@@ -98,7 +98,7 @@ section{padding:var(--pad) 20px}
   flex-direction:column;
   will-change:transform;
   transform:translate3d(0,0,0);
-  animation:popupScrollLoop 7s linear infinite;
+  animation:popupScrollLoop 10s linear infinite;
 }
 
 .popup-bg img{
@@ -126,26 +126,53 @@ section{padding:var(--pad) 20px}
   padding:32px 28px 24px;
   max-width:340px;
   width:calc(100% - 48px);
-  background:rgba(255,255,255,0.13);
+  background:rgba(255,255,255,0.18);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,0.22);
+  border:1px solid rgba(255,255,255,0.26);
   border-radius:24px;
   box-shadow:0 8px 40px rgba(0,0,0,0.35);
 }
-.popup-c{
-  position:relative;z-index:2;text-align:center;
-  padding:32px 28px 24px;max-width:340px;width:calc(100% - 48px);
-  background:rgba(255,255,255,0.13);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,0.22);
-  border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,0.35);
+
+.popup-c h2{
+  font-family:var(--fh);
+  font-size:1.5rem;
+  color:#fff;
+  margin-bottom:14px;
+  font-weight:300;
+  text-shadow:0 1px 8px rgba(0,0,0,.3);
 }
-.popup-c h2{font-family:var(--fh);font-size:1.5rem;color:#fff;margin-bottom:14px;font-weight:300;text-shadow:0 1px 8px rgba(0,0,0,.3)}
-.popup-c p{font-size:.86rem;color:rgba(255,255,255,.82);line-height:1.65;margin-bottom:24px}
-.popup-btns{display:flex;gap:10px;justify-content:center}
-.popup-btns .btn{flex:1;max-width:140px}
-.popup-note{font-size:.68rem;color:rgba(255,255,255,.38);margin-top:14px;line-height:1.5}
+
+.popup-c p{
+  font-size:.86rem;
+  color:rgba(255,255,255,.82);
+  line-height:1.65;
+  margin-bottom:24px;
+}
+
+.popup-btns{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:nowrap;
+}
+
+.popup-btns .btn{
+  flex:0 1 auto;
+  max-width:none;
+  white-space:nowrap;
+  padding:15px 18px;
+  font-size:.68rem;
+  letter-spacing:.08em;
+}
+
+.popup-note{
+  font-size:.68rem;
+  color:rgba(255,255,255,.38);
+  margin-top:14px;
+  line-height:1.5;
+}
 
 /* ──────────── HERO ──────────── */
 .hero{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--n);padding:80px 20px 40px}
