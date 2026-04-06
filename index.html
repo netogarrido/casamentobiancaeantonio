@@ -1016,6 +1016,9 @@ function applyMidia(rows){
 
   /* Áudio */
   var au=document.getElementById('bgMusic');
+    au.addEventListener('play', syncPlayerUI);
+    au.addEventListener('pause', syncPlayerUI);
+  
   var src=document.getElementById('audioSrc');
   if(au&&src&&MIDIAS.vestido_audio){
     src.src=MIDIAS.vestido_audio;
@@ -1241,10 +1244,33 @@ function hP(){
   document.getElementById('mini').classList.add('vis');
 }
 function tM(){
-  if(pl){au.pause();pl=false;}
-  else{au.play().then(function(){pl=true;}).catch(function(){});}
-  uI();
+  if(bgMusic.paused){
+    bgMusic.play();
+  } else {
+    bgMusic.pause();
+  }
+
+  syncPlayerUI();
 }
+
+function syncPlayerUI(){
+  const isPlaying = !bgMusic.paused;
+
+  // Ícone principal
+  document.getElementById('pIco').innerHTML = isPlaying
+    ? '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>'  // pause
+    : '<path d="M8 5v14l11-7z"/>';             // play
+
+  // Ícone mini
+  document.getElementById('mIco').innerHTML = isPlaying
+    ? '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>'
+    : '<path d="M8 5v14l11-7z"/>';
+
+  // Animação do botão grande
+  document.getElementById('playBtnEl')
+    .classList.toggle('playing', isPlaying);
+}
+
 function uI(){
   var path=pl?'M6 4h4v16H6zM14 4h4v16h-4z':'M8 5v14l11-7z';
   document.getElementById('pIco').innerHTML='<path d="'+path+'"/>';
