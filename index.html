@@ -1564,7 +1564,32 @@ var countdownInterval=null;
 
 function tick(){
   var enabled=String(CONFIG.countdown_enabled||'sim').toLowerCase().trim();
-  var targetRaw=CONFIG.countdown_target;
+  var targetRaw=CONFIG.countdown_target||'2026-10-23T17:00:00-03:00';
+var target;
+
+if(typeof targetRaw==='string'){
+  var raw=targetRaw.trim();
+
+  if(/^Date\(\d+,\d+,\d+(,\d+,\d+,\d+)?\)$/.test(raw)){
+    var parts=raw.match(/\d+/g).map(Number);
+    target=new Date(
+      parts[0],
+      parts[1],
+      parts[2],
+      parts[3]||0,
+      parts[4]||0,
+      parts[5]||0
+    );
+  }else if(/^\d{4}-\d{2}-\d{2}$/.test(raw)){
+    target=new Date(raw+'T00:00:00');
+  }else if(/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(raw)){
+    target=new Date(raw.replace(' ','T'));
+  }else{
+    target=new Date(raw);
+  }
+}else{
+  target=new Date(targetRaw);
+}
   var cdEl=document.getElementById('cd');
 
   if(enabled==='nao'){
@@ -1576,21 +1601,6 @@ function tick(){
     cdEl.style.display='none';
     console.warn('countdown_target não encontrado em CONFIG.');
     return;
-  }
-
-  var target;
-  if(typeof targetRaw==='string'){
-    var raw=targetRaw.trim();
-
-    if(/^\d{4}-\d{2}-\d{2}$/.test(raw)){
-      target=new Date(raw+'T00:00:00');
-    }else if(/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(raw)){
-      target=new Date(raw.replace(' ','T'));
-    }else{
-      target=new Date(raw);
-    }
-  }else{
-    target=new Date(targetRaw);
   }
 
   if(isNaN(target.getTime())){
