@@ -22,6 +22,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--fb);font-weight:400;color:var(--i);background:var(--s);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.popup-open{overflow:hidden;touch-action:none}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
@@ -1315,15 +1316,39 @@ function tF(el){
 var au=document.getElementById('bgMusic');
 var pl=false;
 
+function goToHeroStart(){
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+
+  document.documentElement.style.scrollBehavior='auto';
+  document.body.classList.add('popup-open');
+
+  window.scrollTo(0,0);
+
+  var hero=document.getElementById('hero');
+  if(hero){
+    hero.scrollIntoView({block:'start', inline:'nearest'});
+  }
+
+  requestAnimationFrame(function(){
+    window.scrollTo(0,0);
+    if(hero){
+      hero.scrollIntoView({block:'start', inline:'nearest'});
+    }
+    document.documentElement.style.scrollBehavior='';
+  });
+}
+
 function startM(){
   au.play().then(function(){pl=true;uI();}).catch(function(){});
   hP();
 }
 function skipM(){hP();}
 function hP(){
+  goToHeroStart();
   document.getElementById('popup').classList.add('off');
   document.getElementById('mini').classList.add('vis');
 }
+  
 function tM(){
   if(bgMusic.paused){
     bgMusic.play();
@@ -1385,7 +1410,7 @@ function openLightbox(img){
 }
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('on');
-  document.body.style.overflow='';
+  document.body.classList.remove('popup-open');
 }
 
 /* ══════════════════════════════════════════
@@ -1638,10 +1663,15 @@ function startSlideshow(){
    INIT
 ══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded',function(){
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+  document.body.style.overflow='hidden';
+  goToHeroStart();
+
   tick();
   setInterval(tick,1000);
   loadAll();
-});
+  });
+  
 </script>
 </body>
 </html>
