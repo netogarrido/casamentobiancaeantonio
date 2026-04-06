@@ -565,12 +565,11 @@ section{padding:var(--pad) 20px}
 
 <!-- MINI PLAYER -->
 <div class="mini" id="mini">
-  <!-- Emoji do chapéu — abre modal com contexto -->
-  <div class="mini-emoji" id="miniChapeuBtn" title="🎩 Chapéu do compositor" onclick="openCaixinhaByCategoria('noivo_artista')">🎩</div>
-  <!-- Play/Pause -->
+  <div class="mini-emoji" id="miniNoivaBtn" title=""></div>
   <div class="mini-btn" onclick="tM()" id="miniBtnEl">
     <svg id="mIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
   </div>
+  <div class="mini-emoji" id="miniNoivoBtn" title=""></div>
 </div>
 
 <!-- NAV -->
@@ -915,6 +914,7 @@ var PIX={
   'nara_16':'https://nubank.com.br/cobrar/2dfgs/69d03986-152f-4aa8-b98e-af36465d96ef',
   'outro_valor_17':'https://nubank.com.br/cobrar/2dfgs/69d03a91-bc68-40a1-9edc-d544e0a24295',
   'noivo_artista_18':'https://nubank.com.br/cobrar/2dfgs/69d039b6-38db-43d5-8cd2-3d937ae0ecc8',
+  'noivo_artista_21':'https://nubank.com.br/cobrar/2dfgs/69d1de9d-1584-4c0f-8dd2-27a824d83337',
   'noivo_artista_19':'https://nubank.com.br/cobrar/2dfgs/69d039fd-0971-4902-b76a-fe14b01c1e58',
   'festa_20':'https://nubank.com.br/cobrar/2dfgs/69d03a2f-5cfb-4f6c-8be6-a7ffac960824'
 };
@@ -1090,8 +1090,9 @@ function applyPresentes(rows){
       v:isLivre?0:Number(val),
       d:r.descricao||'',
       l:link,
-      catId:catId
-    };
+      catId:catId,
+      ordem:Number(ordem)||0
+      };
     if(tipo==='presente'){
       if(!GIFTS[catId])GIFTS[catId]=[];
       GIFTS[catId].push(item);
@@ -1103,6 +1104,7 @@ function applyPresentes(rows){
   renderCaixinhasVestido();
   renderCaixinhaProg();
   renderChapeuRow();
+  renderMiniPlayerBtns();
   /* valor livre */
   var outro=GIFTS.outro_valor&&GIFTS.outro_valor[0];
   if(outro){
@@ -1187,11 +1189,38 @@ function renderChapeuRow(){
     row.appendChild(btn);
   });
 }
+ function renderMiniPlayerBtns(){
+  var btnNoiva=document.getElementById('miniNoivaBtn');
+  var btnNoivo=document.getElementById('miniNoivoBtn');
 
-/* Abre a primeira caixinha de uma categoria (usado no mini player) */
-function openCaixinhaByCategoria(catId){
-  var found=CAIXINHAS.filter(function(cx){return cx.catId===catId;});
-  if(found.length>0)openModal(found[0]);
+  if(!btnNoiva||!btnNoivo)return;
+
+  var itens=CAIXINHAS
+    .filter(function(cx){return cx.catId==='noivo_artista';})
+    .sort(function(a,b){return Number(a.ordem)-Number(b.ordem);});
+
+  var noivo=itens[0];
+  var noiva=itens[1];
+
+  btnNoivo.textContent='';
+  btnNoivo.title='';
+  btnNoivo.onclick=null;
+
+  btnNoiva.textContent='';
+  btnNoiva.title='';
+  btnNoiva.onclick=null;
+
+  if(noivo){
+    btnNoivo.textContent=noivo.i;
+    btnNoivo.title=noivo.n+' · '+noivo.p;
+    btnNoivo.onclick=function(){openModal(noivo);};
+  }
+
+  if(noiva){
+    btnNoiva.textContent=noiva.i;
+    btnNoiva.title=noiva.n+' · '+noiva.p;
+    btnNoiva.onclick=function(){openModal(noiva);};
+  }
 }
 
 /* ══════════════════════════════════════════
