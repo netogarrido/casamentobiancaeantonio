@@ -1052,10 +1052,10 @@ function applyConteudo(rows){
   rows.forEach(function(r){
     var key=r.local_exato;
     var val=r.descricao;
-    if(!key||val===null||val===undefined||val==='')return;
-    if(String(r.ativo||'').toLowerCase()==='nao')return;
+    if(!key)return;
 
-    var cleaned=String(val).replace(/\\n/g,'\n');
+    var cleaned=(val===null||val===undefined)?'':String(val).replace(/\\n/g,'\n');
+    var ativo=String(r.ativo||'sim').toLowerCase().trim();
 
     /* Casos especiais de placeholder que têm ID próprio */
     var phMap={
@@ -1066,18 +1066,40 @@ function applyConteudo(rows){
     };
     if(phMap[key]){
       var phEl=document.getElementById(phMap[key]);
-      if(phEl)phEl.placeholder=cleaned;
+      if(!phEl)return;
+
+      if(ativo==='nao'){
+        phEl.placeholder='';
+      }else{
+        phEl.placeholder=cleaned;
+      }
       return;
     }
 
     var el=document.getElementById(key);
     if(!el)return;
 
+    if(ativo==='nao'){
+      el.style.display='none';
+      return;
+    }else{
+      el.style.display='';
+    }
+
+    if(cleaned==='')return;
+
     var tag=el.tagName;
-    if(tag==='INPUT'){el.placeholder=cleaned;}
-    else if(tag==='TEXTAREA'){el.placeholder=cleaned;}
-    else if(tag==='OPTION'){el.textContent=cleaned;}
-    else{el.innerHTML=cleaned.replace(/\n/g,'<br>');}
+    if(tag==='INPUT'){
+      el.placeholder=cleaned;
+    }else if(tag==='TEXTAREA'){
+      el.placeholder=cleaned;
+    }else if(tag==='OPTION'){
+      el.textContent=cleaned;
+    }else if(key==='nav_logo'){
+      el.innerHTML=cleaned.replace(/\n/g,'<br>');
+    }else{
+      el.innerHTML=cleaned.replace(/\n/g,'<br>');
+    }
   });
 }
 
