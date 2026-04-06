@@ -379,7 +379,7 @@ section{padding:var(--pad) 20px}
 /* ──────────── PRESENTES ──────────── */
 .presentes{background:var(--s);position:relative}
 .presentes::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--al),transparent);opacity:.15}
-.pres-hero{width:100%;height:180px;border-radius:var(--r);overflow:hidden;margin-bottom:24px;position:relative}
+.pres-hero{width:100%;aspect-ratio:3/4;border-radius:var(--r);overflow:hidden;margin-bottom:24px;position:relative}
 .pres-hero img{width:100%;height:100%;object-fit:cover;object-position:center 60%}
 .pres-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,var(--s),transparent 50%)}
 .pres-header{text-align:center;margin-bottom:28px}
@@ -1230,6 +1230,12 @@ function toggleCat(id){
   activeCat=activeCat===id?null:id;
   document.querySelectorAll('.cat-card').forEach(function(c){c.classList.toggle('on',c.dataset.c===activeCat);});
   document.querySelectorAll('.sub-panel').forEach(function(p){p.classList.toggle('on',p.id==='sp-'+activeCat);});
+  setTimeout(()=>{
+  const el = document.querySelector('.sub-panel.on');
+  if(el){
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}, 100);
 }
 
 /* ══════════════════════════════════════════
