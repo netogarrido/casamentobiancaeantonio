@@ -936,6 +936,7 @@ var MIDIAS={};
 var GIFTS={};
 var CAIXINHAS=[];
 var CAT_IMGS={};
+var CONFIG={};
 var FAQS=[];
 var curGift=null;
 var CONTATOS={email:'',whatsapp:''};
@@ -980,16 +981,18 @@ function fetchSheet(tabName){
 ══════════════════════════════════════════ */
 function loadAll(){
   Promise.all([
+    fetchSheet('configuracoes'),
     fetchSheet('midia'),
     fetchSheet('conteudo'),
     fetchSheet('presentes'),
     fetchSheet('perguntas')
   ]).then(function(res){
-    applyMidia(res[0]);
+    applyConfiguracoes(res[0]);
+    applyMidia(res[1]);
     startSlideshow();
-    applyConteudo(res[1]);
-    applyPresentes(res[2]);
-    applyPerguntas(res[3]);
+    applyConteudo(res[2]);
+    applyPresentes(res[3]);
+    applyPerguntas(res[4]);
   }).catch(function(e){
     console.warn('Sheets load error:',e);
   });
@@ -1044,6 +1047,23 @@ function applyMidia(rows){
   };
 }
 
+/* ══════════════════════════════════════════
+   APPLY Configuracoes
+══════════════════════════════════════════ */
+  function applyConfiguracoes(rows){
+  CONFIG={};
+
+  rows.forEach(function(r){
+    var key=(r.chave||'').trim();
+    var val=r.valor;
+    var ativo=String(r.ativo||'sim').toLowerCase().trim();
+
+    if(!key||ativo==='nao')return;
+    CONFIG[key]=val;
+  });
+}
+
+  
 /* ══════════════════════════════════════════
    APPLY CONTEUDO
    Injecta texto/placeholder conforme tipo de elemento
@@ -1490,10 +1510,30 @@ function sR(e){
    COUNTDOWN
 ══════════════════════════════════════════ */
 function tick(){
-  var target=new Date('2026-10-23T17:00:00-03:00');
+  var enabled=String(CONFIG.countdown_enabled||'sim').toLowerCase().trim();
+  var targetRaw=CONFIG.countdown_target||'2026-10-23T17:00:00-03:00';
+
+  if(enabled==='nao'){
+    document.getElementById('cd').style.display='none';
+    return;
+  }
+
+  var target=new Date(targetRaw);
   var now=new Date();
   var diff=target-now;
-  if(diff<=0){document.getElementById('cd').style.display='none';return;}
+
+  if(isNaN(target.getTime())){
+    console.warn('countdown_target inválido:',targetRaw);
+    document.getElementById('cd').style.display='none';
+    return;
+  }
+
+  if(diff<=0){
+    document.getElementById('cd').style.display='none';
+    return;
+  }
+
+  document.getElementById('cd').style.display='';
   document.getElementById('cdD').textContent=Math.floor(diff/864e5);
   document.getElementById('cdH').textContent=String(Math.floor(diff%864e5/36e5)).padStart(2,'0');
   document.getElementById('cdM').textContent=String(Math.floor(diff%36e5/6e4)).padStart(2,'0');
