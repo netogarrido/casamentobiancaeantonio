@@ -478,22 +478,32 @@ section[id]{scroll-margin-top:104px}
   transform:translateY(-2px) scale(1.02);
   box-shadow:0 14px 30px rgba(0,0,0,.16);
 }
+.vestido-story-card{
+  background:var(--ag);
+  border-left:2.5px solid var(--a);
+  border-radius:0 var(--r) var(--r) 0;
+  padding:18px 18px 16px;
+  margin-bottom:18px;
+}
 .vestido-quote{
   font-family:var(--fh);
   font-size:1.02rem;
   font-style:italic;
   color:var(--im);
   line-height:1.65;
-  margin-bottom:24px;
-  padding:18px 20px;
-  border-left:2.5px solid var(--a);
-  background:var(--ag);
-  border-radius:0 var(--rs) var(--rs) 0
+  margin-bottom:16px;
+  padding:0;
+  border-left:none;
+  background:none;
+  border-radius:0;
 }
   .vestido-quote cite{display:block;font-size:.72rem;color:var(--a);font-style:normal;margin-top:10px;font-family:var(--fb);font-weight:600}
 /* player */
-.player{display:flex;align-items:center;gap:14px;padding:16px;background:var(--n);border-radius:var(--r);margin:4px 0 18px}
-.play-btn{width:48px;height:48px;border-radius:50%;background:var(--a);display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:all .25s}
+.player{display:flex;align-items:center;gap:14px;padding:16px;background:var(--n);border-radius:var(--r);margin:0 0 14px}
+.player--story{
+  margin-top:8px;
+}
+  .play-btn{width:48px;height:48px;border-radius:50%;background:var(--a);display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:all .25s}
 .play-btn:hover{transform:scale(1.1);box-shadow:0 0 18px rgba(212,160,74,.4)}
 .play-btn.playing{animation:pulse 2s ease-in-out infinite}
 .play-btn svg{width:16px;height:16px;fill:var(--n);margin-left:2px}
@@ -514,13 +524,15 @@ section[id]{scroll-margin-top:104px}
 }
 .chapeu-btn:hover{background:rgba(212,160,74,.2);border-color:var(--a);transform:scale(1.1)}
 .lyr-toggle{
-  display:inline-flex;
+  display:flex;
   align-items:center;
+  justify-content:center;
   gap:8px;
-  padding:10px 14px;
-  margin-bottom:14px;
-  border-radius:999px;
-  background:rgba(212,160,74,.10);
+  width:100%;
+  padding:12px 14px;
+  margin-bottom:0;
+  border-radius:12px;
+  background:rgba(212,160,74,.12);
   border:1px solid rgba(212,160,74,.22);
   font-size:.78rem;
   color:var(--a);
@@ -531,11 +543,21 @@ section[id]{scroll-margin-top:104px}
 }
 
 .lyr-toggle:hover{
-  background:rgba(212,160,74,.16);
+  background:rgba(212,160,74,.18);
   border-color:var(--a);
   transform:translateY(-1px);
 }
-.lyr-box{max-height:0;overflow:hidden;transition:max-height .5s}.lyr-box.open{max-height:2600px}
+
+.lyr-box{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .5s;
+}
+
+.lyr-box.open{
+  max-height:2600px;
+  margin-top:12px;
+}
 .lyr-text{font-family:var(--fh);font-size:.88rem;color:var(--is);line-height:2;white-space:pre-line;padding:12px 0}
 
 /* CAIXINHA CARDS */
@@ -714,7 +736,7 @@ section[id]{scroll-margin-top:104px}
 /* mini player: só o botão de play e um emoji clicável para chapéu */
 .mini{position:fixed;bottom:18px;right:18px;z-index:800;display:flex;align-items:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
 .mini.vis{opacity:1;pointer-events:auto}
-.mini-btn{width:50px;height:50px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
+.mini-btn{width:46px;height:46px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
 .mini-btn:hover{border-color:var(--a)}
 .mini-btn svg{width:13px;height:13px;fill:var(--al)}
 /* emoji flutuante (chapéu) no mini player */
@@ -831,21 +853,25 @@ section[id]{scroll-margin-top:104px}
     <img src="" data-midia="vestido_foto_1" alt="" onclick="openLightbox(this)">
     <img src="" data-midia="vestido_foto_2" alt="" onclick="openLightbox(this)">
   </div>
-  <div class="player">
-    <button class="play-btn" onclick="tM()" id="playBtnEl" aria-label="Play/Pause">
-      <svg id="pIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-    </button>
-    <div class="player-info">
-      <div class="player-title" id="musica_titulo"></div>
-      <div class="player-sub" id="musica_artista"></div>
-      <div class="player-bar"><div class="player-prog" id="prog"></div></div>
+
+  <div class="vestido-story-card">
+    <div class="vestido-quote" id="historia_texto_abertura"></div>
+
+    <div class="player player--story">
+      <button class="play-btn" onclick="tM()" id="playBtnEl" aria-label="Play/Pause">
+        <svg id="pIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="player-info">
+        <div class="player-title" id="musica_titulo"></div>
+        <div class="player-sub" id="musica_artista"></div>
+        <div class="player-bar"><div class="player-prog" id="prog"></div></div>
+      </div>
     </div>
+
+    <div class="lyr-toggle" onclick="tL()">📜 <span id="musica_btn_letra"></span></div>
+    <div class="lyr-box" id="lB"><div class="lyr-text" id="musica_letra"></div></div>
   </div>
-  <div class="vestido-quote" id="historia_texto_abertura"></div>
-  <!-- Botões caixinha: só emoji, abre modal com contexto correto -->
-  <div class="chapeu-row" id="chapeuRow"></div>
-  <div class="lyr-toggle" onclick="tL()">📜 <span id="musica_btn_letra"></span></div>
-  <div class="lyr-box" id="lB"><div class="lyr-text" id="musica_letra"></div></div>
+
   <p class="txt" style="margin-top:18px" id="musica_cta"></p>
   <div class="cx-cards" id="cxVestido"></div>
 </div></section>
@@ -1353,7 +1379,6 @@ function applyPresentes(rows){
   renderCats();
   renderCaixinhasVestido();
   renderCaixinhaProg();
-  renderChapeuRow();
   renderMiniPlayerBtns();
   /* valor livre */
   var outro=GIFTS.outro_valor&&GIFTS.outro_valor[0];
@@ -1435,17 +1460,6 @@ function renderCaixinhaProg(){
   });
 }
 
-/* Botões chapéu (só emoji) ao lado do player */
-function renderChapeuRow(){
-  var row=document.getElementById('chapeuRow');if(!row)return;row.innerHTML='';
-  var noivo=CAIXINHAS.filter(function(cx){return cx.catId==='noivo_artista';});
-  noivo.forEach(function(cx){
-    var btn=document.createElement('button');btn.className='chapeu-btn';
-    btn.textContent=cx.i;btn.title=cx.n+' · '+cx.p;
-    (function(g){btn.onclick=function(){openModal(g);};})(cx);
-    row.appendChild(btn);
-  });
-}
  function renderMiniPlayerBtns(){
   var btnLetra=document.getElementById('miniLetraBtn');
 
