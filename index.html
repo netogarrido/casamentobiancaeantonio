@@ -659,7 +659,7 @@ section[id]{scroll-margin-top:104px}
 /* mini player: só o botão de play e um emoji clicável para chapéu */
 .mini{position:fixed;bottom:18px;right:18px;z-index:800;display:flex;align-items:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
 .mini.vis{opacity:1;pointer-events:auto}
-.mini-btn{width:42px;height:50px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
+.mini-btn{width:50px;height:50px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
 .mini-btn:hover{border-color:var(--a)}
 .mini-btn svg{width:13px;height:13px;fill:var(--al)}
 /* emoji flutuante (chapéu) no mini player */
@@ -714,11 +714,10 @@ section[id]{scroll-margin-top:104px}
 
 <!-- MINI PLAYER -->
 <div class="mini" id="mini">
+  <div class="mini-emoji" id="miniLetraBtn" title=""></div>
   <div class="mini-btn" onclick="tM()" id="miniBtnEl">
     <svg id="mIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
   </div>
-  <div class="mini-emoji" id="miniLetraBtn" title=""></div>
-</div>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
@@ -770,7 +769,6 @@ section[id]{scroll-margin-top:104px}
 
 <!-- VESTIDO VESTIDO -->
 <section class="vestido" id="vestido"><div class="inn">
-  <div class="lbl">Vestido Vestido</div>
   <h2 class="ttl" id="historia_titulo"></h2>
   <div class="vestido-photos">
     <img src="" data-midia="vestido_foto_principal" alt="" onclick="openLightbox(this)">
@@ -800,7 +798,6 @@ section[id]{scroll-margin-top:104px}
 <section class="presentes" id="presentes"><div class="inn">
   <div class="pres-hero"><img src="" data-midia="presentes_hero" alt=""></div>
   <div class="pres-header">
-    <div class="lbl">Lista de Presentes</div>
     <h2 class="ttl" id="presentes_titulo"></h2>
     <p class="txt" id="presentes_subtitulo"></p>
     <p class="txt" style="font-size:.8rem;color:var(--is)" id="presentes_texto_apoio"></p>
