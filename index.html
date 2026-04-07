@@ -35,7 +35,7 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   50%{transform:translateY(6px)}
 }
 
-.hero_cta_terciario{
+#hero_cta_terciario{
   animation:setaBounce 1.6s ease-in-out infinite;
 }
   
@@ -752,7 +752,7 @@ section{padding:var(--pad) 20px}
       <div class="hero-ctas">
         <a href="#rsvp" class="btn btn-a" id="hero_cta_primario"></a>
         <a href="#presentes" class="btn btn-g" id="hero_cta_secundario"></a>
-        <a href="#vestido" class="btn btn-g btn-xs" style="border:none;opacity:.55;margin-top:2px" id="hero_cta_terciario"></a>
+        <a href="#vestido" class="btn btn-g btn-sm" style="border:none;opacity:.55;margin-top:2px" id="hero_cta_terciario"></a>
       </div>
     </div>
   </div>
@@ -1484,9 +1484,6 @@ function playHeroVideo(){
     }catch(e){}
   });
 }
-
-function goToHeroStart(){
-
 function goToHeroStart(){
   if('scrollRestoration' in history) history.scrollRestoration='manual';
 
