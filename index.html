@@ -47,6 +47,7 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   letter-spacing:0;
   text-transform:none;
   animation:setaBounce 1.6s ease-in-out infinite;
+  margin-top:-12px;
 }
   
 /* NAV */
@@ -658,7 +659,7 @@ section[id]{scroll-margin-top:104px}
 /* mini player: só o botão de play e um emoji clicável para chapéu */
 .mini{position:fixed;bottom:18px;right:18px;z-index:800;display:flex;align-items:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
 .mini.vis{opacity:1;pointer-events:auto}
-.mini-btn{width:42px;height:42px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
+.mini-btn{width:42px;height:50px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
 .mini-btn:hover{border-color:var(--a)}
 .mini-btn svg{width:13px;height:13px;fill:var(--al)}
 /* emoji flutuante (chapéu) no mini player */
@@ -713,8 +714,6 @@ section[id]{scroll-margin-top:104px}
 
 <!-- MINI PLAYER -->
 <div class="mini" id="mini">
-  <div class="mini-emoji" id="miniCartolaBtn" title=""></div>
-  <div class="mini-emoji" id="miniGravacaoBtn" title=""></div>
   <div class="mini-btn" onclick="tM()" id="miniBtnEl">
     <svg id="mIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
   </div>
@@ -1395,8 +1394,6 @@ function renderChapeuRow(){
   });
 }
  function renderMiniPlayerBtns(){
-  var btnCartola=document.getElementById('miniCartolaBtn');
-  var btnGravacao=document.getElementById('miniGravacaoBtn');
   var btnLetra=document.getElementById('miniLetraBtn');
 
   if(!btnCartola||!btnGravacao||!btnLetra)return;
