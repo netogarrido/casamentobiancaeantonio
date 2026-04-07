@@ -438,12 +438,50 @@ section[id]{scroll-margin-top:104px}
 
 /* ──────────── VESTIDO ──────────── */
 .vestido{background:var(--p);position:relative;overflow:hidden}
-.vestido-photos{display:grid;grid-template-columns:1.2fr 1fr;gap:6px;margin-bottom:22px;border-radius:var(--r);overflow:hidden}
-.vestido-photos img{width:100%;object-fit:cover;cursor:pointer;transition:transform .4s}
-.vestido-photos img:hover{transform:scale(1.04)}
-.vestido-photos img:nth-child(1){grid-row:span 2;height:100%;min-height:260px}
-.vestido-photos img:nth-child(2){height:127px}
-.vestido-photos img:nth-child(3){height:127px}
+.vestido-photos{
+  position:relative;
+  margin-bottom:28px;
+  height:320px;
+}
+
+.vestido-photos img{
+  position:absolute;
+  width:62%;
+  border-radius:18px;
+  object-fit:cover;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+  transition:transform .35s ease;
+}
+
+/* foto principal */
+.vestido-photos img:nth-child(1){
+  left:0;
+  top:0;
+  transform:rotate(-2deg);
+  z-index:2;
+}
+
+/* topo direita */
+.vestido-photos img:nth-child(2){
+  right:0;
+  top:10px;
+  width:46%;
+  transform:rotate(3deg);
+  z-index:3;
+}
+
+/* baixo direita */
+.vestido-photos img:nth-child(3){
+  right:10px;
+  bottom:0;
+  width:48%;
+  transform:rotate(-1.5deg);
+  z-index:1;
+}
+
+.vestido-photos img:hover{
+  transform:scale(1.04) rotate(0deg);
+}
 .vestido-quote{
   font-family:var(--fh);
   font-size:1.02rem;
@@ -718,6 +756,7 @@ section[id]{scroll-margin-top:104px}
   <div class="mini-btn" onclick="tM()" id="miniBtnEl">
     <svg id="mIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
   </div>
+</div>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
