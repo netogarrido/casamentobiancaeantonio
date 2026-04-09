@@ -674,21 +674,180 @@ section[id]{scroll-margin-top:78px}
   transform:rotate(4.5deg);
 }
 
-/* foto 3 — sobreposta, baixo esquerda */
-.vestido-photos img:nth-child(3){
-  width:42%;
-  aspect-ratio:4/5;
-  position:absolute;
-  bottom:0;
-  left:2%;
-  z-index:3;
-  transform:rotate(-5deg);
+.vestido-photos{
+  position:relative;
+  margin:0 auto 36px;
+  padding:18px 0 24px;
+  display:block;
+  min-height:520px;
 }
 
-.vestido-photos img:hover{
-  transform:rotate(0deg) scale(1.04);
-  box-shadow:0 24px 50px rgba(84,73,60,.24), 0 6px 16px rgba(84,73,60,.10);
+.vestido-photos img{
+  display:block;
+  object-fit:cover;
+  box-shadow:0 18px 40px rgba(84,73,60,.18), 0 4px 12px rgba(84,73,60,.08);
+  background:#fff;
+  padding:8px 8px 14px;
+  border-radius:3px;
+}
+
+/* wrapper da foto principal — para posicionar o badge */
+.vestido-foto-principal-wrap{
+  width:78%;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+/* foto principal — centro, polaroid grande, sempre fixa */
+.vestido-foto-principal-wrap img{
+  width:100%;
+  aspect-ratio:4/5;
+  transform:rotate(-1.2deg);
+}
+
+.vestido-badge{
+  position:absolute;
+  bottom:20px;
+  right:4px;
+  background:linear-gradient(135deg,var(--a),var(--al));
+  color:var(--n);
+  font-size:.62rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  padding:6px 11px;
+  border-radius:999px;
+  box-shadow:0 4px 14px rgba(212,160,74,.38);
+  cursor:pointer;
+  z-index:4;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease, box-shadow .2s ease;
+  white-space:nowrap;
+  display:none;
+  align-items:center;
+  gap:4px;
+}
+.vestido-badge:hover{
+  transform:scale(1.07);
+  box-shadow:0 6px 18px rgba(212,160,74,.5);
+}
+
+/* palco das 4 fotos secundárias */
+.vestido-secundarias{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+}
+
+/* polaroids secundárias */
+.vestido-polaroid{
+  position:absolute;
+  width:42%;
+  aspect-ratio:4/5;
+  opacity:0;
+  pointer-events:none;
+  will-change:transform, opacity;
+  transition:
+    opacity .9s ease,
+    transform 1.1s cubic-bezier(.2,.7,.3,1),
+    box-shadow .45s ease;
+}
+
+/* posições base */
+.vestido-polaroid--1{
+  top:0;
+  right:2%;
+  transform:translate3d(0,10px,0) rotate(4deg) scale(.98);
+}
+.vestido-polaroid--2{
+  bottom:2%;
+  left:2%;
+  transform:translate3d(0,10px,0) rotate(-5deg) scale(.98);
+}
+.vestido-polaroid--3{
+  top:10%;
+  left:0;
+  transform:translate3d(0,10px,0) rotate(-3deg) scale(.98);
+}
+.vestido-polaroid--4{
+  bottom:8%;
+  right:0;
+  transform:translate3d(0,10px,0) rotate(5deg) scale(.98);
+}
+
+/* visíveis */
+.vestido-polaroid.is-visible{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* a que está mais à frente */
+.vestido-polaroid.is-front{
   z-index:5;
+  box-shadow:0 24px 50px rgba(84,73,60,.24), 0 6px 16px rgba(84,73,60,.10);
+}
+
+/* a segunda visível, atrás */
+.vestido-polaroid.is-back{
+  z-index:4;
+}
+
+/* resposta sutil ao toque/hover */
+.vestido-polaroid.is-front:hover,
+.vestido-polaroid.is-front:active,
+.vestido-polaroid.is-touched{
+  box-shadow:0 26px 56px rgba(84,73,60,.28), 0 8px 18px rgba(84,73,60,.12);
+}
+
+/* estados refinados por slot */
+.vestido-polaroid--1.is-visible.is-front{
+  transform:translate3d(-4px,0,0) rotate(5deg) scale(1.01);
+}
+.vestido-polaroid--1.is-visible.is-back{
+  transform:translate3d(2px,4px,0) rotate(3.5deg) scale(.985);
+}
+
+.vestido-polaroid--2.is-visible.is-front{
+  transform:translate3d(4px,-2px,0) rotate(-5.5deg) scale(1.01);
+}
+.vestido-polaroid--2.is-visible.is-back{
+  transform:translate3d(-2px,3px,0) rotate(-4deg) scale(.985);
+}
+
+.vestido-polaroid--3.is-visible.is-front{
+  transform:translate3d(4px,-1px,0) rotate(-2.4deg) scale(1.01);
+}
+.vestido-polaroid--3.is-visible.is-back{
+  transform:translate3d(-3px,4px,0) rotate(-3.4deg) scale(.985);
+}
+
+.vestido-polaroid--4.is-visible.is-front{
+  transform:translate3d(-5px,-2px,0) rotate(4.6deg) scale(1.01);
+}
+.vestido-polaroid--4.is-visible.is-back{
+  transform:translate3d(1px,4px,0) rotate(3.6deg) scale(.985);
+}
+
+@media(min-width:520px){
+  .vestido .inn{max-width:520px}
+  .vestido-photos{min-height:560px}
+  .vestido-foto-principal-wrap{width:64%;}
+  .vestido-polaroid{width:38%;}
+  .vestido-polaroid--1{right:6%}
+  .vestido-polaroid--2{left:6%}
+  .vestido-polaroid--3{left:4%}
+  .vestido-polaroid--4{right:4%}
+}
+
+@media(max-width:380px){
+  .vestido-foto-principal-wrap{width:74%;}
+  .vestido-photos{min-height:470px}
+  .vestido-polaroid{width:44%;}
+  .vestido-polaroid--1{right:0}
+  .vestido-polaroid--2{left:0}
+  .vestido-polaroid--3{left:0}
+  .vestido-polaroid--4{right:0}
 }
 
 /* ── Quote de abertura — solta, editorial ── */
@@ -1824,14 +1983,19 @@ section[id]{scroll-margin-top:78px}
    <!-- âncora de scroll mantida (oculta) -->
   <div id="lyrInvite" style="display:none"></div>
 
-  <!-- Fotos polaroid — principal + 2 sobrepostas; demais só no carrossel -->
+    <!-- Fotos polaroid — principal fixa + 4 secundárias rotativas -->
   <div class="vestido-photos" id="vestidoPhotos">
     <div class="vestido-foto-principal-wrap">
       <img src="" data-midia="vestido_foto_principal" alt="" onclick="openCarousel('vestido',0)">
       <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)">📷 <span id="vestidoBadgeN"></span></div>
     </div>
-    <img src="" data-midia="vestido_foto_1" alt="" onclick="openCarousel('vestido',1)">
-    <img src="" data-midia="vestido_foto_2" alt="" onclick="openCarousel('vestido',2)">
+
+    <div class="vestido-secundarias" id="vestidoSecundarias">
+      <img class="vestido-polaroid vestido-polaroid--1" src="" data-midia="vestido_foto_3" alt="" data-idx="3" onclick="openCarousel('vestido',3)">
+      <img class="vestido-polaroid vestido-polaroid--2" src="" data-midia="vestido_foto_4" alt="" data-idx="4" onclick="openCarousel('vestido',4)">
+      <img class="vestido-polaroid vestido-polaroid--3" src="" data-midia="vestido_foto_1" alt="" data-idx="1" onclick="openCarousel('vestido',1)">
+      <img class="vestido-polaroid vestido-polaroid--4" src="" data-midia="vestido_foto_2" alt="" data-idx="2" onclick="openCarousel('vestido',2)">
+    </div>
   </div>
 
   <!-- Texto de abertura -->
@@ -2935,7 +3099,101 @@ function openLightbox(img){
   document.getElementById('lightbox').classList.add('on');
   lockScroll();
 }
+/* ══════════════════════════════════════════
+   VESTIDO — POLAROIDS ROTATIVAS
+══════════════════════════════════════════ */
+var vestidoRotator=null;
+var vestidoResumeTimer=null;
+var vestidoState={
+  nodes:[],
+  active:[0,1],
+  tick:0,
+  paused:false
+};
 
+function applyVestidoState(frontIdx,backIdx){
+  if(!vestidoState.nodes.length)return;
+
+  vestidoState.nodes.forEach(function(node,idx){
+    node.classList.remove('is-visible','is-front','is-back','is-touched');
+
+    if(idx===frontIdx){
+      node.classList.add('is-visible','is-front');
+    }else if(idx===backIdx){
+      node.classList.add('is-visible','is-back');
+    }
+  });
+
+  vestidoState.active=[frontIdx,backIdx];
+}
+
+function nextVestidoPair(){
+  if(vestidoState.paused||vestidoState.nodes.length<4)return;
+
+  var pairs=[
+    [0,1],
+    [2,3],
+    [1,2],
+    [3,0]
+  ];
+
+  vestidoState.tick=(vestidoState.tick+1)%pairs.length;
+  applyVestidoState(pairs[vestidoState.tick][0],pairs[vestidoState.tick][1]);
+}
+
+function pauseVestidoRotation(ms){
+  vestidoState.paused=true;
+  clearTimeout(vestidoResumeTimer);
+  vestidoResumeTimer=setTimeout(function(){
+    vestidoState.paused=false;
+  },ms||5000);
+}
+
+function touchVestidoPolaroid(idx){
+  if(!vestidoState.nodes.length)return;
+
+  var current=vestidoState.active.slice();
+  var other=current[0]===idx ? current[1] : current[0];
+
+  if(current.indexOf(idx)===-1){
+    applyVestidoState(idx,other);
+  }else{
+    applyVestidoState(idx,other);
+  }
+
+  var node=vestidoState.nodes[idx];
+  if(node){
+    node.classList.add('is-touched');
+    setTimeout(function(){
+      node.classList.remove('is-touched');
+    },900);
+  }
+
+  pauseVestidoRotation(6500);
+}
+
+function initVestidoPolaroids(){
+  var wrap=document.getElementById('vestidoSecundarias');
+  if(!wrap)return;
+
+  vestidoState.nodes=[].slice.call(wrap.querySelectorAll('.vestido-polaroid'));
+  if(vestidoState.nodes.length<4)return;
+
+  applyVestidoState(0,1);
+
+  vestidoState.nodes.forEach(function(node,idx){
+    node.addEventListener('click',function(){
+      touchVestidoPolaroid(idx);
+    });
+
+    node.addEventListener('touchstart',function(){
+      touchVestidoPolaroid(idx);
+    },{passive:true});
+  });
+
+  clearInterval(vestidoRotator);
+  vestidoRotator=setInterval(nextVestidoPair,4200);
+}
 /* ══════════════════════════════════════════
    MODAL PRESENTE
    Fluxo: clica → modal (nome + mensagem) → envia POST → abre Pix
@@ -3252,6 +3510,11 @@ document.addEventListener('DOMContentLoaded',function(){
   if('scrollRestoration' in history) history.scrollRestoration='manual';
   goToHeroStart();
   loadAll();
+
+  /* NOVO — polaroids do vestido */
+  setTimeout(function(){
+    initVestidoPolaroids();
+  },800);
 });
   
 </script>
