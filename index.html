@@ -690,6 +690,20 @@ section[id]{scroll-margin-top:78px}
   box-shadow:0 24px 50px rgba(84,73,60,.24), 0 6px 16px rgba(84,73,60,.10);
   z-index:5;
 }
+#vestidoSlotA,
+#vestidoSlotB{
+  transition:
+    opacity 1.15s ease,
+    box-shadow .45s ease,
+    transform .45s cubic-bezier(.2,.7,.3,1);
+}
+
+#vestidoSlotA.vestido-slot-off,
+#vestidoSlotB.vestido-slot-off{
+  opacity:0;
+  pointer-events:none;
+}
+  
   /* movimento sutil — polaroids vivas */
 @keyframes polaroidFloat1{
   0%,100%{transform:rotate(4.5deg) translateY(0)}
@@ -1849,8 +1863,8 @@ section[id]{scroll-margin-top:78px}
       <img src="" data-midia="vestido_foto_principal" alt="" onclick="openCarousel('vestido',0)">
       <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)">📷 <span id="vestidoBadgeN"></span></div>
     </div>
-    <img src="" data-midia="vestido_foto_1" alt="" onclick="openCarousel('vestido',1)">
-    <img src="" data-midia="vestido_foto_2" alt="" onclick="openCarousel('vestido',2)">
+    <img src="" data-midia="vestido_foto_1" alt="" id="vestidoSlotA" onclick="openCarousel('vestido',1)">
+    <img src="" data-midia="vestido_foto_2" alt="" id="vestidoSlotB" onclick="openCarousel('vestido',2)">
   </div>
 
   <!-- Texto de abertura -->
@@ -2320,6 +2334,7 @@ function applyMidia(rows){
 
   /* Montar álbuns do carrossel após MIDIAS estar pronto */
   buildLboxAlbums();
+  initVestidoSwap();
 }
 
 /* ══════════════════════════════════════════
@@ -2954,6 +2969,121 @@ function openLightbox(img){
   document.getElementById('lightbox').classList.add('on');
   lockScroll();
 }
+/* ══════════════════════════════════════════
+   VESTIDO — ALTERNÂNCIA REAL SEM MEXER NO PALCO
+══════════════════════════════════════════ */
+var vestidoSwapTimer=null;
+var vestidoSwapResumeTimer=null;
+var vestidoSwapState={
+  pairs:[],
+  tick:0,
+  paused:false
+};
+
+function getVestidoDisponiveis(){
+  var arr=[];
+  if(MIDIAS.vestido_foto_1)arr.push({key:'vestido_foto_1',idx:1});
+  if(MIDIAS.vestido_foto_2)arr.push({key:'vestido_foto_2',idx:2});
+  if(MIDIAS.vestido_foto_3)arr.push({key:'vestido_foto_3',idx:3});
+  if(MIDIAS.vestido_foto_4)arr.push({key:'vestido_foto_4',idx:4});
+  return arr;
+}
+
+function setVestidoSlot(el,item){
+  if(!el||!item||!MIDIAS[item.key])return;
+  el.src=MIDIAS[item.key];
+  el.setAttribute('data-midia',item.key);
+  el.onclick=function(){openCarousel('vestido',item.idx);};
+}
+
+function buildVestidoPairs(items){
+  var byIdx={};
+  items.forEach(function(item){ byIdx[item.idx]=item; });
+
+  var base=[
+    [1,2],
+    [3,4],
+    [1,3],
+    [2,4],
+    [4,1],
+    [2,3]
+  ];
+
+  return base
+    .filter(function(pair){
+      return byIdx[pair[0]]&&byIdx[pair[1]];
+    })
+    .map(function(pair){
+      return [byIdx[pair[0]],byIdx[pair[1]]];
+    });
+}
+
+function applyVestidoPair(pair){
+  var slotA=document.getElementById('vestidoSlotA');
+  var slotB=document.getElementById('vestidoSlotB');
+  if(!slotA||!slotB||!pair||pair.length<2)return;
+
+  setVestidoSlot(slotA,pair[0]);
+  setVestidoSlot(slotB,pair[1]);
+}
+
+function pauseVestidoSwap(ms){
+  vestidoSwapState.paused=true;
+  clearTimeout(vestidoSwapResumeTimer);
+  vestidoSwapResumeTimer=setTimeout(function(){
+    vestidoSwapState.paused=false;
+  },ms||12000);
+}
+
+function nextVestidoSwap(){
+  if(vestidoSwapState.paused||!vestidoSwapState.pairs.length)return;
+
+  var slotA=document.getElementById('vestidoSlotA');
+  var slotB=document.getElementById('vestidoSlotB');
+  if(!slotA||!slotB)return;
+
+  slotA.classList.add('vestido-slot-off');
+  slotB.classList.add('vestido-slot-off');
+
+  setTimeout(function(){
+    vestidoSwapState.tick=(vestidoSwapState.tick+1)%vestidoSwapState.pairs.length;
+    applyVestidoPair(vestidoSwapState.pairs[vestidoSwapState.tick]);
+  },1200);
+
+  setTimeout(function(){
+    slotA.classList.remove('vestido-slot-off');
+    slotB.classList.remove('vestido-slot-off');
+  },1550);
+}
+
+function initVestidoSwap(){
+  var slotA=document.getElementById('vestidoSlotA');
+  var slotB=document.getElementById('vestidoSlotB');
+  if(!slotA||!slotB)return;
+
+  var items=getVestidoDisponiveis();
+  if(items.length<3)return;
+
+  vestidoSwapState.pairs=buildVestidoPairs(items);
+  if(!vestidoSwapState.pairs.length)return;
+
+  vestidoSwapState.tick=0;
+  applyVestidoPair(vestidoSwapState.pairs[0]);
+
+  clearInterval(vestidoSwapTimer);
+  vestidoSwapTimer=setInterval(nextVestidoSwap,11000);
+
+  [slotA,slotB].forEach(function(el){
+    el.addEventListener('touchstart',function(){
+      pauseVestidoSwap(14000);
+    },{passive:true});
+
+    el.addEventListener('click',function(){
+      pauseVestidoSwap(14000);
+    });
+  });
+}
+  
 
 /* ══════════════════════════════════════════
    MODAL PRESENTE
