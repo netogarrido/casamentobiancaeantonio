@@ -699,13 +699,13 @@ section[id]{scroll-margin-top:78px}
 
 /* saída */
 #vestidoSlotA.vestido-saindo-direita{
-  opacity:0;
+  opacity:.18;
   transform:translate3d(86px,8px,0) rotate(7deg);
   pointer-events:none;
 }
 
 #vestidoSlotB.vestido-saindo-esquerda{
-  opacity:0;
+  opacity:.18;
   transform:translate3d(-86px,8px,0) rotate(-7deg);
   pointer-events:none;
 }
@@ -713,7 +713,7 @@ section[id]{scroll-margin-top:78px}
 /* entrada nova — vem de cima, mais devagar */
 #vestidoSlotA.vestido-entrando,
 #vestidoSlotB.vestido-entrando{
-  opacity:0;
+  opacity:.08;
   pointer-events:none;
 }
 
@@ -2901,11 +2901,11 @@ function nextVestidoSwap(){
   slotA.classList.add('vestido-trocando');
   slotB.classList.add('vestido-trocando');
 
-  /* saem para os lados */
+  /* começa a saída das atuais */
   slotA.classList.add('vestido-saindo-direita');
   slotB.classList.add('vestido-saindo-esquerda');
 
-  /* respiro antes das novas */
+  /* antes de elas sumirem totalmente, entram as novas */
   setTimeout(function(){
     vestidoSwapTick=(vestidoSwapTick+1)%vestidoSwapPairs.length;
 
@@ -2923,13 +2923,13 @@ function nextVestidoSwap(){
         slotB.classList.remove('vestido-entrando');
       });
     });
-  },1900);
+  },900);
 
   setTimeout(function(){
     vestidoClearAnimClasses(slotA);
     vestidoClearAnimClasses(slotB);
     vestidoSwapBusy=false;
-  },4700);
+  },4300);
 }
 
 function initVestidoSwap(){
