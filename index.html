@@ -621,6 +621,7 @@ section[id]{scroll-margin-top:78px}
   padding:8px 8px 14px;
   border-radius:3px;
 }
+  
 
 /* wrapper da foto principal — para posicionar o badge */
 .vestido-foto-principal-wrap{
@@ -690,6 +691,49 @@ section[id]{scroll-margin-top:78px}
   box-shadow:0 24px 50px rgba(84,73,60,.24), 0 6px 16px rgba(84,73,60,.10);
   z-index:5;
 }
+
+  #vestidoSlotA,
+#vestidoSlotB{
+  will-change:transform, opacity;
+}
+
+/* saída */
+#vestidoSlotA.vestido-saindo-direita{
+  opacity:0;
+  transform:translate3d(86px,8px,0) rotate(7deg);
+  pointer-events:none;
+}
+
+#vestidoSlotB.vestido-saindo-esquerda{
+  opacity:0;
+  transform:translate3d(-86px,8px,0) rotate(-7deg);
+  pointer-events:none;
+}
+
+/* entrada nova — vem de cima, mais devagar */
+#vestidoSlotA.vestido-entrando,
+#vestidoSlotB.vestido-entrando{
+  opacity:0;
+  pointer-events:none;
+}
+
+#vestidoSlotA.vestido-entrando{
+  transform:translate3d(0,-34px,0) rotate(4.5deg) scale(.985);
+}
+
+#vestidoSlotB.vestido-entrando{
+  transform:translate3d(0,-34px,0) rotate(-5deg) scale(.985);
+}
+
+/* durante troca: mais lento e suave */
+#vestidoSlotA.vestido-trocando,
+#vestidoSlotB.vestido-trocando{
+  transition:
+    opacity 1.6s ease,
+    transform 2.4s cubic-bezier(.22,.61,.36,1),
+    box-shadow .45s ease;
+}
+  
 #vestidoSlotA,
 #vestidoSlotB{
   transition:
@@ -2800,7 +2844,150 @@ function buildLboxAlbums(){
   while(MIDIAS['presentes_foto_'+pi]){p.push(MIDIAS['presentes_foto_'+pi]);pi++;}
   LBOX.albums.presentes=p;
 }
+/* ══════════════════════════════════════════
+   VESTIDO — TROCA DAS 2 POLAROIDS
+══════════════════════════════════════════ */
+var vestidoSwapTimer=null;
+var vestidoSwapResumeTimer=null;
+var vestidoSwapBusy=false;
+var vestidoSwapPaused=false;
+var vestidoSwapTick=0;
+var vestidoSwapPairs=[];
 
+function vestidoGetItems(){
+  var items=[];
+  if(MIDIAS.vestido_foto_1)items.push({key:'vestido_foto_1',idx:1});
+  if(MIDIAS.vestido_foto_2)items.push({key:'vestido_foto_2',idx:2});
+  if(MIDIAS.vestido_foto_3)items.push({key:'vestido_foto_3',idx:3});
+  if(MIDIAS.vestido_foto_4)items.push({key:'vestido_foto_4',idx:4});
+  return items;
+}
+
+function vestidoBuildPairs(items){
+  var byIdx={};
+  items.forEach(function(item){ byIdx[item.idx]=item; });
+
+  var base=[
+    [1,2],
+    [3,4],
+    [1,3],
+    [2,4],
+    [4,1],
+    [2,3]
+  ];
+
+  return base.filter(function(pair){
+    return byIdx[pair[0]]&&byIdx[pair[1]];
+  }).map(function(pair){
+    return [byIdx[pair[0]],byIdx[pair[1]]];
+  });
+}
+
+function vestidoSetSlot(el,item){
+  if(!el||!item||!MIDIAS[item.key])return;
+  el.src=MIDIAS[item.key];
+  el.setAttribute('data-midia',item.key);
+  el.onclick=function(){
+    openCarousel('vestido',item.idx);
+  };
+}
+
+function vestidoApplyPair(pair){
+  var slotA=document.getElementById('vestidoSlotA');
+  var slotB=document.getElementById('vestidoSlotB');
+  if(!slotA||!slotB||!pair||pair.length<2)return;
+
+  vestidoSetSlot(slotA,pair[0]);
+  vestidoSetSlot(slotB,pair[1]);
+}
+
+function vestidoPauseSwap(ms){
+  vestidoSwapPaused=true;
+  clearTimeout(vestidoSwapResumeTimer);
+  vestidoSwapResumeTimer=setTimeout(function(){
+    vestidoSwapPaused=false;
+  },ms||14000);
+}
+
+function vestidoClearAnimClasses(el){
+  if(!el)return;
+  el.classList.remove(
+    'vestido-trocando',
+    'vestido-saindo-direita',
+    'vestido-saindo-esquerda',
+    'vestido-entrando'
+  );
+}
+
+function nextVestidoSwap(){
+  if(vestidoSwapPaused||vestidoSwapBusy||!vestidoSwapPairs.length)return;
+
+  var slotA=document.getElementById('vestidoSlotA');
+  var slotB=document.getElementById('vestidoSlotB');
+  if(!slotA||!slotB)return;
+
+  vestidoSwapBusy=true;
+
+  slotA.classList.add('vestido-trocando');
+  slotB.classList.add('vestido-trocando');
+
+  /* saem para os lados */
+  slotA.classList.add('vestido-saindo-direita');
+  slotB.classList.add('vestido-saindo-esquerda');
+
+  /* respiro antes das novas */
+  setTimeout(function(){
+    vestidoSwapTick=(vestidoSwapTick+1)%vestidoSwapPairs.length;
+
+    vestidoClearAnimClasses(slotA);
+    vestidoClearAnimClasses(slotB);
+
+    vestidoApplyPair(vestidoSwapPairs[vestidoSwapTick]);
+
+    slotA.classList.add('vestido-trocando','vestido-entrando');
+    slotB.classList.add('vestido-trocando','vestido-entrando');
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        slotA.classList.remove('vestido-entrando');
+        slotB.classList.remove('vestido-entrando');
+      });
+    });
+  },1900);
+
+  setTimeout(function(){
+    vestidoClearAnimClasses(slotA);
+    vestidoClearAnimClasses(slotB);
+    vestidoSwapBusy=false;
+  },4700);
+}
+
+function initVestidoSwap(){
+  var slotA=document.getElementById('vestidoSlotA');
+  var slotB=document.getElementById('vestidoSlotB');
+  if(!slotA||!slotB)return;
+
+  var items=vestidoGetItems();
+  if(items.length<3)return;
+
+  vestidoSwapPairs=vestidoBuildPairs(items);
+  if(!vestidoSwapPairs.length)return;
+
+  vestidoSwapTick=0;
+  vestidoApplyPair(vestidoSwapPairs[0]);
+
+  clearInterval(vestidoSwapTimer);
+  vestidoSwapTimer=setInterval(nextVestidoSwap,9800);
+
+  [slotA,slotB].forEach(function(el){
+    el.addEventListener('click',function(){
+      vestidoPauseSwap(14000);
+    });
+    el.addEventListener('touchstart',function(){
+      vestidoPauseSwap(14000);
+    },{passive:true});
+  });
+}
 function openCarousel(album,idx){
   var imgs=LBOX.albums[album];
   if(!imgs||!imgs.length)return;
