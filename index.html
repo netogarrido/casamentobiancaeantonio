@@ -706,8 +706,7 @@ section[id]{scroll-margin-top:78px}
   position:relative;
 }
 
-.vestido-quote::before,
-.vestido-quote::after{
+.vestido-quote::before{
   font-family:var(--fh);
   font-size:2.4rem;
   color:var(--a);
@@ -715,18 +714,22 @@ section[id]{scroll-margin-top:78px}
   line-height:0;
   position:relative;
   font-style:normal;
-}
-
-.vestido-quote::before{
   content:'\201C';
   margin-right:4px;
   top:14px;
 }
 
-.vestido-quote::after{
-  content:'\201D';
-  margin-left:4px;
+.vestido-quote-close{
+  font-family:var(--fh);
+  font-size:2.4rem;
+  color:var(--a);
+  opacity:.32;
+  line-height:0;
+  position:relative;
+  font-style:normal;
+  margin-left:3px;
   top:18px;
+  display:inline;
 }
 
 .vestido-quote cite{
@@ -1827,9 +1830,9 @@ section[id]{scroll-margin-top:78px}
   </div>
 
   <!-- Texto de abertura -->
-  <div class="vestido-quote">
-  <span id="historia_texto_abertura"></span>
-  <cite id="musica_artista"></cite>
+  <div class="vestido-quote" id="historia_texto_abertura_wrap">
+  <span id="historia_texto_abertura"></span><span class="vestido-quote-close">\u201D</span>
+  <cite id="historia_cite"></cite>
 </div>
   
 <!-- Botão abrir versos — abaixo do player, fora das fotos -->
@@ -1837,7 +1840,7 @@ section[id]{scroll-margin-top:78px}
     <div class="lyr-invite-ext-line"></div>
     <button class="lyr-invite-ext-btn" aria-label="Abrir letra da música">
       <span id="musica_btn_letra">abrir os versos</span>
-      <span class="lyr-invite-ext-seta">aqui</span>
+      <span class="lyr-invite-ext-seta">↓</span>
     </button>
     <div class="lyr-invite-ext-line"></div>
   </div>  
