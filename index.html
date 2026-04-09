@@ -743,6 +743,11 @@ section[id]{scroll-margin-top:78px}
   font-family:var(--fb);
   font-weight:600;
 }
+.vestido-quote cite:not(:empty)::before{
+  content:'— ';
+  font-style:normal;
+  opacity:.55;
+}
 
 /* ── Player minimalista, sem linhas divisórias ── */
 /* ── Player — título de seção + scrubber de áudio ── */
@@ -1830,8 +1835,8 @@ section[id]{scroll-margin-top:78px}
   </div>
 
   <!-- Texto de abertura -->
-  <div class="vestido-quote" id="historia_texto_abertura_wrap">
-  <span id="historia_texto_abertura"></span><span class="vestido-quote-close">\u201D</span>
+<div class="vestido-quote" id="historia_texto_abertura_wrap">
+  <span id="historia_texto_abertura"></span><span class="vestido-quote-close">&#x201D;</span>
   <cite id="historia_cite"></cite>
 </div>
   
