@@ -1152,6 +1152,8 @@ section[id]{scroll-margin-top:78px}
   .vestido-quote{font-size:1.28rem;max-width:440px}
   .vestido-photos{padding:24px 0 32px}
   .vestido-foto-principal-wrap{width:64%;}
+  .vestido-photos img:nth-child(2){width:38%;right:6%}
+  .vestido-photos img:nth-child(3){width:38%;left:6%}
   .lyr-invite-verso{font-size:1.22rem}
   .lyr-text{font-size:1.08rem;line-height:2.05}
   .vestido::before{width:min(70%,640px);right:-12%;opacity:.12}
@@ -1161,6 +1163,8 @@ section[id]{scroll-margin-top:78px}
 /* mobile pequeno: fotos não saem da tela */
 @media(max-width:380px){
   .vestido-foto-principal-wrap{width:74%;}
+  .vestido-photos img:nth-child(2){width:44%;right:0}
+  .vestido-photos img:nth-child(3){width:44%;left:0}
   .vestido-quote{font-size:1.08rem}
   .lyr-invite-verso{font-size:1.02rem}
   .lyr-text{font-size:.96rem;line-height:1.88}
@@ -3109,6 +3113,7 @@ function initVestidoPolaroids(){
 
   clearInterval(vestidoRotator);
   vestidoRotator=setInterval(nextVestidoPair,9000);
+}
 }
 /* ══════════════════════════════════════════
    MODAL PRESENTE
