@@ -1806,7 +1806,6 @@ section[id]{scroll-margin-top:78px}
     <div class="player-info">
       <div class="player-meta">
         <div class="player-title" id="musica_titulo"></div>
-        <div class="player-sub" id="musica_artista"></div>
       </div>
       <div class="player-scrub">
         <input type="range" id="audioSeek" min="0" max="100" value="0" step="0.1" aria-label="Posição da música">
@@ -1838,7 +1837,10 @@ section[id]{scroll-margin-top:78px}
   </div>
 
   <!-- Texto de abertura -->
-  <div class="vestido-quote" id="historia_texto_abertura"></div>
+  <div class="vestido-quote">
+  <span id="historia_texto_abertura"></span>
+  <cite id="musica_artista"></cite>
+</div>
 
   <div class="lyr-box" id="lB">
     <div class="lyr-stage">
