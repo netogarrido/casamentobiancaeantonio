@@ -690,6 +690,25 @@ section[id]{scroll-margin-top:78px}
   box-shadow:0 24px 50px rgba(84,73,60,.24), 0 6px 16px rgba(84,73,60,.10);
   z-index:5;
 }
+  /* movimento sutil — polaroids vivas */
+@keyframes polaroidFloat1{
+  0%,100%{transform:rotate(4.5deg) translateY(0)}
+  50%{transform:rotate(5.2deg) translateY(-6px)}
+}
+
+@keyframes polaroidFloat2{
+  0%,100%{transform:rotate(-5deg) translateY(0)}
+  50%{transform:rotate(-4.2deg) translateY(6px)}
+}
+
+/* aplica nas duas fotos existentes */
+.vestido-photos img:nth-child(2){
+  animation:polaroidFloat1 9s ease-in-out infinite;
+}
+
+.vestido-photos img:nth-child(3){
+  animation:polaroidFloat2 11s ease-in-out infinite;
+}
 
 /* ── Quote de abertura — solta, editorial ── */
 .vestido-quote{
