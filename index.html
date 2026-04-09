@@ -729,9 +729,9 @@ section[id]{scroll-margin-top:78px}
 #vestidoSlotA.vestido-trocando,
 #vestidoSlotB.vestido-trocando{
   transition:
-    opacity 1.6s ease,
-    transform 2.4s cubic-bezier(.22,.61,.36,1),
-    box-shadow .45s ease;
+    opacity 2.4s ease,
+    transform 3.8s cubic-bezier(.22,.61,.36,1),
+    box-shadow .6s ease;
 }
   
 .vestido-photos img:nth-child(3){
@@ -2947,7 +2947,7 @@ function initVestidoSwap(){
   vestidoApplyPair(vestidoSwapPairs[0]);
 
   clearInterval(vestidoSwapTimer);
-  vestidoSwapTimer=setInterval(nextVestidoSwap,9800);
+  vestidoSwapTimer=setInterval(nextVestidoSwap,7800);
 
   [slotA,slotB].forEach(function(el){
     el.addEventListener('click',function(){
