@@ -696,7 +696,8 @@ section[id]{scroll-margin-top:78px}
 .vestido-badge{
   position:absolute;
   bottom:20px;
-  right:4px;
+  left:50%;
+  transform:translateX(-50%);
   background:linear-gradient(135deg,var(--a),var(--al));
   color:var(--n);
   font-size:.62rem;
@@ -741,11 +742,11 @@ section[id]{scroll-margin-top:78px}
   
 
 /* Slot A — canto superior esquerdo */
-#vestidoSlot1{ top:-1%;  left:-2%; }
+#vestidoSlot1{ top:+2%;  left:-2%; }
 /* Slot B — canto superior direito */
 #vestidoSlot2{ top:-2%;  right:-3%; }
 /* Slot C — canto inferior esquerdo */
-#vestidoSlot3{ bottom:-4%; left:-4%; }
+#vestidoSlot3{ bottom:-4%; left:0%; }
 /* Slot D — centro, sempre por cima */
 #vestidoSlot4{ bottom:-2%; right:-1%; }
 
@@ -1895,7 +1896,7 @@ section[id]{scroll-margin-top:78px}
 <div class="vestido-photos" id="vestidoPhotos">
   <div class="vestido-foto-principal-wrap">
     <img src="" data-midia="vestido_foto_principal" alt="" onclick="openCarousel('vestido',0)">
- <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)">📷 <span id="fotos_vestido"></span></div>
+ <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)"><span id="fotos_vestido"></span></div>
   </div>
   <img src="" alt="" id="vestidoSlot1" class="vestido-polaroid">
   <img src="" alt="" id="vestidoSlot2" class="vestido-polaroid">
