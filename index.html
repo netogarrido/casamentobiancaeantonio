@@ -1627,14 +1627,13 @@ section[id]{scroll-margin-top:78px}
   -webkit-overflow-scrolling:touch;
 }
 /* textura sutil só no fundo, fora do header — animada para acompanhar a estética da seção Vestido */
-.mo-box::before{
+.mo-box--textura::before{
   content:'';
   position:absolute;
   top:140px;
   left:-20%;
   right:-20%;
   bottom:0;
-  background-image:url('');
   background-repeat:no-repeat;
   background-size:130% auto;
   background-position:center top;
@@ -1645,6 +1644,7 @@ section[id]{scroll-margin-top:78px}
   animation:ventoFlutua3 13s ease-in-out infinite;
   will-change:transform;
 }
+  
 .mo-box > *{position:relative;z-index:1}
 .mo-close{position:absolute;top:12px;right:16px;font-size:1.2rem;color:var(--is);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--sm);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .25s}
 .mo-close:hover{background:var(--st)}
@@ -2095,11 +2095,11 @@ section[id]{scroll-margin-top:78px}
       <div class="mo-gh">
         <div class="mo-gi" id="mI2"></div>
         <div class="mo-gn" id="mN"></div>
-        <div class="mo-gp" id="mP"></div>
+        <div class="mo-gp" id="mP" style="display:none"></div>
         <div class="mo-gd" id="mD"></div>
       </div>
       <div class="mo-steps">
-        <div class="mo-step"><div class="mo-step-n">1</div><div class="mo-step-t" id="modal_step_1">Preencha seu nome e deixe um recado.</div></div>
+        <div class="mo-step"><div class="mo-step-n">1</div><div class="mo-step-t" id="modal_step_1">Confirme seu nome e deixe um recado.</div></div>
         <div class="mo-step"><div class="mo-step-n">2</div><div class="mo-step-t" id="modal_step_2">Clique para enviar sua mensagem e abrir o Pix.</div></div>
       </div>
       <div class="mo-fg">
@@ -2112,19 +2112,14 @@ section[id]{scroll-margin-top:78px}
         <div class="mo-cnt"><span id="mCt">0</span>/500</div>
       </div>
 <div class="mo-btns">
-        <div id="mo-valor-confirmacao" style="
-          text-align:center;
-          font-family:var(--fh);
-          font-size:1.5rem;
-          font-weight:400;
-          color:var(--a);
-          letter-spacing:.01em;
-          margin-bottom:4px;
-          line-height:1;
-        "></div>
-        <button class="btn btn-a" style="width:100%" onclick="sAP()" id="modal_btn_enviar">Enviar mensagem e abrir Pix →</button>
+        <button class="btn btn-a" style="width:100%;flex-direction:column;gap:2px;padding:14px 32px" onclick="sAP()" id="modal_btn_enviar">
+          <span style="font-size:.72rem;letter-spacing:.1em">ENVIAR MENSAGEM E ABRIR PIX →</span>
+          <span id="mo-valor-confirmacao" style="font-size:1.1rem;font-family:var(--fh);font-weight:400;letter-spacing:.04em;opacity:.88;text-transform:none"></span>
+        </button>
         <button class="btn btn-g btn-sm" style="width:100%" onclick="cM()">Voltar</button>
       </div>
+
+      
     </div>
     <div class="ty" id="tY">
       <div style="font-size:2.6rem;margin-bottom:12px">💛</div>
@@ -2303,11 +2298,11 @@ function applyMidia(rows){
     var styleTag=document.getElementById('dynStyle')||document.createElement('style');
     styleTag.id='dynStyle';
     var u=MIDIAS.vestido_textura;
-    styleTag.textContent=
+styleTag.textContent=
       '.vestido::before,.vestido::after{background-image:url("'+u+'") !important;}'+
       '.lyr-invite::before{background-image:url("'+u+'") !important;background-repeat:repeat !important;background-size:55% auto !important;}'+
       '.lyr-stage::before,.lyr-stage::after{background-image:url("'+u+'") !important;}'+
-      '.mo-box::before{background-image:url("'+u+'") !important;}';
+      '.mo-box--textura::before{background-image:url("'+u+'") !important;}';
     if(!styleTag.parentNode)document.head.appendChild(styleTag);
   }
 
@@ -3183,16 +3178,30 @@ function openModal(g){
   document.getElementById('mN').textContent=g.n;
   document.getElementById('mP').textContent=g.p;
   document.getElementById('mD').textContent=g.d||'';
+
+  /* Valor dentro do botão */
   var vcEl=document.getElementById('mo-valor-confirmacao');
   if(vcEl)vcEl.textContent=g.v&&g.v>0?'R$ '+g.v.toLocaleString('pt-BR'):'Valor livre';
+
+  /* Nome pré-preenchido */
   document.getElementById('mNm').value=getNomeSalvo();
   document.getElementById('mMs').value='';
   document.getElementById('mCt').textContent='0';
 
-  /* Label dinâmico: confirme se tem nome salvo, preencha se não tem */
+  /* Label dinâmico */
   var labelNome=document.getElementById('modal_nome_label');
   if(labelNome){
     labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';
+  }
+
+  /* Textura: só para caixinhas do vestido (catId === 'noivo_artista') */
+  var moBox=document.querySelector('.mo-box');
+  if(moBox){
+    if(g.catId==='noivo_artista'){
+      moBox.classList.add('mo-box--textura');
+    }else{
+      moBox.classList.remove('mo-box--textura');
+    }
   }
 
   document.getElementById('mF').style.display='block';
@@ -3200,6 +3209,7 @@ function openModal(g){
   document.getElementById('mo').classList.add('on');
   lockScroll();
 }
+  
 /* alias legado */
 var oM=openModal;
 
