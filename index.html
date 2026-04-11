@@ -744,7 +744,7 @@ section[id]{scroll-margin-top:78px}
 /* Slot A — canto superior esquerdo */
 #vestidoSlot1{ top:+2%;  left:-2%; }
 /* Slot B — canto superior direito */
-#vestidoSlot2{ top:-2%;  right:-3%; }
+#vestidoSlot2{ top:-2%;  right:+2%; }
 /* Slot C — canto inferior esquerdo */
 #vestidoSlot3{ bottom:-4%; left:0%; }
 /* Slot D — centro, sempre por cima */
@@ -1699,54 +1699,6 @@ section[id]{scroll-margin-top:78px}
 .lightbox-dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
 .lightbox-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .2s;cursor:pointer}
 .lightbox-dot.on{background:var(--al)}
-/* Upload de foto */
-.lightbox-upload-area{
-  margin-top:18px;
-  width:100%;
-  max-width:min(92vw,520px);
-  display:none;
-  flex-direction:column;
-  gap:10px;
-}
-.lightbox-upload-area.vis{display:flex}
-.lightbox-upload-toggle{
-  font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.4);cursor:pointer;text-align:center;
-  padding:8px 0;border-top:1px solid rgba(255,255,255,.08);margin-top:4px;
-  transition:color .2s;
-}
-.lightbox-upload-toggle:hover{color:var(--al)}
-.lightbox-upload-box{
-  background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.18);
-  border-radius:14px;padding:16px;display:none;flex-direction:column;gap:10px;
-}
-.lightbox-upload-box.vis{display:flex}
-.lightbox-upload-label{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);
-  cursor:pointer;color:rgba(255,255,255,.7);font-size:.78rem;
-  background:rgba(255,255,255,.04);transition:all .2s;
-}
-.lightbox-upload-label:hover{background:rgba(255,255,255,.10);border-color:var(--al)}
-.lightbox-upload-label input{display:none}
-.lightbox-upload-preview{width:100%;max-height:120px;object-fit:cover;border-radius:8px;display:none}
-.lightbox-upload-preview.vis{display:block}
-.lightbox-upload-fi{
-  width:100%;padding:10px 12px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;font-size:.82rem;color:#fff;
-}
-.lightbox-upload-fi::placeholder{color:rgba(255,255,255,.3)}
-.lightbox-upload-fi:focus{border-color:var(--al);outline:none}
-.lightbox-upload-send{
-  width:100%;padding:13px;border-radius:50px;
-  background:linear-gradient(135deg,var(--a),var(--al));
-  color:var(--n);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  cursor:pointer;border:none;font-family:var(--fb);transition:all .25s;
-}
-.lightbox-upload-send:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,160,74,.35)}
-.lightbox-upload-ok{display:none;text-align:center;padding:12px;color:var(--al);font-size:.84rem}
-.lightbox-upload-ok.vis{display:block}
 </style>
 </head>
 <body>
@@ -1763,22 +1715,7 @@ section[id]{scroll-margin-top:78px}
     <div class="lightbox-nav lightbox-next" onclick="lboxNav(1)">›</div>
   </div>
   <div class="lightbox-dots" id="lightboxDots"></div>
-  <!-- Toggle upload -->
-  <div class="lightbox-upload-toggle" id="lboxUploadToggle" onclick="toggleLboxUpload()">+ enviar sua foto</div>
-  <div class="lightbox-upload-area vis" id="lboxUploadArea">
-    <div class="lightbox-upload-box" id="lboxUploadBox">
-      <label class="lightbox-upload-label">
-        📷 escolher foto do celular
-        <input type="file" accept="image/*" id="lboxFileInput" onchange="previewLboxFile(this)">
-      </label>
-      <img src="" alt="" class="lightbox-upload-preview" id="lboxPreview">
-      <input class="lightbox-upload-fi" id="lboxNome" placeholder="Seu nome">
-      <input class="lightbox-upload-fi" id="lboxMsg" placeholder="Sua mensagem (opcional)">
-      <button class="lightbox-upload-send" onclick="sendLboxUpload()">Enviar foto e mensagem 💛</button>
-      <div class="lightbox-upload-ok" id="lboxOk">Foto enviada! Muito obrigado 💛</div>
-    </div>
   </div>
-</div>
 
 <!-- POPUP -->
 <div class="popup" id="popup">
@@ -3138,11 +3075,7 @@ function openCarousel(album,idx){
   LBOX.cur.album=album;
   LBOX.cur.idx=Math.max(0,Math.min(idx,imgs.length-1));
   lboxRender();
-  /* Mostrar toggle de upload só no álbum vestido */
-  var tog=document.getElementById('lboxUploadToggle');
-  var area=document.getElementById('lboxUploadArea');
-  if(tog)tog.style.display=(album==='vestido')?'block':'none';
-  if(area&&album!=='vestido')area.classList.remove('vis');
+
   document.getElementById('lightbox').classList.add('on');
   lockScroll();
 }
@@ -3183,17 +3116,7 @@ function lboxNav(dir){
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('on');
   unlockScroll();
-  /* Reset upload */
-  var box=document.getElementById('lboxUploadBox');
-  var ok=document.getElementById('lboxOk');
-  var prev=document.getElementById('lboxPreview');
-  if(box)box.classList.remove('vis');
-  if(ok)ok.classList.remove('vis');
-  if(prev){prev.src='';prev.classList.remove('vis');}
-  var nm=document.getElementById('lboxNome');var msg=document.getElementById('lboxMsg');
-  if(nm)nm.value='';if(msg)msg.value='';
-  LBOX.uploadOpen=false;
-}
+ }
 
 /* Fechar clicando no fundo escuro (fora da imagem) */
 document.getElementById('lightbox').addEventListener('click',function(e){
@@ -3218,72 +3141,6 @@ document.addEventListener('keydown',function(e){
     if(Math.abs(dx)>40)lboxNav(dx<0?1:-1);
   },{passive:true});
 })();
-
-/* ── Upload Cloudinary ── */
-var CLOUDINARY_URL='https://api.cloudinary.com/v1_1/demosite/image/upload';
-var CLOUDINARY_PRESET='ml_default';
-/* ATENÇÃO: Neto, substitua 'demosite' pelo seu cloud name e 'ml_default' pelo seu upload preset
-   após criar conta gratuita em cloudinary.com */
-
-function toggleLboxUpload(){
-  var box=document.getElementById('lboxUploadBox');
-  if(!box)return;
-  LBOX.uploadOpen=!LBOX.uploadOpen;
-  box.classList.toggle('vis',LBOX.uploadOpen);
-}
-
-function previewLboxFile(input){
-  var file=input.files[0];
-  if(!file)return;
-  var prev=document.getElementById('lboxPreview');
-  var reader=new FileReader();
-  reader.onload=function(e){prev.src=e.target.result;prev.classList.add('vis');};
-  reader.readAsDataURL(file);
-}
-
-function sendLboxUpload(){
-  var fileInput=document.getElementById('lboxFileInput');
-  var nome=(document.getElementById('lboxNome').value||'').trim();
-  var msg=(document.getElementById('lboxMsg').value||'').trim();
-  var file=fileInput.files[0];
-  var btn=document.querySelector('.lightbox-upload-send');
-
-  if(!file){toast('Escolha uma foto primeiro 📷');return;}
-  if(!nome){toast('Escreva seu nome 😊');return;}
-
-  if(btn){btn.textContent='Enviando...';btn.disabled=true;}
-
-  var fd=new FormData();
-  fd.append('file',file);
-  fd.append('upload_preset',CLOUDINARY_PRESET);
-
-  fetch(CLOUDINARY_URL,{method:'POST',body:fd})
-    .then(function(r){return r.json();})
-    .then(function(data){
-      var url=data.secure_url||data.url||'';
-      /* Enviar ao Google Script */
-      fetch(SU,{
-        method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          type:'foto_mural',
-          nome:nome,
-          mensagem:msg,
-          foto_url:url,
-          album:LBOX.cur.album,
-          timestamp:new Date().toISOString()
-        })
-      }).catch(function(){});
-      /* Feedback */
-      var ok=document.getElementById('lboxOk');
-      if(ok)ok.classList.add('vis');
-      if(btn){btn.style.display='none';}
-    })
-    .catch(function(){
-      toast('Erro no upload. Tente novamente.');
-      if(btn){btn.textContent='Enviar foto e mensagem 💛';btn.disabled=false;}
-    });
-}
 
 /* Compat: openLightbox mantido para não quebrar nada */
 function openLightbox(img){
