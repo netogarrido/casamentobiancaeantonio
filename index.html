@@ -692,10 +692,14 @@ section[id]{scroll-margin-top:78px}
   z-index:5;
 }
 
-/* ── Polaroids animadas — slots independentes ── */
+/* ── Polaroids animadas — posicionadas em % do container ── */
+.vestido-foto-principal-wrap{
+  position:relative;
+}
+
 .vestido-polaroid{
   position:absolute;
-  width:42%;
+  width:44%;
   aspect-ratio:4/5;
   object-fit:cover;
   box-shadow:0 18px 40px rgba(84,73,60,.22), 0 4px 12px rgba(84,73,60,.10);
@@ -705,8 +709,17 @@ section[id]{scroll-margin-top:78px}
   pointer-events:none;
   opacity:0;
   will-change:transform, opacity;
-  /* z-index controlado pelo JS durante a queda */
+  /* posição base de cada zona — em % do container */
 }
+
+/* zona 0 — canto superior direito */
+#vestidoSlot1{ top:-8%;  right:-18%; }
+/* zona 1 — canto inferior esquerdo */
+#vestidoSlot2{ bottom:-12%; left:-18%; }
+/* zona 2 — canto superior esquerdo */
+#vestidoSlot3{ top:-8%;  left:-18%; }
+/* zona 3 — centro */
+#vestidoSlot4{ top:30%;  left:22%;  }
 
 /* ── Quote de abertura — solta, editorial ── */
 .vestido-quote{
@@ -2806,36 +2819,23 @@ function vpEmbaralhar(arr){
   return a;
 }
 
-/* 4 zonas fixas dentro do frame da foto principal
-   todas com x/y pequenos para não sair do frame */
-function vpGeraZona(zonaIdx){
-  var zonas=[
-    /* zona 0 — canto superior direito */
-    { x:vpRand(6,18),  y:vpRand(-10,4),  r:vpRand(3,8)   },
-    /* zona 1 — canto inferior esquerdo */
-    { x:vpRand(-18,-6),y:vpRand(18,30),  r:vpRand(-8,-3) },
-    /* zona 2 — canto superior esquerdo */
-    { x:vpRand(-18,-6),y:vpRand(-10,4),  r:vpRand(-8,-2) },
-    /* zona 3 — centro */
-    { x:vpRand(-6,6),  y:vpRand(4,16),   r:vpRand(-4,4)  }
-  ];
-  var z=zonas[zonaIdx%4];
-  return 'translate3d('+z.x+'px,'+z.y+'px,0) rotate('+z.r+'deg)';
+/* Rotação de pouso por zona — pequena variação a cada ciclo */
+function vpRotacaoPouso(zonaIdx){
+  var bases=[6,-7,-5,2];
+  var base=bases[zonaIdx]||0;
+  return base+vpRand(-2,2);
 }
 
+/* Transform de pouso — só rotação, posição vem do CSS */
+function vpGeraPouso(zonaIdx){
+  return 'rotate('+vpRotacaoPouso(zonaIdx)+'deg)';
+}
+
+/* Transform inicial — foto vem de cima com leve inclinação */
 function vpGeraInicio(zonaIdx){
-  /* cada zona tem direção de entrada coerente com onde vai pousar */
-  var entradas=[
-    /* vem da direita/cima */
-    'translate3d('+vpRand(12,22)+'px,-130%,0) rotate('+vpRand(5,10)+'deg)',
-    /* vem da esquerda/baixo — mas ainda de cima */
-    'translate3d('+vpRand(-22,-12)+'px,-130%,0) rotate('+vpRand(-10,-5)+'deg)',
-    /* vem da esquerda/cima */
-    'translate3d('+vpRand(-22,-12)+'px,-130%,0) rotate('+vpRand(-8,-3)+'deg)',
-    /* vem do centro/cima */
-    'translate3d('+vpRand(-6,6)+'px,-130%,0) rotate('+vpRand(-4,4)+'deg)'
-  ];
-  return entradas[zonaIdx%4];
+  var xOff=[vpRand(4,10),vpRand(-10,-4),vpRand(-10,-4),vpRand(-4,4)];
+  var r=vpRotacaoPouso(zonaIdx);
+  return 'translate3d('+xOff[zonaIdx]+'px,-140%,0) rotate('+r+'deg)';
 }
 
 function vpGetSlots(){
@@ -2867,9 +2867,10 @@ function vpPousar(el,zIdx,cb){
   el.style.transform=el._pousoFinal;
   el.classList.add('pousado');
 
+  /* quique leve */
   setTimeout(function(){
     el.style.transition='transform .22s ease-out';
-    el.style.transform=el._pousoFinal+' scale(1.025)';
+    el.style.transform=el._pousoFinal+' scale(1.03)';
     setTimeout(function(){
       el.style.transition='transform .16s ease-in';
       el.style.transform=el._pousoFinal+' scale(1)';
@@ -2887,12 +2888,12 @@ function vpVarrer(ativos,cb){
       if(!el||el.style.opacity==='0')return;
       el.style.transition=
         'transform 1.15s cubic-bezier(.4,0,.6,1), opacity .9s ease';
-      el.style.transform='translate3d(-145%,85%,0) rotate(-16deg)';
+      el.style.transform='translate3d(-160%,90%,0) rotate(-18deg)';
       el.style.opacity='0';
       el.style.pointerEvents='none';
       el.classList.remove('pousado');
     });
-    setTimeout(function(){if(cb)cb();},1250);
+    setTimeout(function(){if(cb)cb();},1300);
   },3400);
 }
 
@@ -2904,18 +2905,35 @@ function vpCiclo(){
   var ativos=slots.filter(function(el){return el&&el.dataset.src;});
   if(!ativos.length){vpBusy=false;return;}
 
-  /* embaralha fotos E zonas independentemente */
+  /* embaralha quais fotos caem em quais zonas — ambos independentes */
   var fotosEmbaralhadas=vpEmbaralhar(ativos);
   var zonasEmbaralhadas=vpEmbaralhar([0,1,2,3]).slice(0,fotosEmbaralhadas.length);
 
   fotosEmbaralhadas.forEach(function(el,i){
     var zona=zonasEmbaralhadas[i];
-    var pouso=vpGeraZona(zona);
+
+    /* reposiciona o elemento na zona sorteada via CSS */
+    /* zera posição anterior */
+    el.style.top='';el.style.bottom='';
+    el.style.left='';el.style.right='';
+
+    /* aplica posição da zona sorteada */
+    var posicoes=[
+      {top:'-8%',  right:'-18%'},
+      {bottom:'-12%',left:'-18%'},
+      {top:'-8%',  left:'-18%'},
+      {top:'30%',  left:'22%'}
+    ];
+    var pos=posicoes[zona];
+    Object.keys(pos).forEach(function(k){el.style[k]=pos[k];});
+
+    var pouso=vpGeraPouso(zona);
     var inicio=vpGeraInicio(zona);
     vpResetSlot(el,pouso,inicio);
     el.src=el.dataset.src;
   });
 
+  /* força reflow */
   void fotosEmbaralhadas[0].offsetHeight;
 
   var idx=0;
@@ -2958,8 +2976,7 @@ function initVestidoSwap(){
     }else{
       el.style.display='none';
     }
-    /* estado inicial neutro */
-    vpResetSlot(el,vpGeraZona(i),vpGeraInicio(i));
+    vpResetSlot(el,vpGeraPouso(i),vpGeraInicio(i));
   });
 
   if(!temAlguma)return;
