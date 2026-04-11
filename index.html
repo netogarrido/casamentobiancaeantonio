@@ -2111,7 +2111,17 @@ section[id]{scroll-margin-top:78px}
         <textarea class="mo-fta" id="mMs" placeholder="Escreva aqui com carinho..." maxlength="500" oninput="document.getElementById('mCt').textContent=this.value.length"></textarea>
         <div class="mo-cnt"><span id="mCt">0</span>/500</div>
       </div>
-      <div class="mo-btns">
+<div class="mo-btns">
+        <div id="mo-valor-confirmacao" style="
+          text-align:center;
+          font-family:var(--fh);
+          font-size:1.5rem;
+          font-weight:400;
+          color:var(--a);
+          letter-spacing:.01em;
+          margin-bottom:4px;
+          line-height:1;
+        "></div>
         <button class="btn btn-a" style="width:100%" onclick="sAP()" id="modal_btn_enviar">Enviar mensagem e abrir Pix →</button>
         <button class="btn btn-g btn-sm" style="width:100%" onclick="cM()">Voltar</button>
       </div>
@@ -3173,9 +3183,18 @@ function openModal(g){
   document.getElementById('mN').textContent=g.n;
   document.getElementById('mP').textContent=g.p;
   document.getElementById('mD').textContent=g.d||'';
-  document.getElementById('mNm').value='';
+  var vcEl=document.getElementById('mo-valor-confirmacao');
+  if(vcEl)vcEl.textContent=g.v&&g.v>0?'R$ '+g.v.toLocaleString('pt-BR'):'Valor livre';
+  document.getElementById('mNm').value=getNomeSalvo();
   document.getElementById('mMs').value='';
   document.getElementById('mCt').textContent='0';
+
+  /* Label dinâmico: confirme se tem nome salvo, preencha se não tem */
+  var labelNome=document.getElementById('modal_nome_label');
+  if(labelNome){
+    labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';
+  }
+
   document.getElementById('mF').style.display='block';
   document.getElementById('tY').classList.remove('on');
   document.getElementById('mo').classList.add('on');
