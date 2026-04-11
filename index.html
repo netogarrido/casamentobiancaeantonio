@@ -692,50 +692,51 @@ section[id]{scroll-margin-top:78px}
   z-index:5;
 }
 
-  #vestidoSlotA,
-#vestidoSlotB{
+/* ── Polaroids animadas — slots independentes ── */
+.vestido-polaroid{
+  position:absolute;
+  width:42%;
+  aspect-ratio:4/5;
+  object-fit:cover;
+  box-shadow:0 18px 40px rgba(84,73,60,.18), 0 4px 12px rgba(84,73,60,.08);
+  background:#fff;
+  padding:8px 8px 14px;
+  border-radius:3px;
+  pointer-events:none;
+  opacity:0;
   will-change:transform, opacity;
+  z-index:2;
 }
 
-/* saída */
-#vestidoSlotA.vestido-saindo-direita{
-  opacity:.18;
-  transform:translate3d(86px,8px,0) rotate(7deg);
-  pointer-events:none;
-}
+/* estado inicial de cada slot — acima do frame, prontos para cair */
+#vestidoSlot1{ top:0; right:2%; transform:translate3d(8px,-120%,0) rotate(6deg); }
+#vestidoSlot2{ top:0; left:2%;  transform:translate3d(-10px,-120%,0) rotate(-7deg); }
+#vestidoSlot3{ top:0; right:8%; transform:translate3d(4px,-120%,0) rotate(3deg); }
+#vestidoSlot4{ top:0; left:8%; transform:translate3d(-6px,-120%,0) rotate(-4deg); }
 
-#vestidoSlotB.vestido-saindo-esquerda{
-  opacity:.18;
-  transform:translate3d(-86px,8px,0) rotate(-7deg);
-  pointer-events:none;
-}
+/* estado pousado de cada slot */
+#vestidoSlot1.pousado{ transform:translate3d(0,0,0) rotate(4.5deg); }
+#vestidoSlot2.pousado{ transform:translate3d(0,0,0) rotate(-5.2deg); }
+#vestidoSlot3.pousado{ transform:translate3d(12px,18px,0) rotate(2.8deg); }
+#vestidoSlot4.pousado{ transform:translate3d(-14px,22px,0) rotate(-3.5deg); }
 
-/* entrada nova — vem de cima, mais devagar */
-#vestidoSlotA.vestido-entrando,
-#vestidoSlotB.vestido-entrando{
-  opacity:.08;
-  pointer-events:none;
-}
-
-#vestidoSlotA.vestido-entrando{
-  transform:translate3d(0,-34px,0) rotate(4.5deg) scale(.985);
-}
-
-#vestidoSlotB.vestido-entrando{
-  transform:translate3d(0,-34px,0) rotate(-5deg) scale(.985);
-}
-
-/* durante troca: mais lento e suave */
-#vestidoSlotA.vestido-trocando,
-#vestidoSlotB.vestido-trocando{
+/* varredura — todas saem diagonal direita→esquerda de cima→baixo */
+.vestido-polaroid.varrendo{
+  transform:translate3d(-140%,80%,0) rotate(-12deg) !important;
+  opacity:0 !important;
   transition:
-    opacity 2.4s ease,
-    transform 3.8s cubic-bezier(.22,.61,.36,1),
-    box-shadow .6s ease;
+    transform 1.1s cubic-bezier(.4,0,.6,1),
+    opacity .9s ease !important;
+  pointer-events:none;
 }
-  
-.vestido-photos img:nth-child(3){
-  animation:polaroidFloat2 11s ease-in-out infinite;
+
+/* quique ao pousar */
+@keyframes polaroidPouso{
+  0%  { transform-origin:center bottom; }
+  72% { transform:var(--pouso-final) scale(1.03); }
+  86% { transform:var(--pouso-final) scale(.985); }
+  94% { transform:var(--pouso-final) scale(1.008); }
+  100%{ transform:var(--pouso-final) scale(1); }
 }
 
 /* ── Quote de abertura — solta, editorial ── */
@@ -1877,8 +1878,10 @@ section[id]{scroll-margin-top:78px}
     <img src="" data-midia="vestido_foto_principal" alt="" onclick="openCarousel('vestido',0)">
     <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)">📷 <span id="vestidoBadgeN"></span></div>
   </div>
-  <img src="" data-midia="vestido_foto_1" alt="" id="vestidoSlotA" onclick="openCarousel('vestido',1)">
-  <img src="" data-midia="vestido_foto_2" alt="" id="vestidoSlotB" onclick="openCarousel('vestido',2)">
+  <img src="" alt="" id="vestidoSlot1" class="vestido-polaroid">
+  <img src="" alt="" id="vestidoSlot2" class="vestido-polaroid">
+  <img src="" alt="" id="vestidoSlot3" class="vestido-polaroid">
+  <img src="" alt="" id="vestidoSlot4" class="vestido-polaroid">
 </div>
 
   <!-- Texto de abertura -->
@@ -2817,147 +2820,171 @@ function buildLboxAlbums(){
 /* ══════════════════════════════════════════
    VESTIDO — TROCA DAS 2 POLAROIDS
 ══════════════════════════════════════════ */
-var vestidoSwapTimer=null;
-var vestidoSwapResumeTimer=null;
-var vestidoSwapBusy=false;
-var vestidoSwapPaused=false;
-var vestidoSwapTick=0;
-var vestidoSwapPairs=[];
+/* ══════════════════════════════════════════
+   VESTIDO — POLAROIDS CAINDO (nova lógica)
+   Até 4 fotos caem uma por uma em tempo aleatório,
+   depois uma varredura diagonal arrasta todas juntas.
+   Só usa vestido_foto_1..4 — foto_5+ ficam só no carrossel.
+══════════════════════════════════════════ */
+var vpTimer=null;
+var vpBusy=false;
 
-function vestidoGetItems(){
-  var items=[];
-  if(MIDIAS.vestido_foto_1)items.push({key:'vestido_foto_1',idx:1});
-  if(MIDIAS.vestido_foto_2)items.push({key:'vestido_foto_2',idx:2});
-  if(MIDIAS.vestido_foto_3)items.push({key:'vestido_foto_3',idx:3});
-  if(MIDIAS.vestido_foto_4)items.push({key:'vestido_foto_4',idx:4});
-  return items;
+/* Intervalo aleatório entre quedas: mín 2.2s, máx 5s */
+function vpRand(min,max){
+  return min+Math.random()*(max-min);
 }
 
-function vestidoBuildPairs(items){
-  var byIdx={};
-  items.forEach(function(item){ byIdx[item.idx]=item; });
+/* Posições pousadas finais — cada slot tem a sua */
+var VP_POUSO=[
+  'translate3d(0,0,0) rotate(4.5deg)',
+  'translate3d(0,0,0) rotate(-5.2deg)',
+  'translate3d(12px,18px,0) rotate(2.8deg)',
+  'translate3d(-14px,22px,0) rotate(-3.5deg)'
+];
 
-  var base=[
-    [1,2],
-    [3,4],
-    [1,3],
-    [2,4],
-    [4,1],
-    [2,3]
+/* Estado inicial (acima do frame) — cada slot tem o seu */
+var VP_INICIO=[
+  'translate3d(8px,-120%,0) rotate(6deg)',
+  'translate3d(-10px,-120%,0) rotate(-7deg)',
+  'translate3d(4px,-120%,0) rotate(3deg)',
+  'translate3d(-6px,-120%,0) rotate(-4deg)'
+];
+
+function vpGetSlots(){
+  return [
+    document.getElementById('vestidoSlot1'),
+    document.getElementById('vestidoSlot2'),
+    document.getElementById('vestidoSlot3'),
+    document.getElementById('vestidoSlot4')
   ];
-
-  return base.filter(function(pair){
-    return byIdx[pair[0]]&&byIdx[pair[1]];
-  }).map(function(pair){
-    return [byIdx[pair[0]],byIdx[pair[1]]];
-  });
 }
 
-function vestidoSetSlot(el,item){
-  if(!el||!item||!MIDIAS[item.key])return;
-  el.src=MIDIAS[item.key];
-  el.setAttribute('data-midia',item.key);
-  el.onclick=function(){
-    openCarousel('vestido',item.idx);
-  };
-}
-
-function vestidoApplyPair(pair){
-  var slotA=document.getElementById('vestidoSlotA');
-  var slotB=document.getElementById('vestidoSlotB');
-  if(!slotA||!slotB||!pair||pair.length<2)return;
-
-  vestidoSetSlot(slotA,pair[0]);
-  vestidoSetSlot(slotB,pair[1]);
-}
-
-function vestidoPauseSwap(ms){
-  vestidoSwapPaused=true;
-  clearTimeout(vestidoSwapResumeTimer);
-  vestidoSwapResumeTimer=setTimeout(function(){
-    vestidoSwapPaused=false;
-  },ms||14000);
-}
-
-function vestidoClearAnimClasses(el){
+/* Reseta um slot pro estado inicial (invisível, acima) */
+function vpResetSlot(el,idx){
   if(!el)return;
-  el.classList.remove(
-    'vestido-trocando',
-    'vestido-saindo-direita',
-    'vestido-saindo-esquerda',
-    'vestido-entrando'
-  );
+  el.style.transition='none';
+  el.style.opacity='0';
+  el.style.transform=VP_INICIO[idx];
+  el.classList.remove('pousado','varrendo');
+  el.style.pointerEvents='none';
 }
 
-function nextVestidoSwap(){
-  if(vestidoSwapPaused||vestidoSwapBusy||!vestidoSwapPairs.length)return;
+/* Pousa uma polaroid com quique */
+function vpPousar(el,idx,cb){
+  if(!el)return;
+  /* Duração da queda: 0.72s, cubic-bezier com bounce */
+  el.style.transition=
+    'transform .72s cubic-bezier(.22,.61,.36,1.18), opacity .28s ease';
+  el.style.opacity='1';
+  el.style.setProperty('--pouso-final', VP_POUSO[idx]);
+  el.style.transform=VP_POUSO[idx];
+  el.classList.add('pousado');
 
-  var slotA=document.getElementById('vestidoSlotA');
-  var slotB=document.getElementById('vestidoSlotB');
-  if(!slotA||!slotB)return;
-
-  vestidoSwapBusy=true;
-
-  slotA.classList.add('vestido-trocando');
-  slotB.classList.add('vestido-trocando');
-
-  /* começa a saída das atuais */
-  slotA.classList.add('vestido-saindo-direita');
-  slotB.classList.add('vestido-saindo-esquerda');
-
-  /* antes de elas sumirem totalmente, entram as novas */
   setTimeout(function(){
-    vestidoSwapTick=(vestidoSwapTick+1)%vestidoSwapPairs.length;
+    /* Quique suave pós-pouso */
+    el.style.transition='transform .18s ease-out';
+    el.style.transform=VP_POUSO[idx].replace('scale(1)','').replace('rotate(','rotate(').trim();
+    setTimeout(function(){
+      el.style.transition='';
+      if(cb)cb();
+    },180);
+  },720);
+}
 
-    vestidoClearAnimClasses(slotA);
-    vestidoClearAnimClasses(slotB);
-
-    vestidoApplyPair(vestidoSwapPairs[vestidoSwapTick]);
-
-    slotA.classList.add('vestido-trocando','vestido-entrando');
-    slotB.classList.add('vestido-trocando','vestido-entrando');
-
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        slotA.classList.remove('vestido-entrando');
-        slotB.classList.remove('vestido-entrando');
-      });
+/* Varre todas as polaroids pousadas juntas — diagonal direita→esquerda, cima→baixo */
+function vpVarrer(slots,cb){
+  /* Pequeno delay antes de varrer — mão pairando */
+  setTimeout(function(){
+    /* Todas entram em transição ao mesmo tempo */
+    slots.forEach(function(el){
+      if(!el||el.style.opacity==='0')return;
+      el.style.transition=
+        'transform 1.1s cubic-bezier(.4,0,.6,1), opacity .85s ease';
+      el.style.transform='translate3d(-140%,80%,0) rotate(-14deg)';
+      el.style.opacity='0';
+      el.classList.remove('pousado');
+      el.style.pointerEvents='none';
     });
-  },900);
+    /* Aguarda saída completa, depois chama callback */
+    setTimeout(function(){
+      if(cb)cb();
+    },1200);
+  },3200); /* 3.2s contemplando as fotos antes de varrer */
+}
 
-  setTimeout(function(){
-    vestidoClearAnimClasses(slotA);
-    vestidoClearAnimClasses(slotB);
-    vestidoSwapBusy=false;
-  },4300);
+/* Ciclo principal */
+function vpCiclo(){
+  if(vpBusy)return;
+  vpBusy=true;
+
+  var slots=vpGetSlots();
+
+  /* Verifica quais slots têm foto carregada */
+  var ativos=slots.filter(function(el){return el&&el.dataset.src;});
+  if(!ativos.length){vpBusy=false;return;}
+
+  /* Reseta todos */
+  ativos.forEach(function(el,i){
+    vpResetSlot(el,slots.indexOf(el));
+    el.src=el.dataset.src;
+  });
+
+  /* Força reflow antes de começar */
+  void ativos[0].offsetHeight;
+
+  var idx=0;
+  function quedaProxima(){
+    if(idx>=ativos.length){
+      /* Todas pousaram — inicia varredura */
+      vpVarrer(ativos,function(){
+        vpBusy=false;
+        /* Pausa antes do próximo ciclo: 1.8s */
+        vpTimer=setTimeout(vpCiclo,1800);
+      });
+      return;
+    }
+    var el=ativos[idx];
+    var slotIdx=slots.indexOf(el);
+    vpPousar(el,slotIdx,null);
+    idx++;
+    /* Intervalo aleatório até a próxima queda */
+    var delay=vpRand(2200,4800);
+    vpTimer=setTimeout(quedaProxima,delay);
+  }
+
+  /* Primeira queda começa com pequeno delay inicial */
+  vpTimer=setTimeout(quedaProxima,600);
 }
 
 function initVestidoSwap(){
-  var slotA=document.getElementById('vestidoSlotA');
-  var slotB=document.getElementById('vestidoSlotB');
-  if(!slotA||!slotB)return;
+  var slots=vpGetSlots();
+  var fotos=['vestido_foto_1','vestido_foto_2','vestido_foto_3','vestido_foto_4'];
+  var temAlguma=false;
 
-  var items=vestidoGetItems();
-  if(items.length<3)return;
-
-  vestidoSwapPairs=vestidoBuildPairs(items);
-  if(!vestidoSwapPairs.length)return;
-
-  vestidoSwapTick=0;
-  vestidoApplyPair(vestidoSwapPairs[0]);
-
-  clearInterval(vestidoSwapTimer);
-  vestidoSwapTimer=setInterval(nextVestidoSwap,7800);
-
-  [slotA,slotB].forEach(function(el){
-    el.addEventListener('click',function(){
-      vestidoPauseSwap(14000);
-    });
-    el.addEventListener('touchstart',function(){
-      vestidoPauseSwap(14000);
-    },{passive:true});
+  slots.forEach(function(el,i){
+    if(!el)return;
+    var key=fotos[i];
+    if(MIDIAS[key]){
+      el.dataset.src=MIDIAS[key];
+      el.src='';
+      el.onclick=function(){openCarousel('vestido',i+1);};
+      el.style.pointerEvents='auto';
+      temAlguma=true;
+    }else{
+      el.style.display='none';
+    }
+    vpResetSlot(el,i);
   });
+
+  if(!temAlguma)return;
+
+  /* Inicia primeiro ciclo após 1.4s (dá tempo da página carregar) */
+  clearTimeout(vpTimer);
+  vpTimer=setTimeout(vpCiclo,1400);
 }
+
+
+  
 function openCarousel(album,idx){
   var imgs=LBOX.albums[album];
   if(!imgs||!imgs.length)return;
