@@ -108,6 +108,61 @@ section[id]{scroll-margin-top:78px}
 .sep{width:32px;height:1px;background:var(--a);opacity:.3;margin:20px auto}
 
 /* ──────────── POPUP ──────────── */
+
+  /* Campo de nome no popup */
+.popup-nome-wrap{
+  margin-bottom:18px;
+  text-align:left;
+}
+.popup-nome-label{
+  display:block;
+  font-size:.6rem;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+  margin-bottom:8px;
+}
+.popup-nome-input{
+  width:100%;
+  padding:13px 16px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:12px;
+  font-size:.92rem;
+  color:#fff;
+  font-family:var(--fb);
+  transition:border-color .25s, background .25s;
+  -webkit-appearance:none;
+}
+.popup-nome-input::placeholder{
+  color:rgba(255,255,255,.3);
+}
+.popup-nome-input:focus{
+  outline:none;
+  border-color:var(--al);
+  background:rgba(255,255,255,.18);
+}
+.popup-nome-input.erro{
+  border-color:rgba(255,100,100,.7);
+  animation:shake .35s ease;
+}
+.popup-nome-erro{
+  font-size:.65rem;
+  color:rgba(255,120,120,.85);
+  margin-top:6px;
+  display:none;
+  padding-left:4px;
+}
+.popup-nome-erro.vis{
+  display:block;
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+  
 @keyframes popupScrollLoop{
   from{transform:translate3d(0,0,0)}
   to{transform:translate3d(0,calc(-50% + 1px),0)}
@@ -1765,15 +1820,28 @@ section[id]{scroll-margin-top:78px}
     <img src="" data-midia="popup_bg_4" alt="">
   </div>
 </div>
-  <div class="popup-c">
-    <h2 id="popup_titulo"></h2>
-    <p id="popup_texto"></p>
-    <div class="popup-btns">
-      <button class="btn btn-g" id="popup_botao_secundario" onclick="skipM()"></button>
-      <button class="btn btn-a" id="popup_botao_primario" onclick="startM()"></button>
-    </div>
-    <p class="popup-note" id="popup_aviso_player"></p>
+ <div class="popup-c">
+  <h2 id="popup_titulo"></h2>
+  <p id="popup_texto"></p>
+  <div class="popup-nome-wrap">
+    <label class="popup-nome-label" id="popup_nome"></label>
+    <input
+      class="popup-nome-input"
+      id="popupNomeInput"
+      type="text"
+      autocomplete="name"
+      autocorrect="off"
+      spellcheck="false"
+      placeholder="Seu nome completo"
+    >
+    <div class="popup-nome-erro" id="popupNomeErro">Por favor, escreva seu nome antes de continuar</div>
   </div>
+  <div class="popup-btns">
+    <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
+    <button class="btn btn-a" id="popup_botao_primario" onclick="handleStart()"></button>
+  </div>
+  <p class="popup-note" id="popup_aviso_player"></p>
+</div>
 </div>
 
 <!-- MINI PLAYER -->
@@ -1858,7 +1926,7 @@ section[id]{scroll-margin-top:78px}
 <div class="vestido-photos" id="vestidoPhotos">
   <div class="vestido-foto-principal-wrap">
     <img src="" data-midia="vestido_foto_principal" alt="" onclick="openCarousel('vestido',0)">
- <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)">📷 <span id="fotos_vestido_texto"></span></div>
+ <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)">📷 <span id="fotos_vestido"></span></div>
   </div>
   <img src="" alt="" id="vestidoSlot1" class="vestido-polaroid">
   <img src="" alt="" id="vestidoSlot2" class="vestido-polaroid">
@@ -2617,14 +2685,120 @@ function goToHeroStart(){
   });
 }
 
-function startM(){
+/* ── Validação do nome no popup ── */
+function getNomePopup(){
+  return (document.getElementById('popupNomeInput').value||'').trim();
+}
+
+function validarNomePopup(){
+  var input=document.getElementById('popupNomeInput');
+  var erro=document.getElementById('popupNomeErro');
+  var nome=getNomePopup();
+  if(!nome){
+    input.classList.add('erro');
+    erro.classList.add('vis');
+    input.focus();
+    setTimeout(function(){input.classList.remove('erro');},400);
+    return false;
+  }
+  input.classList.remove('erro');
+  erro.classList.remove('vis');
+  return true;
+}
+
+function salvarNomeConvidado(nome){
+  try{localStorage.setItem('convidado_nome',nome);}catch(e){}
+}
+
+function getNomeSalvo(){
+  try{return localStorage.getItem('convidado_nome')||'';}catch(e){return '';}
+}
+
+function registrarVisita(nome,comMusica){
+  var payload={
+    type:'analytics',
+    nome:nome,
+    com_musica:comMusica?'sim':'nao',
+    device:/Mobi|Android/i.test(navigator.userAgent)?'celular':'desktop',
+    origem:(function(){
+      var ref=document.referrer||'';
+      if(!ref)return'direto';
+      if(/whatsapp/i.test(ref))return'whatsapp';
+      if(/instagram/i.test(ref))return'instagram';
+      if(/facebook/i.test(ref))return'facebook';
+      return'outro';
+    })(),
+    url_completa:window.location.href,
+    sessao_id:(function(){
+      var sid=sessionStorage.getItem('sid');
+      if(!sid){sid=Math.random().toString(36).substr(2,9);sessionStorage.setItem('sid',sid);}
+      return sid;
+    })(),
+    timestamp:new Date().toISOString()
+  };
+  fetch(SU,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).catch(function(){});
+}
+
+/* Rastreamento de scroll e tempo */
+var _visitaInicio=Date.now();
+var _scrollMax=0;
+var _secoesVistas=[];
+
+window.addEventListener('scroll',function(){
+  var pct=Math.round((window.scrollY/(document.body.scrollHeight-window.innerHeight))*100);
+  if(pct>_scrollMax)_scrollMax=pct;
+  ['vestido','presentes','rsvp','hosp','faq'].forEach(function(id){
+    if(_secoesVistas.indexOf(id)>=0)return;
+    var el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top<window.innerHeight*0.8)_secoesVistas.push(id);
+  });
+},{passive:true});
+
+function registrarSaida(){
+  var nome=getNomeSalvo();
+  if(!nome)return;
+  var tempo=Math.round((Date.now()-_visitaInicio)/1000);
+  var payload={
+    type:'analytics_saida',
+    nome:nome,
+    tempo_total_seg:tempo,
+    scroll_max:_scrollMax+'%',
+    secoes_visitadas:_secoesVistas.join(', '),
+    sessao_id:(sessionStorage.getItem('sid')||''),
+    timestamp:new Date().toISOString()
+  };
+  /* sendBeacon garante envio mesmo ao fechar a aba */
+  var blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+  navigator.sendBeacon?navigator.sendBeacon(SU,blob):
+    fetch(SU,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
+}
+
+window.addEventListener('pagehide',registrarSaida);
+window.addEventListener('beforeunload',registrarSaida);
+
+function handleStart(){
+  if(!validarNomePopup())return;
+  var nome=getNomePopup();
+  salvarNomeConvidado(nome);
+  registrarVisita(nome,true);
   playHeroVideo();
   au.play().then(function(){pl=true;uI();}).catch(function(){});
   hP();
+  initVestidoSwap();
 }
-function skipM(){
+
+function handleSkip(){
+  if(!validarNomePopup())return;
+  var nome=getNomePopup();
+  salvarNomeConvidado(nome);
+  registrarVisita(nome,false);
   playHeroVideo();
   hP();
+  initVestidoSwap();
 }
   
 function hP(){
@@ -2775,7 +2949,7 @@ function buildLboxAlbums(){
   while(MIDIAS['vestido_foto_'+vi]){v.push(MIDIAS['vestido_foto_'+vi]);vi++;}
   LBOX.albums.vestido=v;
 
-/* Badge — texto vem 100% do Sheets via applyConteudo (id: fotos_vestido_texto) */
+/* Badge — texto vem 100% do Sheets via applyConteudo (id: fotos_vestido) */
   var badge=document.getElementById('vestidoBadge');
   if(badge){
     badge.style.display= v.length>1 ? 'flex' : 'none';
@@ -3251,6 +3425,9 @@ function sR(e){
   var d={type:'rsvp'};
   fd.forEach(function(v,k){d[k]=v;});
   d.timestamp=new Date().toISOString();
+  /* Vincula nome do popup ao RSVP */
+  if(!d.nome)d.nome=getNomeSalvo();
+  d.convidado_id=sessionStorage.getItem('sid')||'';
 
   var sug=(d.sugestao_musica||'').trim();
   var msg=(d.mensagem||'').trim();
@@ -3477,6 +3654,15 @@ document.addEventListener('DOMContentLoaded',function(){
   if('scrollRestoration' in history) history.scrollRestoration='manual';
   goToHeroStart();
   loadAll();
+  /* Se já visitou antes, pré-preenche o nome */
+  var nomeSalvo=getNomeSalvo();
+  if(nomeSalvo){
+    var inp=document.getElementById('popupNomeInput');
+    if(inp)inp.value=nomeSalvo;
+    /* Pré-preenche também o RSVP */
+    var rsvpNome=document.querySelector('#rF input[name="nome"]');
+    if(rsvpNome&&!rsvpNome.value)rsvpNome.value=nomeSalvo;
+  }
 
   /* Inicia animação das polaroids quando seção vestido entra na tela */
   var vestidoSec=document.getElementById('vestido');
