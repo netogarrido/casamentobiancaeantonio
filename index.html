@@ -162,11 +162,6 @@ section[id]{scroll-margin-top:78px}
   25%{transform:translateX(-6px)}
   75%{transform:translateX(6px)}
 }
-  
-@keyframes popupScrollLoop{
-  from{transform:translate3d(0,0,0)}
-  to{transform:translate3d(0,calc(-50% + 1px),0)}
-}
 
 .popup{
   position:fixed;
@@ -199,7 +194,6 @@ section[id]{scroll-margin-top:78px}
   flex-direction:column;
   will-change:transform;
   transform:translate3d(0,0,0);
-  animation:popupScrollLoop 40s linear infinite;
 }
 
 .popup-bg img{
@@ -3482,7 +3476,7 @@ function startSlideshow(){
 
   var validImgs=originals.filter(function(img){
     var src=img.getAttribute('src');
-    return src && src.trim()!=='';
+    return src&&src.trim()!=='';
   });
 
   if(!validImgs.length)return;
@@ -3490,9 +3484,10 @@ function startSlideshow(){
 
   track.innerHTML='';
 
+  /* Monta lista original + clone para loop infinito */
   validImgs.forEach(function(img,idx){
     img.classList.remove('popup-stage-1','popup-stage-2','popup-stage-3','popup-stage-4');
-    img.classList.add('popup-stage-'+String(idx+1));
+    img.classList.add('popup-stage-'+String((idx%4)+1));
     track.appendChild(img);
   });
 
@@ -3500,15 +3495,75 @@ function startSlideshow(){
     var clone=img.cloneNode(true);
     clone.setAttribute('aria-hidden','true');
     clone.classList.remove('popup-stage-1','popup-stage-2','popup-stage-3','popup-stage-4');
-    clone.classList.add('popup-stage-'+String(idx+1));
+    clone.classList.add('popup-stage-'+String((idx%4)+1));
     track.appendChild(clone);
   });
 
   track.dataset.ready='1';
-
   track.style.animation='none';
-  void track.offsetHeight;
-  track.style.animation='popupScrollLoop 16s ease-in-out infinite';
+  track.style.transform='translate3d(0,0,0)';
+
+  /* Velocidade em px por segundo — constante, sem aceleração */
+  var PX_PER_SEC=18;
+  var currentY=0;
+  var lastTime=null;
+  var halfH=0;
+  var rafId=null;
+
+  function calcHalf(){
+    /* metade = altura dos originais (sem os clones) */
+    halfH=0;
+    for(var i=0;i<validImgs.length;i++){
+      halfH+=track.children[i].offsetHeight;
+    }
+  }
+
+  function step(ts){
+    if(!lastTime){lastTime=ts;}
+    var delta=(ts-lastTime)/1000; /* segundos desde último frame */
+    lastTime=ts;
+
+    /* recalcula metade se ainda não tiver altura (imagens carregando) */
+    if(!halfH)calcHalf();
+
+    currentY+=PX_PER_SEC*delta;
+
+    /* quando passa da metade, volta ao zero — loop imperceptível */
+    if(halfH&&currentY>=halfH){
+      currentY=currentY-halfH;
+    }
+
+    track.style.transform='translate3d(0,-'+currentY+'px,0)';
+    rafId=requestAnimationFrame(step);
+  }
+
+  /* Aguarda imagens carregarem para ter altura correta */
+  var loaded=0;
+  var total=track.querySelectorAll('img').length;
+  function onLoad(){
+    loaded++;
+    if(loaded>=total){
+      calcHalf();
+      if(rafId)cancelAnimationFrame(rafId);
+      lastTime=null;
+      rafId=requestAnimationFrame(step);
+    }
+  }
+  Array.from(track.querySelectorAll('img')).forEach(function(img){
+    if(img.complete){onLoad();}
+    else{img.addEventListener('load',onLoad);img.addEventListener('error',onLoad);}
+  });
+
+  /* Pausa quando popup some da tela (economiza bateria) */
+  var popupEl=document.getElementById('popup');
+  var obs=new MutationObserver(function(){
+    if(popupEl.classList.contains('off')){
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+    }else{
+      if(!rafId){lastTime=null;rafId=requestAnimationFrame(step);}
+    }
+  });
+  obs.observe(popupEl,{attributes:true,attributeFilter:['class']});
 }
 
 /* ══════════════════════════════════════════
