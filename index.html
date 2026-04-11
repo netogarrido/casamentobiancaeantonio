@@ -754,7 +754,7 @@ section[id]{scroll-margin-top:78px}
 
 .vestido-polaroid{
   position:absolute;
-  width:44%;
+  width:33%;
   aspect-ratio:4/5;
   object-fit:cover;
   box-shadow:0 18px 40px rgba(84,73,60,.22), 0 4px 12px rgba(84,73,60,.10);
@@ -768,13 +768,13 @@ section[id]{scroll-margin-top:78px}
 }
 
 /* zona 0 — canto superior direito */
-#vestidoSlot1{ top:-8%;  right:-18%; }
+#vestidoSlot1{ top:-6%;  right:-13%; }
 /* zona 1 — canto inferior esquerdo */
-#vestidoSlot2{ bottom:-12%; left:-18%; }
+#vestidoSlot2{ bottom:-9%; left:-13%; }
 /* zona 2 — canto superior esquerdo */
-#vestidoSlot3{ top:-8%;  left:-18%; }
+#vestidoSlot3{ top:-6%;  left:-13%; }
 /* zona 3 — centro */
-#vestidoSlot4{ top:30%;  left:22%;  }
+#vestidoSlot4{ top:32%;  left:26%;  }
 
 /* ── Quote de abertura — solta, editorial ── */
 .vestido-quote{
@@ -3092,11 +3092,11 @@ function vpCiclo(){
     el.style.left='';el.style.right='';
 
     /* aplica posição da zona sorteada */
-    var posicoes=[
-      {top:'-8%',  right:'-18%'},
-      {bottom:'-12%',left:'-18%'},
-      {top:'-8%',  left:'-18%'},
-      {top:'30%',  left:'22%'}
+  var posicoes=[
+      {top:'-6%',  right:'-13%'},
+      {bottom:'-9%',left:'-13%'},
+      {top:'-6%',  left:'-13%'},
+      {top:'32%',  left:'26%'}
     ];
     var pos=posicoes[zona];
     Object.keys(pos).forEach(function(k){el.style[k]=pos[k];});
