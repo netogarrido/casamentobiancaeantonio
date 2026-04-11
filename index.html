@@ -554,6 +554,19 @@ section[id]{scroll-margin-top:78px}
   opacity:.7;
 }
 
+#vestido_seta_presentes{
+  width:88px;
+  height:88px;
+  font-size:4.4rem;
+  min-height:88px;
+  opacity:.85;
+  background:rgba(254,251,245,.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border-radius:50%;
+  box-shadow:0 4px 18px rgba(84,73,60,.14), 0 1px 4px rgba(84,73,60,.08);
+}
+
 /* ──────────── VESTIDO ──────────── */
 @keyframes ventoFlutua{
   0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
@@ -3515,7 +3528,7 @@ function startSlideshow(){
   track.style.transform='translate3d(0,0,0)';
 
   /* Velocidade em px por segundo — constante, sem aceleração */
-  var PX_PER_SEC=50;
+  var PX_PER_SEC=75;
   var currentY=0;
   var lastTime=null;
   var halfH=0;
