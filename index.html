@@ -2608,12 +2608,10 @@ function startM(){
   playHeroVideo();
   au.play().then(function(){pl=true;uI();}).catch(function(){});
   hP();
-  initVestidoSwap();
 }
 function skipM(){
   playHeroVideo();
   hP();
-  initVestidoSwap();
 }
   
 function hP(){
@@ -2799,7 +2797,6 @@ function vpRand(min,max){
   return min+Math.random()*(max-min);
 }
 
-/* Embaralha array — Fisher-Yates */
 function vpEmbaralhar(arr){
   var a=arr.slice();
   for(var i=a.length-1;i>0;i--){
@@ -2809,27 +2806,36 @@ function vpEmbaralhar(arr){
   return a;
 }
 
-/* Gera posição pousada aleatória — 4 zonas dentro do frame */
-function vpGeraPousoAleatorio(idx){
+/* 4 zonas fixas dentro do frame da foto principal
+   todas com x/y pequenos para não sair do frame */
+function vpGeraZona(zonaIdx){
   var zonas=[
     /* zona 0 — canto superior direito */
-    { x:vpRand(4,16),  y:vpRand(-6,8),   r:vpRand(3,7)   },
-    /* zona 1 — canto superior esquerdo */
-    { x:vpRand(-16,-4),y:vpRand(-4,10),  r:vpRand(-7,-3) },
-    /* zona 2 — topo centro-esquerdo, ao lado do slot 0 */
-    { x:vpRand(-8,2),  y:vpRand(-8,6),   r:vpRand(-4,2)  },
-    /* zona 3 — centro do frame, leve deslocamento */
-    { x:vpRand(-6,6),  y:vpRand(8,20),   r:vpRand(-3,3)  }
+    { x:vpRand(6,18),  y:vpRand(-10,4),  r:vpRand(3,8)   },
+    /* zona 1 — canto inferior esquerdo */
+    { x:vpRand(-18,-6),y:vpRand(18,30),  r:vpRand(-8,-3) },
+    /* zona 2 — canto superior esquerdo */
+    { x:vpRand(-18,-6),y:vpRand(-10,4),  r:vpRand(-8,-2) },
+    /* zona 3 — centro */
+    { x:vpRand(-6,6),  y:vpRand(4,16),   r:vpRand(-4,4)  }
   ];
-  var z=zonas[idx]||zonas[0];
+  var z=zonas[zonaIdx%4];
   return 'translate3d('+z.x+'px,'+z.y+'px,0) rotate('+z.r+'deg)';
 }
 
-/* Posição inicial de cada slot — acima do frame */
-function vpGeraInicioAleatorio(idx){
-  var angles=[vpRand(4,8),vpRand(-8,-4),vpRand(-3,3),vpRand(-2,4)];
-  var xOff=[vpRand(6,14),vpRand(-14,-6),vpRand(-6,4),vpRand(-4,6)];
-  return 'translate3d('+xOff[idx]+'px,-130%,0) rotate('+angles[idx]+'deg)';
+function vpGeraInicio(zonaIdx){
+  /* cada zona tem direção de entrada coerente com onde vai pousar */
+  var entradas=[
+    /* vem da direita/cima */
+    'translate3d('+vpRand(12,22)+'px,-130%,0) rotate('+vpRand(5,10)+'deg)',
+    /* vem da esquerda/baixo — mas ainda de cima */
+    'translate3d('+vpRand(-22,-12)+'px,-130%,0) rotate('+vpRand(-10,-5)+'deg)',
+    /* vem da esquerda/cima */
+    'translate3d('+vpRand(-22,-12)+'px,-130%,0) rotate('+vpRand(-8,-3)+'deg)',
+    /* vem do centro/cima */
+    'translate3d('+vpRand(-6,6)+'px,-130%,0) rotate('+vpRand(-4,4)+'deg)'
+  ];
+  return entradas[zonaIdx%4];
 }
 
 function vpGetSlots(){
@@ -2841,15 +2847,15 @@ function vpGetSlots(){
   ];
 }
 
-function vpResetSlot(el,idx,pousoFinal,inicioTransform){
+function vpResetSlot(el,pousoFinal,inicioTransform){
   if(!el)return;
   el.style.transition='none';
   el.style.opacity='0';
-  el.style.transform=inicioTransform||vpGeraInicioAleatorio(idx);
+  el.style.transform=inicioTransform;
   el.style.zIndex='2';
   el.classList.remove('pousado','varrendo');
   el.style.pointerEvents='none';
-  el._pousoFinal=pousoFinal||vpGeraPousoAleatorio(idx);
+  el._pousoFinal=pousoFinal;
 }
 
 function vpPousar(el,zIdx,cb){
@@ -2863,10 +2869,10 @@ function vpPousar(el,zIdx,cb){
 
   setTimeout(function(){
     el.style.transition='transform .22s ease-out';
-    el.style.transform=el._pousoFinal+'scale(1.025)';
+    el.style.transform=el._pousoFinal+' scale(1.025)';
     setTimeout(function(){
       el.style.transition='transform .16s ease-in';
-      el.style.transform=el._pousoFinal+'scale(1)';
+      el.style.transform=el._pousoFinal+' scale(1)';
       setTimeout(function(){
         el.style.transition='';
         if(cb)cb();
@@ -2898,35 +2904,34 @@ function vpCiclo(){
   var ativos=slots.filter(function(el){return el&&el.dataset.src;});
   if(!ativos.length){vpBusy=false;return;}
 
-  /* Embaralha ordem de queda a cada ciclo */
-  var ordem=vpEmbaralhar(ativos);
+  /* embaralha fotos E zonas independentemente */
+  var fotosEmbaralhadas=vpEmbaralhar(ativos);
+  var zonasEmbaralhadas=vpEmbaralhar([0,1,2,3]).slice(0,fotosEmbaralhadas.length);
 
-  /* Gera posições e inícios aleatórios novos para este ciclo */
-  ordem.forEach(function(el,i){
-    var slotIdx=slots.indexOf(el);
-    var inicio=vpGeraInicioAleatorio(i); /* usa i como zona, não slotIdx */
-    var pouso=vpGeraPousoAleatorio(i);
-    vpResetSlot(el,slotIdx,pouso,inicio);
+  fotosEmbaralhadas.forEach(function(el,i){
+    var zona=zonasEmbaralhadas[i];
+    var pouso=vpGeraZona(zona);
+    var inicio=vpGeraInicio(zona);
+    vpResetSlot(el,pouso,inicio);
     el.src=el.dataset.src;
   });
 
-  void ordem[0].offsetHeight;
+  void fotosEmbaralhadas[0].offsetHeight;
 
   var idx=0;
   var zBase=3;
 
   function quedaProxima(){
-    if(idx>=ordem.length){
-      vpVarrer(ordem,function(){
+    if(idx>=fotosEmbaralhadas.length){
+      vpVarrer(fotosEmbaralhadas,function(){
         vpBusy=false;
         vpTimer=setTimeout(vpCiclo,1600);
       });
       return;
     }
-    var el=ordem[idx];
+    var el=fotosEmbaralhadas[idx];
     vpPousar(el,zBase+idx,null);
     idx++;
-    /* intervalo curto entre quedas: 1s a 3s */
     var delay=vpRand(1000,3000);
     vpTimer=setTimeout(quedaProxima,delay);
   }
@@ -2953,7 +2958,8 @@ function initVestidoSwap(){
     }else{
       el.style.display='none';
     }
-    vpResetSlot(el,i,vpGeraPousoAleatorio(i),vpGeraInicioAleatorio(i));
+    /* estado inicial neutro */
+    vpResetSlot(el,vpGeraZona(i),vpGeraInicio(i));
   });
 
   if(!temAlguma)return;
@@ -2961,6 +2967,12 @@ function initVestidoSwap(){
   clearTimeout(vpTimer);
   vpTimer=setTimeout(vpCiclo,800);
 }
+
+
+
+
+
+  
   
 function openCarousel(album,idx){
   var imgs=LBOX.albums[album];
@@ -3448,6 +3460,20 @@ document.addEventListener('DOMContentLoaded',function(){
   if('scrollRestoration' in history) history.scrollRestoration='manual';
   goToHeroStart();
   loadAll();
+
+  /* Inicia animação das polaroids quando seção vestido entra na tela */
+  var vestidoSec=document.getElementById('vestido');
+  if(vestidoSec&&'IntersectionObserver' in window){
+    var vpObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          initVestidoSwap();
+          vpObs.disconnect(); /* dispara só uma vez */
+        }
+      });
+    },{threshold:0.25}); /* 25% da seção visível já dispara */
+    vpObs.observe(vestidoSec);
+  }
 });
   
 </script>
