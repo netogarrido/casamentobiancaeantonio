@@ -2397,6 +2397,13 @@ function applyConteudo(rows){
       el.innerHTML=cleaned.replace(/\n/g,'<br>');
     }
   });
+
+  /* Espelha o conteúdo do hero_cta_terciario para o vestido_seta_presentes */
+  var heroSeta=document.getElementById('hero_cta_terciario');
+  var vestidoSeta=document.getElementById('vestido_seta_presentes');
+  if(heroSeta&&vestidoSeta&&heroSeta.innerHTML){
+    vestidoSeta.innerHTML=heroSeta.innerHTML;
+  }
 }
 
 /* ══════════════════════════════════════════
