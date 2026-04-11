@@ -741,11 +741,11 @@ section[id]{scroll-margin-top:78px}
   
 
 /* Slot A — canto superior esquerdo */
-#vestidoSlot1{ top:-6%;  left:-13%; }
+#vestidoSlot1{ top:-4%;  left:-6%; }
 /* Slot B — canto superior direito */
-#vestidoSlot2{ top:-6%;  right:-13%; }
+#vestidoSlot2{ top:-4%;  right:-6%; }
 /* Slot C — canto inferior esquerdo */
-#vestidoSlot3{ bottom:-9%; left:-13%; }
+#vestidoSlot3{ bottom:-6%; left:-6%; }
 /* Slot D — centro, sempre por cima */
 #vestidoSlot4{ top:28%;  left:50%; transform:translateX(-50%); }
 
@@ -3098,17 +3098,20 @@ function initVestidoSwap(){
   if(vpIniciado)return;
   vpIniciado=true;
 
-  var slots=vpGetSlots();
-  var fotos=['vestido_foto_1','vestido_foto_2','vestido_foto_3','vestido_foto_4'];
+var slots=vpGetSlots();
+  var fotosKeys=['vestido_foto_1','vestido_foto_2','vestido_foto_3','vestido_foto_4'];
+  /* Embaralha quais fotos vão para quais slots desde o início */
+  var fotosEmbaralhadas=vpEmbaralhar(fotosKeys);
   var temAlguma=false;
 
   slots.forEach(function(el,i){
     if(!el)return;
-    var key=fotos[i];
+    var key=fotosEmbaralhadas[i];
+    var idxOriginal=fotosKeys.indexOf(key);
     if(MIDIAS[key]){
       el.dataset.src=MIDIAS[key];
       el.src='';
-      el.onclick=function(){openCarousel('vestido',i+1);};
+      el.onclick=function(){openCarousel('vestido',idxOriginal+1);};
       temAlguma=true;
     }else{
       el.style.display='none';
