@@ -2799,39 +2799,36 @@ function vpRand(min,max){
   return min+Math.random()*(max-min);
 }
 
-/* Gera posição pousada aleatória para cada slot,
-   evitando a área inferior onde fica o badge */
+/* Embaralha array — Fisher-Yates */
+function vpEmbaralhar(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+
+/* Gera posição pousada aleatória — 4 zonas dentro do frame */
 function vpGeraPousoAleatorio(idx){
-  /* Zonas seguras: canto sup-dir, sup-esq, meio-dir, meio-esq */
-  /* Cada slot tem uma zona preferencial mas com bastante variação */
   var zonas=[
-    /* slot 0 — zona superior direita */
-    { x:vpRand(4,18),  y:vpRand(-8,12),  r:vpRand(3,7)   },
-    /* slot 1 — zona superior esquerda */
-    { x:vpRand(-18,-4),y:vpRand(-6,14),  r:vpRand(-7,-3) },
-    /* slot 2 — zona meio direita, um pouco abaixo */
-    { x:vpRand(8,22),  y:vpRand(14,28),  r:vpRand(1,5)   },
-    /* slot 3 — zona meio esquerda, um pouco abaixo */
-    { x:vpRand(-22,-8),y:vpRand(16,30),  r:vpRand(-5,-1) }
+    /* zona 0 — canto superior direito */
+    { x:vpRand(4,16),  y:vpRand(-6,8),   r:vpRand(3,7)   },
+    /* zona 1 — canto superior esquerdo */
+    { x:vpRand(-16,-4),y:vpRand(-4,10),  r:vpRand(-7,-3) },
+    /* zona 2 — topo centro-esquerdo, ao lado do slot 0 */
+    { x:vpRand(-8,2),  y:vpRand(-8,6),   r:vpRand(-4,2)  },
+    /* zona 3 — centro do frame, leve deslocamento */
+    { x:vpRand(-6,6),  y:vpRand(8,20),   r:vpRand(-3,3)  }
   ];
   var z=zonas[idx]||zonas[0];
   return 'translate3d('+z.x+'px,'+z.y+'px,0) rotate('+z.r+'deg)';
 }
 
-/* Posição inicial de cada slot — acima do frame, ângulo levemente diferente */
+/* Posição inicial de cada slot — acima do frame */
 function vpGeraInicioAleatorio(idx){
-  var angles=[
-    vpRand(4,8),
-    vpRand(-8,-4),
-    vpRand(1,5),
-    vpRand(-5,-1)
-  ];
-  var xOff=[
-    vpRand(6,14),
-    vpRand(-14,-6),
-    vpRand(2,10),
-    vpRand(-10,-2)
-  ];
+  var angles=[vpRand(4,8),vpRand(-8,-4),vpRand(-3,3),vpRand(-2,4)];
+  var xOff=[vpRand(6,14),vpRand(-14,-6),vpRand(-6,4),vpRand(-4,6)];
   return 'translate3d('+xOff[idx]+'px,-130%,0) rotate('+angles[idx]+'deg)';
 }
 
@@ -2852,7 +2849,6 @@ function vpResetSlot(el,idx,pousoFinal,inicioTransform){
   el.style.zIndex='2';
   el.classList.remove('pousado','varrendo');
   el.style.pointerEvents='none';
-  /* guarda posição de pouso gerada para este ciclo */
   el._pousoFinal=pousoFinal||vpGeraPousoAleatorio(idx);
 }
 
@@ -2865,15 +2861,12 @@ function vpPousar(el,zIdx,cb){
   el.style.transform=el._pousoFinal;
   el.classList.add('pousado');
 
-  /* quique leve */
   setTimeout(function(){
     el.style.transition='transform .22s ease-out';
-    var f=el._pousoFinal;
-    /* escala leve de quique */
-    el.style.transform=f.replace(/scale\([^)]*\)/,'')+'scale(1.025)';
+    el.style.transform=el._pousoFinal+'scale(1.025)';
     setTimeout(function(){
       el.style.transition='transform .16s ease-in';
-      el.style.transform=f.replace(/scale\([^)]*\)/,'')+'scale(1)';
+      el.style.transform=el._pousoFinal+'scale(1)';
       setTimeout(function(){
         el.style.transition='';
         if(cb)cb();
@@ -2883,7 +2876,6 @@ function vpPousar(el,zIdx,cb){
 }
 
 function vpVarrer(ativos,cb){
-  /* pausa contemplativa antes de varrer */
   setTimeout(function(){
     ativos.forEach(function(el){
       if(!el||el.style.opacity==='0')return;
@@ -2903,39 +2895,39 @@ function vpCiclo(){
   vpBusy=true;
 
   var slots=vpGetSlots();
-
-  /* apenas slots com foto */
   var ativos=slots.filter(function(el){return el&&el.dataset.src;});
   if(!ativos.length){vpBusy=false;return;}
 
-  /* gera posições aleatórias novas a cada ciclo */
-  ativos.forEach(function(el,i){
+  /* Embaralha ordem de queda a cada ciclo */
+  var ordem=vpEmbaralhar(ativos);
+
+  /* Gera posições e inícios aleatórios novos para este ciclo */
+  ordem.forEach(function(el,i){
     var slotIdx=slots.indexOf(el);
-    var inicio=vpGeraInicioAleatorio(slotIdx);
-    var pouso=vpGeraPousoAleatorio(slotIdx);
+    var inicio=vpGeraInicioAleatorio(i); /* usa i como zona, não slotIdx */
+    var pouso=vpGeraPousoAleatorio(i);
     vpResetSlot(el,slotIdx,pouso,inicio);
     el.src=el.dataset.src;
   });
 
-  /* força reflow */
-  void ativos[0].offsetHeight;
+  void ordem[0].offsetHeight;
 
   var idx=0;
-  /* z-index começa em 3 — badge fica em 10 (definido no CSS do .vestido-badge) */
   var zBase=3;
 
   function quedaProxima(){
-    if(idx>=ativos.length){
-      vpVarrer(ativos,function(){
+    if(idx>=ordem.length){
+      vpVarrer(ordem,function(){
         vpBusy=false;
         vpTimer=setTimeout(vpCiclo,1600);
       });
       return;
     }
-    var el=ativos[idx];
+    var el=ordem[idx];
     vpPousar(el,zBase+idx,null);
     idx++;
-    var delay=vpRand(2400,5200);
+    /* intervalo curto entre quedas: 1s a 3s */
+    var delay=vpRand(1000,3000);
     vpTimer=setTimeout(quedaProxima,delay);
   }
 
