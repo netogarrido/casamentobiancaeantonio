@@ -718,35 +718,7 @@ section[id]{scroll-margin-top:78px}
   transform:scale(1.07);
   box-shadow:0 6px 18px rgba(212,160,74,.5);
 }
-
-/* foto 2 — sobreposta, topo direita */
-.vestido-photos img:nth-child(2){
-  width:42%;
-  aspect-ratio:4/5;
-  position:absolute;
-  top:0;
-  right:2%;
-  z-index:3;
-  transform:rotate(4.5deg);
-}
-
-/* foto 3 — sobreposta, baixo esquerda */
-.vestido-photos img:nth-child(3){
-  width:42%;
-  aspect-ratio:4/5;
-  position:absolute;
-  bottom:0;
-  left:2%;
-  z-index:3;
-  transform:rotate(-5deg);
-}
-
-.vestido-photos img:hover{
-  transform:rotate(0deg) scale(1.04);
-  box-shadow:0 24px 50px rgba(84,73,60,.24), 0 6px 16px rgba(84,73,60,.10);
-  z-index:5;
-}
-
+  
 /* ── Polaroids animadas — posicionadas em % do container ── */
 .vestido-foto-principal-wrap{
   position:relative;
@@ -764,17 +736,18 @@ section[id]{scroll-margin-top:78px}
   pointer-events:none;
   opacity:0;
   will-change:transform, opacity;
-  /* posição base de cada zona — em % do container */
+/* posição base de cada zona — em % do container */
 }
+  
 
-/* zona 0 — canto superior direito */
-#vestidoSlot1{ top:-6%;  right:-13%; }
-/* zona 1 — canto inferior esquerdo */
-#vestidoSlot2{ bottom:-9%; left:-13%; }
-/* zona 2 — canto superior esquerdo */
-#vestidoSlot3{ top:-6%;  left:-13%; }
-/* zona 3 — centro */
-#vestidoSlot4{ top:32%;  left:26%;  }
+/* Slot A — canto superior esquerdo */
+#vestidoSlot1{ top:-6%;  left:-13%; }
+/* Slot B — canto superior direito */
+#vestidoSlot2{ top:-6%;  right:-13%; }
+/* Slot C — canto inferior esquerdo */
+#vestidoSlot3{ bottom:-9%; left:-13%; }
+/* Slot D — centro, sempre por cima */
+#vestidoSlot4{ top:28%;  left:50%; transform:translateX(-50%); }
 
 /* ── Quote de abertura — solta, editorial ── */
 .vestido-quote{
@@ -3006,10 +2979,11 @@ function vpGeraPouso(zonaIdx){
 }
 
 /* Transform inicial — foto vem de cima com leve inclinação */
-function vpGeraInicio(zonaIdx){
-  var xOff=[vpRand(4,10),vpRand(-10,-4),vpRand(-10,-4),vpRand(-4,4)];
-  var r=vpRotacaoPouso(zonaIdx);
-  return 'translate3d('+xOff[zonaIdx]+'px,-140%,0) rotate('+r+'deg)';
+function vpGeraInicio(slotId){
+  /* slotId: 0=A(sup-esq), 1=B(sup-dir), 2=C(inf-esq), 3=D(centro) */
+  var xOff=[vpRand(-10,-4), vpRand(4,10), vpRand(-10,-4), vpRand(-4,4)];
+  var r=vpRotacaoPouso(slotId);
+  return 'translate3d('+xOff[slotId]+'px,-160%,0) rotate('+r+'deg)';
 }
 
 function vpGetSlots(){
@@ -3079,30 +3053,15 @@ function vpCiclo(){
   var ativos=slots.filter(function(el){return el&&el.dataset.src;});
   if(!ativos.length){vpBusy=false;return;}
 
-  /* embaralha quais fotos caem em quais zonas — ambos independentes */
+/* Slots fixos: 0=A(sup-esq), 1=B(sup-dir), 2=C(inf-esq), 3=D(centro) */
+  /* Embaralha quais FOTOS vão para quais slots */
   var fotosEmbaralhadas=vpEmbaralhar(ativos);
-  var zonasEmbaralhadas=vpEmbaralhar([0,1,2,3]).slice(0,fotosEmbaralhadas.length);
 
-  fotosEmbaralhadas.forEach(function(el,i){
-    var zona=zonasEmbaralhadas[i];
-
-    /* reposiciona o elemento na zona sorteada via CSS */
-    /* zera posição anterior */
-    el.style.top='';el.style.bottom='';
-    el.style.left='';el.style.right='';
-
-    /* aplica posição da zona sorteada */
-  var posicoes=[
-      {top:'-6%',  right:'-13%'},
-      {bottom:'-9%',left:'-13%'},
-      {top:'-6%',  left:'-13%'},
-      {top:'32%',  left:'26%'}
-    ];
-    var pos=posicoes[zona];
-    Object.keys(pos).forEach(function(k){el.style[k]=pos[k];});
-
-    var pouso=vpGeraPouso(zona);
-    var inicio=vpGeraInicio(zona);
+  /* Associa cada slot à sua foto embaralhada */
+  fotosEmbaralhadas.forEach(function(el,slotIdx){
+    el._slotIdx=slotIdx;
+    var pouso=vpGeraPouso(slotIdx);
+    var inicio=vpGeraInicio(slotIdx);
     vpResetSlot(el,pouso,inicio);
     el.src=el.dataset.src;
   });
@@ -3110,26 +3069,34 @@ function vpCiclo(){
   /* força reflow */
   void fotosEmbaralhadas[0].offsetHeight;
 
+  /* Ordem de queda: slots A, B, C em ordem aleatória; D sempre por último */
+  var slotsABC=vpEmbaralhar(
+    fotosEmbaralhadas.filter(function(el){return el._slotIdx!==3;})
+  );
+  var slotD=fotosEmbaralhadas.filter(function(el){return el._slotIdx===3;})[0];
+  var ordemQueda=slotD ? slotsABC.concat([slotD]) : slotsABC;
+
   var idx=0;
   var zBase=3;
 
   function quedaProxima(){
-    if(idx>=fotosEmbaralhadas.length){
+    if(idx>=ordemQueda.length){
       vpVarrer(fotosEmbaralhadas,function(){
         vpBusy=false;
         vpTimer=setTimeout(vpCiclo,1600);
       });
       return;
     }
-    var el=fotosEmbaralhadas[idx];
-    vpPousar(el,zBase+idx,null);
+    var el=ordemQueda[idx];
+    /* D sempre tem z-index mais alto */
+    var z=(el._slotIdx===3)?zBase+10:zBase+idx;
+    vpPousar(el,z,null);
     idx++;
-    var delay=vpRand(1000,3000);
+    var delay=vpRand(1000,2500);
     vpTimer=setTimeout(quedaProxima,delay);
   }
 
   vpTimer=setTimeout(quedaProxima,700);
-}
 
 function initVestidoSwap(){
   if(vpIniciado)return;
