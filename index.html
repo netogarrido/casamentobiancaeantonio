@@ -1305,8 +1305,8 @@ section[id]{scroll-margin-top:78px}
 .pres-polaroid-wrap{
   position:relative;
   z-index:1;
-  width:96%;
-  max-width:440px;
+  width:82%;
+  max-width:400px;
   margin:0 auto 28px;
   cursor:pointer;
 }
@@ -1345,6 +1345,16 @@ section[id]{scroll-margin-top:78px}
   margin:0 16px;
   position:relative;
   z-index:1;
+}
+
+.pres-cats-panel{
+  background:rgba(255,255,255,.62);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.85);
+  border-radius:18px;
+  padding:16px 14px 14px;
+  box-shadow:0 4px 18px rgba(15,23,32,.08);
 }
 
 .pres-cats-label{
@@ -1893,11 +1903,15 @@ section[id]{scroll-margin-top:78px}
     <p class="txt" style="font-size:.78rem;color:var(--is)" id="presentes_texto_apoio"></p>
     <p class="txt" style="font-size:.76rem;color:var(--is)" id="presentes_pix_texto"></p>
   </div>
-  <!-- Grid de categorias -->
+
+<!-- Grid de categorias -->
   <div class="pres-cats-wrap">
-    <div class="pres-cats-label" id="presentes_categorias_titulo">Escolha uma categoria</div>
-    <div class="cat-grid" id="cG"></div>
+    <div class="pres-cats-panel">
+      <div class="pres-cats-label" id="presentes_categorias_titulo">Escolha uma categoria</div>
+      <div class="cat-grid" id="cG"></div>
+    </div>
   </div>
+  
   <!-- Painéis de presentes por categoria -->
   <div class="pres-body">
     <p class="txt" style="display:none" id="presentes_categorias_titulo"></p>
