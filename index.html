@@ -1350,7 +1350,7 @@ section[id]{scroll-margin-top:78px}
 .pres-cats-label{
   font-family:var(--fh);
   font-weight:600;
-  font-size:.62rem;
+  font-size:.93rem;
   letter-spacing:.28em;
   text-transform:uppercase;
   color:var(--n);
@@ -1468,7 +1468,7 @@ section[id]{scroll-margin-top:78px}
 }
 .pres-body .txt{color:var(--im)}
 
-#presentes_categorias_titulo{display:none!important;}
+#presentes_categorias_titulo{}
 
 /* Cards de presente individuais */
 .g-card{
@@ -1880,7 +1880,7 @@ section[id]{scroll-margin-top:78px}
   
 <!-- Título da seção presentes -->
   <div style="padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,24px);text-align:center;position:relative;z-index:1;">
-    <h2 id="presentes_titulo" style="font-family:var(--fh);font-weight:400;font-style:italic;font-size:clamp(1.6rem,5.5vw,2.1rem);line-height:1.18;color:var(--i);"></h2>
+    <h2 id="presentes_titulo" style="font-family:var(--fh);font-weight:400;font-style:italic;font-size:clamp(2rem,7vw,3.4rem);line-height:1.08;color:var(--i);"></h2>
   </div>
   
   <!-- Foto polaroid centralizada -->
@@ -1889,13 +1889,13 @@ section[id]{scroll-margin-top:78px}
   </div>
   <!-- Texto de introdução -->
   <div class="pres-intro">
-    <p class="txt" id="presentes_subtitulo"></p>
+    <p class="txt" id="presentes_subtitulo" style="font-size:1.29rem;"></p>
     <p class="txt" style="font-size:.78rem;color:var(--is)" id="presentes_texto_apoio"></p>
     <p class="txt" style="font-size:.76rem;color:var(--is)" id="presentes_pix_texto"></p>
   </div>
   <!-- Grid de categorias -->
   <div class="pres-cats-wrap">
-    <div class="pres-cats-label">Escolha uma categoria</div>
+    <div class="pres-cats-label" id="presentes_categorias_titulo">Escolha uma categoria</div>
     <div class="cat-grid" id="cG"></div>
   </div>
   <!-- Painéis de presentes por categoria -->
