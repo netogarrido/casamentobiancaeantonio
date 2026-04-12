@@ -2161,7 +2161,7 @@ var PIX={
   'nara_15':'https://nubank.com.br/cobrar/2dfgs/69d03958-b9ca-4ea6-ba82-b334aabea53a',
   'nara_16':'https://nubank.com.br/cobrar/2dfgs/69d03986-152f-4aa8-b98e-af36465d96ef',
   'outro_valor_17':'https://nubank.com.br/cobrar/2dfgs/69d03a91-bc68-40a1-9edc-d544e0a24295',
-  'noivo_artista_18':'https://nubank.com.br/cobrar/2dfgs/69d039b6-38db-43d5-8cd2-3d937ae0ecc8',
+  'noivo_artista_18':'https://nubank.com.br/cobrar/2dfgs/69d1dd6e-cc3c-45bc-89dc-4c1a42859b58',
   'noivo_artista_21':'https://nubank.com.br/cobrar/2dfgs/69d1de9d-1584-4c0f-8dd2-27a824d83337',
   'noivo_artista_19':'https://nubank.com.br/cobrar/2dfgs/69d039fd-0971-4902-b76a-fe14b01c1e58',
   'festa_20':'https://nubank.com.br/cobrar/2dfgs/69d03a2f-5cfb-4f6c-8be6-a7ffac960824'
@@ -2565,7 +2565,6 @@ function tF(el){
    MUSIC
 ══════════════════════════════════════════ */
 var au=document.getElementById('bgMusic');
-var pl=false;
 
 function playHeroVideo(){
   var hero=document.getElementById('hero');
@@ -2700,7 +2699,7 @@ function handleStart(){
   salvarNomeConvidado(nome);
   registrarVisita(nome,true);
   playHeroVideo();
-  au.play().then(function(){pl=true;uI();}).catch(function(){});
+  au.play().then(function(){syncPlayerUI();}).catch(function(){});
   hP();
   initVestidoSwap();
 }
@@ -2751,15 +2750,6 @@ function syncPlayerUI(){
     .classList.toggle('playing', isPlaying);
 }
 
-function uI(){
-  var path=pl?'M6 4h4v16H6zM14 4h4v16h-4z':'M8 5v14l11-7z';
-  document.getElementById('pIco').innerHTML='<path d="'+path+'"/>';
-  document.getElementById('mIco').innerHTML='<path d="'+path+'"/>';
-  var pb=document.getElementById('playBtnEl');
-  var mb=document.getElementById('miniBtnEl');
-  if(pb){if(pl)pb.classList.add('playing');else pb.classList.remove('playing');}
-  if(mb){if(pl)mb.classList.add('playing');else mb.classList.remove('playing');}
-}
 /* Scrubber de áudio */
 var audioSeekEl = document.getElementById('audioSeek');
 var audioSeekDragging = false;
