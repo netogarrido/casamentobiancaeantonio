@@ -1301,37 +1301,6 @@ section[id]{scroll-margin-top:78px}
   z-index:0;
 }
 
-/* ── Título presentes — segue padrão editorial das outras seções ── */
-.pres-titulo-link{
-  display:block;
-  text-align:left;
-  padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,24px);
-  max-width:var(--mw);
-  margin:0 auto;
-  position:relative;
-  z-index:1;
-  text-decoration:none;
-  -webkit-tap-highlight-color:transparent;
-  cursor:pointer;
-}
-
-.pres-titulo-link .lbl{
-  margin-bottom:12px;
-}
-
-.pres-titulo-link h2{
-  font-family:var(--fh);
-  font-weight:400;
-  font-style:italic;
-  font-size:clamp(1.6rem,5.5vw,2.1rem);
-  letter-spacing:0;
-  text-transform:none;
-  color:var(--i);
-  line-height:1.18;
-  margin:0;
-  text-shadow:none;
-}
-
 /* ── Foto polaroid centralizada ── */
 .pres-polaroid-wrap{
   position:relative;
@@ -1906,16 +1875,13 @@ section[id]{scroll-margin-top:78px}
 
  
   
-  
-<!-- PRESENTES -->
 <!-- PRESENTES -->
 <section class="presentes" id="presentes">
   
-<!-- Título editorial — padrão das seções -->
-  <a href="#presentes" class="pres-titulo-link" onclick="smoothScrollTo('presentes');return false;">
-    <div class="lbl">Lista de Presentes</div>
-    <h2 id="presentes_titulo"></h2>
-  </a>
+<!-- Título da seção presentes -->
+  <div style="padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,24px);text-align:center;position:relative;z-index:1;">
+    <h2 id="presentes_titulo" style="font-family:var(--fh);font-weight:400;font-style:italic;font-size:clamp(1.6rem,5.5vw,2.1rem);line-height:1.18;color:var(--i);"></h2>
+  </div>
   
   <!-- Foto polaroid centralizada -->
   <div class="pres-polaroid-wrap" onclick="openCarousel('presentes',0)">
