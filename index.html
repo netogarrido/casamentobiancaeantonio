@@ -1301,11 +1301,13 @@ section[id]{scroll-margin-top:78px}
   z-index:0;
 }
 
-/* ── Título clicável — tipografia editorial Cormorant ── */
+/* ── Título presentes — segue padrão editorial das outras seções ── */
 .pres-titulo-link{
   display:block;
-  text-align:center;
-  padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,28px);
+  text-align:left;
+  padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,24px);
+  max-width:var(--mw);
+  margin:0 auto;
   position:relative;
   z-index:1;
   text-decoration:none;
@@ -1313,19 +1315,21 @@ section[id]{scroll-margin-top:78px}
   cursor:pointer;
 }
 
+.pres-titulo-link .lbl{
+  margin-bottom:12px;
+}
+
 .pres-titulo-link h2{
   font-family:var(--fh);
-  font-weight:600;
-  font-style:normal;
-  font-size:clamp(2rem,9vw,3.2rem);
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:#5C3D2A;
-  line-height:1.1;
-  margin:0 auto;
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.5),
-    0 2px 10px rgba(255,255,255,.3);
+  font-weight:400;
+  font-style:italic;
+  font-size:clamp(1.6rem,5.5vw,2.1rem);
+  letter-spacing:0;
+  text-transform:none;
+  color:var(--i);
+  line-height:1.18;
+  margin:0;
+  text-shadow:none;
 }
 
 /* ── Foto polaroid centralizada ── */
@@ -1906,10 +1910,13 @@ section[id]{scroll-margin-top:78px}
 <!-- PRESENTES -->
 <!-- PRESENTES -->
 <section class="presentes" id="presentes">
-  <!-- Título clicável editorial -->
+  
+<!-- Título editorial — padrão das seções -->
   <a href="#presentes" class="pres-titulo-link" onclick="smoothScrollTo('presentes');return false;">
+    <div class="lbl">Lista de Presentes</div>
     <h2 id="presentes_titulo"></h2>
   </a>
+  
   <!-- Foto polaroid centralizada -->
   <div class="pres-polaroid-wrap" onclick="openCarousel('presentes',0)">
     <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
