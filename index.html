@@ -1265,27 +1265,38 @@ section[id]{scroll-margin-top:78px}
 /* ──────────── PRESENTES ──────────── */
 .presentes{
   position:relative;
-  background:#c9e4f0;
-  background-image:url('');
-  background-size:auto;
-  background-repeat:repeat;
-  background-position:top left;
-  background-attachment:scroll;
+  background:#5BA8D4;
+  background-image:none;
   padding:0 0 var(--pad);
   overflow:hidden;
 }
 
-/* overlay leve para textos respirarem sobre o céu */
+/* camada da textura — semi-transparente e levemente borrada */
+.presentes::after{
+  content:'';
+  position:absolute;
+  inset:-20px;
+  background-image:url('');
+  background-size:auto;
+  background-repeat:repeat;
+  background-position:top left;
+  opacity:.52;
+  filter:blur(3px);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* overlay leve para textos respirarem */
 .presentes::before{
   content:'';
   position:absolute;
   inset:0;
   background:
     linear-gradient(180deg,
-      rgba(255,255,255,.18) 0%,
-      rgba(255,255,255,.06) 30%,
-      rgba(255,255,255,.06) 70%,
-      rgba(255,255,255,.22) 100%);
+      rgba(91,168,212,.12) 0%,
+      rgba(255,255,255,.04) 30%,
+      rgba(255,255,255,.04) 70%,
+      rgba(91,168,212,.14) 100%);
   pointer-events:none;
   z-index:0;
 }
@@ -2326,10 +2337,14 @@ styleTag.textContent=
       if(!styleTag.parentNode)document.head.appendChild(styleTag);
   }
 
-  /* Textura de fundo da seção Presentes — céu/nuvens */
+/* Textura de fundo da seção Presentes — céu/nuvens via pseudo-elemento */
   if(MIDIAS.textura_presente){
-    var presSec=document.querySelector('.presentes');
-    if(presSec)presSec.style.backgroundImage='url("'+MIDIAS.textura_presente+'")';
+    var presStyle=document.getElementById('dynStyle')||document.createElement('style');
+    presStyle.id='dynStyle';
+    var u2=MIDIAS.textura_presente;
+    presStyle.textContent=(presStyle.textContent||'')+
+      '.presentes::after{background-image:url("'+u2+'") !important;}';
+    if(!presStyle.parentNode)document.head.appendChild(presStyle);
   }
 
   /* Category images */
