@@ -331,14 +331,15 @@ section[id]{scroll-margin-top:78px}
   margin-bottom:24px;
 }
 .popup-c p.popup-note{
-  font-size:1.75rem;
-  color:rgba(255,255,255,.75);
-  line-height:1.2;
-  margin-top:0px;
+  font-size:1rem;
+  color:rgba(255,255,255,.55);
+  line-height:1.4;
+  margin-top:4px;
   margin-bottom:16px;
-  font-family:var(--fh);
-  font-style:italic;
-  font-weight:300;
+  font-family:var(--fb);
+  font-style:normal;
+  font-weight:400;
+  letter-spacing:.01em;
 }
 
 .popup-btns{
@@ -356,17 +357,6 @@ section[id]{scroll-margin-top:78px}
   padding:15px 18px;
   font-size:.68rem;
   letter-spacing:.08em;
-}
-
-.popup-note{
-  font-family:var(--fh);
-  font-style:italic;
-  font-weight:300;
-  font-size:1.95rem;
-  color:rgba(255,255,255,.75);
-  margin-top:0px;
-  margin-bottom:16px;
-  line-height:1.2;
 }
 
 /* ──────────── HERO ──────────── */
@@ -1891,10 +1881,6 @@ section[id]{scroll-margin-top:78px}
   <p id="musica_cta"></p>
 <div class="cx-cards" id="cxVestido"></div>
 
-<div style="display:flex;justify-content:center;width:100%;margin-top:16px">
-  <a href="#presentes" class="btn btn-g btn-sm" style="border:none;opacity:.55;margin-top:2px" id="vestido_seta_presentes"></a>
-</div>
-  
 </div></section>
 
  
@@ -2421,12 +2407,7 @@ function applyConteudo(rows){
     }
   });
 
-  /* Espelha o conteúdo do hero_cta_terciario para o vestido_seta_presentes */
-  var heroSeta=document.getElementById('hero_cta_terciario');
-  var vestidoSeta=document.getElementById('vestido_seta_presentes');
-  if(heroSeta&&vestidoSeta&&heroSeta.innerHTML){
-    vestidoSeta.innerHTML=heroSeta.innerHTML;
-  }
+
 }
 
 /* ══════════════════════════════════════════
@@ -2868,14 +2849,15 @@ function tL(){
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
 }else{
-    /* ao fechar: scroll até a seta de navegação no fim da seção */
-setTimeout(function(){
-    var sec=document.getElementById('vestido');
-    if(!sec)return;
-    var secBottom=sec.getBoundingClientRect().bottom+window.scrollY;
-    var y=secBottom-window.innerHeight;
-    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
-  },860);
+    /* ao fechar: isca — título da seção Presentes aparece na base da tela */
+    setTimeout(function(){
+      var presentes=document.getElementById('presentes');
+      if(!presentes)return;
+      var presTop=presentes.getBoundingClientRect().top+window.scrollY;
+      /* posiciona para mostrar ~15% da seção presentes na base da tela */
+      var y=presTop-(window.innerHeight*0.85);
+      window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+    },860);
   }
     
 }
