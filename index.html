@@ -950,10 +950,6 @@ section[id]{scroll-margin-top:78px}
   box-shadow:0 0 0 2px rgba(15,23,32,.35);
 }
 
-/* Remove a antiga barra só-visual */
-.player-bar{ display:none; }
-.player-prog{ display:none; }
-
 /* Botão abrir versos — abaixo do player, fora das fotos */
 .lyr-invite-ext{
   display:flex;
@@ -1018,16 +1014,6 @@ section[id]{scroll-margin-top:78px}
 .vestido.lyr-aberta .lyr-invite-ext-btn span:first-child{
   opacity:.6;
 }
-
-/* ── Convite abrir versos — flutua sobre as fotos, sem moldura ── */
-/* lyr-invite agora é só âncora — o botão visível virou .lyr-invite-ext */
-.lyr-invite{
-  display:none;
-}
-.lyr-invite-verso{ display:none; }
-.lyr-invite-btn{ display:none; }
-.lyr-invite-btn-seta{ display:none; }
-.vestido.lyr-aberta .lyr-invite{ display:none; }
 
 /* ── Letra aberta — palco editorial, textura suave, leitura confortável ── */
 .lyr-box{
@@ -1175,18 +1161,6 @@ section[id]{scroll-margin-top:78px}
   .lyr-text{font-size:.96rem;line-height:1.88}
   .lyr-stage{padding:26px 16px 24px}
 }
-
-/* ── Caixinhas (mantém) ── */
-.chapeu-row{display:flex;gap:8px;margin-bottom:18px}
-.chapeu-btn{
-  width:40px;height:40px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.25rem;line-height:1;
-  background:var(--ag);border:1px solid rgba(212,160,74,.2);
-  cursor:pointer;transition:all .25s;
-  -webkit-tap-highlight-color:transparent;
-}
-.chapeu-btn:hover{background:rgba(212,160,74,.2);border-color:var(--a);transform:scale(1.1)}
 
 /* CAIXINHA CARDS — compactas, estreitas, valor ao lado, apoiar abaixo */
 .cx-cards{display:flex;flex-direction:column;gap:6px;margin-top:12px}
