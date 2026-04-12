@@ -1273,158 +1273,145 @@ section[id]{scroll-margin-top:78px}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
 /* ──────────── PRESENTES ──────────── */
-:root{
-  --pres-oceano:#2C6E8A;
-  --pres-oceano-claro:#5A9DB5;
-  --pres-areia:#C8A96E;
-  --pres-areia-clara:#E8D5A8;
-  --pres-areia-fundo:#F0DEB8;
-  --pres-madeira:#3D2B1F;
-  --pres-madeira-clara:#6B4A35;
-  --pres-texto-placa:#F5E8C8;
-}
+/* ──────────── PRESENTES ──────────── */
 
 .presentes{
   position:relative;
-  background:var(--pres-areia-fundo);
+  background:#c9e4f0;
+  background-image:url('');
+  background-size:cover;
+  background-position:center top;
+  background-attachment:scroll;
   padding:0 0 var(--pad);
   overflow:hidden;
 }
 
-/* ── Título placa madeira isolado no topo ── */
-.pres-placa-titulo{
-  width:100%;
-  background:linear-gradient(180deg,var(--pres-madeira) 0%,var(--pres-madeira-clara) 50%,var(--pres-madeira) 100%);
-  padding:22px 20px 18px;
-  text-align:center;
-  position:relative;
-  box-shadow:0 4px 18px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.2);
-  border-bottom:3px solid rgba(0,0,0,.25);
-  border-top:3px solid rgba(255,255,255,.08);
-}
-
-/* veios de madeira horizontais */
-.pres-placa-titulo::before{
+/* overlay leve para textos respirarem sobre o céu */
+.presentes::before{
   content:'';
   position:absolute;
   inset:0;
-  background:repeating-linear-gradient(
-    180deg,
-    transparent 0px,
-    transparent 8px,
-    rgba(0,0,0,.04) 8px,
-    rgba(0,0,0,.04) 9px
-  );
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.06) 30%,
+      rgba(255,255,255,.06) 70%,
+      rgba(255,255,255,.22) 100%);
   pointer-events:none;
+  z-index:0;
 }
 
-.pres-placa-titulo h2{
-  font-family:var(--fb);
-  font-weight:800;
-  font-size:clamp(1rem,5vw,1.5rem);
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--pres-texto-placa);
-  text-shadow:
-    1px 1px 0 rgba(0,0,0,.6),
-    0 0 12px rgba(200,169,110,.25);
+/* ── Título clicável — tipografia editorial Cormorant ── */
+.pres-titulo-link{
+  display:block;
+  text-align:center;
+  padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,28px);
   position:relative;
   z-index:1;
-  line-height:1.2;
-  margin:0;
-}
-
-/* ── Foto hero: ~55% da tela, esmaece em areia ── */
-.pres-hero{
-  width:100%;
-  position:relative;
-  overflow:hidden;
+  text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
   cursor:pointer;
-  max-height:58vh;
-}
-.pres-hero img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center 30%;
-  display:block;
-}
-/* Gradiente orgânico foto → areia */
-.pres-hero::after{
-  content:'';
-  position:absolute;
-  left:0;right:0;bottom:0;
-  height:55%;
-  background:linear-gradient(0deg,
-    var(--pres-areia-fundo) 0%,
-    rgba(240,222,184,.92) 18%,
-    rgba(240,222,184,.72) 36%,
-    rgba(240,222,184,.38) 58%,
-    rgba(240,222,184,.12) 78%,
-    transparent 100%);
-  pointer-events:none;
 }
 
-/* ── Bloco areia com texto introdução ── */
-.pres-areia{
+.pres-titulo-link h2{
+  font-family:var(--fh);
+  font-weight:600;
+  font-style:normal;
+  font-size:clamp(2rem,9vw,3.2rem);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--n);
+  line-height:1.1;
+  margin:0 auto;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.7),
+    0 2px 12px rgba(255,255,255,.4);
+  transition:color .25s ease, letter-spacing .25s ease;
+}
+
+.pres-titulo-link:hover h2,
+.pres-titulo-link:active h2{
+  color:var(--a);
+  letter-spacing:.22em;
+}
+
+.pres-titulo-link::after{
+  content:'↓';
+  display:block;
+  font-family:var(--fb);
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--a);
+  margin-top:10px;
+  opacity:.7;
+  transition:opacity .25s, transform .25s;
+}
+
+.pres-titulo-link:hover::after{
+  opacity:1;
+  transform:translateY(3px);
+}
+
+/* ── Foto polaroid centralizada ── */
+.pres-polaroid-wrap{
+  position:relative;
+  z-index:1;
+  width:72%;
+  max-width:300px;
+  margin:0 auto 32px;
+  cursor:pointer;
+}
+
+.pres-polaroid-wrap img{
   width:100%;
-  background:var(--pres-areia-fundo);
-  padding:4px 24px 28px;
+  aspect-ratio:3/4;
+  object-fit:cover;
+  object-position:center 20%;
+  display:block;
+  background:#fff;
+  padding:8px 8px 22px;
+  border-radius:3px;
+  box-shadow:0 18px 40px rgba(15,23,32,.22), 0 4px 12px rgba(15,23,32,.10);
+}
+
+/* ── Bloco texto introdução ── */
+.pres-intro{
+  width:100%;
+  max-width:var(--mw);
+  margin:0 auto;
+  padding:0 24px 24px;
   text-align:center;
   position:relative;
+  z-index:1;
 }
-.pres-areia .txt{
+.pres-intro .txt{
   color:var(--im);
   font-size:.86rem;
   margin-bottom:6px;
 }
-.pres-areia .txt:last-child{margin-bottom:0;}
+.pres-intro .txt:last-child{margin-bottom:0;}
 
-/* ── Placa grande única com 4 categorias ── */
-.pres-placa-cats{
-  margin:24px 16px 0;
-  background:linear-gradient(160deg,var(--pres-madeira) 0%,var(--pres-madeira-clara) 45%,var(--pres-madeira) 100%);
-  border-radius:12px;
-  padding:20px 16px 22px;
-  position:relative;
-  box-shadow:
-    0 8px 32px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(255,255,255,.10),
-    inset 0 -1px 0 rgba(0,0,0,.15);
-  border:2px solid rgba(0,0,0,.2);
-}
-
-/* veios de madeira */
-.pres-placa-cats::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  border-radius:10px;
-  background:repeating-linear-gradient(
-    175deg,
-    transparent 0px,
-    transparent 12px,
-    rgba(0,0,0,.03) 12px,
-    rgba(0,0,0,.03) 13px
-  );
-  pointer-events:none;
-}
-
-/* título da placa */
-.pres-placa-cats-titulo{
-  font-family:var(--fb);
-  font-weight:700;
-  font-size:.58rem;
-  letter-spacing:.3em;
-  text-transform:uppercase;
-  color:rgba(245,232,200,.5);
-  text-align:center;
-  margin-bottom:16px;
+/* ── Grid de categorias — "plaquinhas de viagem" ── */
+.pres-cats-wrap{
+  margin:0 16px;
   position:relative;
   z-index:1;
 }
 
-/* grid 2x2 dentro da placa */
+.pres-cats-label{
+  font-family:var(--fh);
+  font-weight:600;
+  font-size:.62rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--n);
+  text-align:center;
+  margin-bottom:12px;
+  opacity:.55;
+}
+
 .cat-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -1436,40 +1423,95 @@ section[id]{scroll-margin-top:78px}
 
 .cat-card{
   position:relative;
-  border-radius:8px;
+  border-radius:12px;
   overflow:hidden;
-  height:110px;
+  height:120px;
   cursor:pointer;
-  transition:all .25s;
+  transition:all .28s ease;
   -webkit-tap-highlight-color:transparent;
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 4px 12px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.06);
+  background:rgba(255,255,255,.62);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:
+    0 4px 16px rgba(15,23,32,.10),
+    inset 0 1px 0 rgba(255,255,255,.9);
 }
+
 .cat-card::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(0deg,rgba(15,23,32,.82),rgba(15,23,32,.2) 55%);
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.0) 40%,
+    rgba(255,255,255,.55) 100%
+  );
+  pointer-events:none;
 }
+
 .cat-card.on{
-  box-shadow:0 0 0 2px var(--al),0 4px 16px rgba(0,0,0,.3);
+  background:rgba(255,255,255,.85);
+  box-shadow:0 0 0 2px var(--a), 0 6px 20px rgba(212,160,74,.25);
+  border-color:var(--a);
 }
-.cat-card img{width:100%;height:100%;object-fit:cover;transition:transform .4s;filter:saturate(.85) brightness(.9);}
-.cat-card:hover img{transform:scale(1.06);filter:saturate(1) brightness(1);}
-.cat-lbl{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;z-index:1;}
+
+.cat-card:active{
+  transform:scale(.97);
+}
+
+@media(hover:hover){
+  .cat-card:hover{
+    background:rgba(255,255,255,.82);
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(15,23,32,.14), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+}
+
+.cat-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .4s ease;
+  filter:saturate(.9) brightness(.95);
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+
+.cat-card:hover img{transform:scale(1.05);filter:saturate(1.05) brightness(1);}
+
+.cat-lbl{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:10px 12px 9px;
+  z-index:2;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+
 .cat-nm{
-  font-family:var(--fb);
-  font-size:.72rem;
-  font-weight:700;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--pres-texto-placa);
-  text-shadow:1px 1px 0 rgba(0,0,0,.5);
+  font-family:var(--fh);
+  font-size:.82rem;
+  font-weight:600;
+  letter-spacing:.06em;
+  color:var(--n);
+  line-height:1.2;
 }
-.cat-rng{font-size:.54rem;color:var(--al);margin-top:2px;font-weight:600;}
+
+.cat-rng{
+  font-size:.54rem;
+  color:var(--a);
+  margin-top:1px;
+  font-weight:700;
+  letter-spacing:.04em;
+}
 
 .sub-panel{display:none;margin-bottom:10px}
 .sub-panel.on{display:block}
 
-/* Conteúdo após a placa — padding normal */
+/* Conteúdo após as categorias */
 .pres-body{
   max-width:var(--mw);
   margin:0 auto;
@@ -1479,7 +1521,7 @@ section[id]{scroll-margin-top:78px}
 }
 .pres-body .txt{color:var(--im)}
 
-#presentes_categorias_titulo{display:none!important;}/* título agora é na placa */
+#presentes_categorias_titulo{display:none!important;}
 
 /* Cards de presente individuais */
 .g-card{
@@ -1487,18 +1529,20 @@ section[id]{scroll-margin-top:78px}
   align-items:center;
   gap:13px;
   padding:14px 15px;
-  background:#fff;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
   border-radius:var(--r);
-  border:1px solid var(--st);
+  border:1px solid rgba(255,255,255,.9);
   margin-bottom:6px;
   cursor:pointer;
   transition:all .22s;
   text-decoration:none;
   color:inherit;
   -webkit-tap-highlight-color:transparent;
-  box-shadow:0 4px 12px rgba(15,23,32,.06);
+  box-shadow:0 4px 12px rgba(15,23,32,.07);
 }
-.g-card:hover{border-color:var(--a);transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,32,.10)}
+.g-card:hover{border-color:var(--a);transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,32,.12)}
 .g-ico{font-size:1.4rem;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:11px;flex-shrink:0}
 .g-inf{flex:1;min-width:0}
 .g-nm{font-family:var(--fh);font-size:.88rem;font-weight:500}
@@ -1509,9 +1553,9 @@ section[id]{scroll-margin-top:78px}
 .livre{
   text-align:center;
   padding:18px;
-  background:rgba(255,255,255,.55);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  background:rgba(255,255,255,.62);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
   border:1px dashed rgba(212,160,74,.5);
   border-radius:var(--r);
   margin-top:14px;
@@ -1886,24 +1930,25 @@ section[id]{scroll-margin-top:78px}
   
   
 <!-- PRESENTES -->
+<!-- PRESENTES -->
 <section class="presentes" id="presentes">
-  <!-- Título estilo placa madeira isolado no topo -->
-  <div class="pres-placa-titulo">
+  <!-- Título clicável editorial -->
+  <a href="#presentes" class="pres-titulo-link" onclick="smoothScrollTo('presentes');return false;">
     <h2 id="presentes_titulo"></h2>
-  </div>
-  <!-- Foto hero ~55% da tela, esmaece em areia -->
-  <div class="pres-hero" onclick="openCarousel('presentes',0)">
+  </a>
+  <!-- Foto polaroid centralizada -->
+  <div class="pres-polaroid-wrap" onclick="openCarousel('presentes',0)">
     <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
   </div>
-  <!-- Bloco areia com texto de introdução -->
-  <div class="pres-areia">
+  <!-- Texto de introdução -->
+  <div class="pres-intro">
     <p class="txt" id="presentes_subtitulo"></p>
     <p class="txt" style="font-size:.78rem;color:var(--is)" id="presentes_texto_apoio"></p>
     <p class="txt" style="font-size:.76rem;color:var(--is)" id="presentes_pix_texto"></p>
   </div>
-  <!-- Placa grande única com 4 categorias -->
-  <div class="pres-placa-cats">
-    <div class="pres-placa-cats-titulo">Escolha uma categoria</div>
+  <!-- Grid de categorias -->
+  <div class="pres-cats-wrap">
+    <div class="pres-cats-label">Escolha uma categoria</div>
     <div class="cat-grid" id="cG"></div>
   </div>
   <!-- Painéis de presentes por categoria -->
@@ -2315,7 +2360,13 @@ styleTag.textContent=
       '.lyr-invite::before{background-image:url("'+u+'") !important;background-repeat:repeat !important;background-size:55% auto !important;}'+
       '.lyr-stage::before,.lyr-stage::after{background-image:url("'+u+'") !important;}'+
       '.mo-box--textura::before{background-image:url("'+u+'") !important;}';
-    if(!styleTag.parentNode)document.head.appendChild(styleTag);
+      if(!styleTag.parentNode)document.head.appendChild(styleTag);
+  }
+
+  /* Textura de fundo da seção Presentes — céu/nuvens */
+  if(MIDIAS.textura_presente){
+    var presSec=document.querySelector('.presentes');
+    if(presSec)presSec.style.backgroundImage='url("'+MIDIAS.textura_presente+'")';
   }
 
   /* Category images */
