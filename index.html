@@ -1355,7 +1355,7 @@ color:var(--a);
   position:relative;
   z-index:1;
   width:100%;
-  margin:0 0 28px;
+  margin:0 0 10px;
   cursor:pointer;
   background:#3f8fc7;
   overflow:hidden;
@@ -1391,14 +1391,11 @@ color:var(--a);
   
 .pres-hero-overlay{
   position:absolute;
-  top:0;
-  left:0;
-  right:0;
+  inset:0;
   width:100%;
-  padding:clamp(20px,6vw,36px) clamp(16px,5vw,28px) 0;
+  padding:clamp(14px,4vw,24px) clamp(16px,5vw,28px) clamp(18px,5vw,26px);
   background:none;
   pointer-events:none;
-  text-align:center;
   z-index:4;
 }
 
@@ -1411,18 +1408,49 @@ color:var(--a);
   text-align:center;
   color:#fff;
   text-shadow:0 1px 2px rgba(15,23,32,.18);
-
   margin:0 auto;
   letter-spacing:-.01em;
   max-width:none;
+  position:absolute;
+  top:clamp(10px,3vw,18px);
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 32px);
+}
+
+#presentes_subtitulo{
+  position:absolute;
+  left:clamp(16px,5vw,28px);
+  right:clamp(16px,5vw,28px);
+  bottom:15%;
+  margin:0;
+  font-family:var(--fh);
+  font-weight:500;
+  font-style:normal;
+  font-size:clamp(1.05rem,4.5vw,1.45rem);
+  line-height:1.12;
+  letter-spacing:-.01em;
+  text-align:left;
+  color:var(--im);
+  text-shadow:none;
+  max-width:68%;
 }
 
 @media(min-width:520px){
   .pres-hero{
-    margin:0 0 32px;
+    margin:0 0 12px;
   }
   #presentes_titulo{
-    font-size:clamp(2.6rem,5vw,3.4rem);
+    font-size:clamp(2.8rem,5vw,4rem);
+    top:clamp(12px,2.4vw,22px);
+    width:calc(100% - 56px);
+  }
+  #presentes_subtitulo{
+    left:clamp(24px,4vw,36px);
+    right:auto;
+    bottom:15%;
+    max-width:42%;
+    font-size:clamp(1.15rem,2vw,1.5rem);
   }
 }
 
@@ -1431,7 +1459,7 @@ color:var(--a);
   width:100%;
   max-width:var(--mw);
   margin:0 auto;
-  padding:0 24px 24px;
+  padding:0 24px 10px;
   text-align:center;
   position:relative;
   z-index:1;
@@ -1996,8 +2024,7 @@ color:var(--a);
 </div></section>
   
 
- 
-  <!-- PRESENTES -->
+ <!-- PRESENTES -->
 <section class="presentes" id="presentes">
   
   <!-- Hero da seção presentes -->
@@ -2007,13 +2034,13 @@ color:var(--a);
     </div>
     <div class="pres-hero-overlay">
       <h2 id="presentes_titulo"></h2>
+      <p class="txt" id="presentes_subtitulo"></p>
     </div>
   </div>
 
   
   <!-- Texto de introdução -->
   <div class="pres-intro">
-    <p class="txt" id="presentes_subtitulo" style="font-size:0.97rem;font-weight:700;"></p>
     <p class="txt" style="font-size:.78rem;color:var(--is)" id="presentes_texto_apoio"></p>
     <p class="txt" style="font-size:.76rem;color:var(--is)" id="presentes_pix_texto"></p>
   </div>
@@ -2024,6 +2051,7 @@ color:var(--a);
       <div class="cat-grid" id="cG"></div>
     </div>
   </div>
+ 
   
   <!-- Painéis de presentes por categoria -->
   <div class="pres-body">
