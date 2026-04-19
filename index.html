@@ -1330,38 +1330,9 @@ color:var(--a);
 /* ──────────── PRESENTES ──────────── */
 .presentes{
   position:relative;
-  background:linear-gradient(180deg,#FAF4E8 0%,#F5EBDD 60%,#EFE3D0 100%);
+  background:#FAF4E8;
   padding:0 0 var(--pad);
   overflow:hidden;
-}
-
-/* camada da textura — semi-transparente e levemente borrada */
-.presentes::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background-image:url('');
-  background-size:auto;
-  background-repeat:repeat;
-  background-position:top left;
-  opacity:.12;
-  pointer-events:none;
-  z-index:0;
-}
-
-/* overlay leve para textos respirarem */
-.presentes::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(180deg,
-      rgba(91,168,212,.12) 0%,
-      rgba(255,255,255,.04) 30%,
-      rgba(255,255,255,.04) 70%,
-      rgba(91,168,212,.14) 100%);
-  pointer-events:none;
-  z-index:0;
 }
 
 /* ── Hero de entrada dos presentes ── */
@@ -2710,14 +2681,8 @@ var au=document.getElementById('bgMusic');
       '.mo-box--textura::before{background-image:url("'+u+'") !important;}';
     if(!styleTag.parentNode)document.head.appendChild(styleTag);
   }
-  if(MIDIAS.textura_presente){
-    var presStyle=document.getElementById('dynStyle')||document.createElement('style');
-    presStyle.id='dynStyle';
-    var u2=MIDIAS.textura_presente;
-    presStyle.textContent=(presStyle.textContent||'')+
-      '.presentes::after{background-image:url("'+u2+'") !important;}';
-    if(!presStyle.parentNode)document.head.appendChild(presStyle);
-  }
+
+  
   CAT_IMGS={
     lua_de_mel:MIDIAS.cat_img_lua_de_mel||'',
     casa_nova:MIDIAS.cat_img_casa_nova||'',
