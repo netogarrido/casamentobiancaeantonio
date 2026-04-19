@@ -111,8 +111,8 @@ section[id]{scroll-margin-top:78px}
 
   /* Campo de nome no popup */
 .popup-nome-wrap{
-  margin-bottom:18px;
-  text-align:left;
+  margin-bottom:8px;
+  text-align:center;
 }
 .popup-nome-label{
   display:block;
@@ -132,6 +132,7 @@ section[id]{scroll-margin-top:78px}
   font-size:.92rem;
   color:#fff;
   font-family:var(--fb);
+  text-align:center;
   transition:border-color .25s, background .25s;
   -webkit-appearance:none;
 }
@@ -156,6 +157,27 @@ section[id]{scroll-margin-top:78px}
 }
 .popup-nome-erro.vis{
   display:block;
+}
+.popup-nome-preview{
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:300;
+  font-size:1.45rem;
+  color:var(--al);
+  text-align:center;
+  min-height:0;
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:max-height .35s ease, opacity .3s ease, margin .3s ease;
+  margin-top:0;
+  letter-spacing:.01em;
+  text-shadow:0 1px 10px rgba(0,0,0,.3);
+}
+.popup-nome-preview.vis{
+  max-height:48px;
+  opacity:1;
+  margin-top:8px;
 }
 @keyframes shake{
   0%,100%{transform:translateX(0)}
@@ -1728,7 +1750,9 @@ section[id]{scroll-margin-top:78px}
       autocorrect="off"
       spellcheck="false"
       placeholder="Seu nome completo"
+      oninput="atualizarPreviewNome(this.value)"
     >
+    <div class="popup-nome-preview" id="popupNomePreview"></div>
     <div class="popup-nome-erro" id="popupNomeErro">Por favor, escreva seu nome antes de continuar</div>
   </div>
   <p id="popup_texto"></p>
@@ -2762,6 +2786,19 @@ function goToHeroStart(){
   });
 }
 
+  function atualizarPreviewNome(val){
+  var preview=document.getElementById('popupNomePreview');
+  if(!preview)return;
+  var nome=(val||'').trim();
+  if(nome){
+    preview.textContent=nome+',';
+    preview.classList.add('vis');
+  }else{
+    preview.textContent='';
+    preview.classList.remove('vis');
+  }
+}
+  
 /* ── Validação do nome no popup ── */
 function getNomePopup(){
   return(document.getElementById('popupNomeInput').value||'').trim();
@@ -3487,6 +3524,7 @@ document.addEventListener('DOMContentLoaded',function(){
   if(nomeSalvo){
     var inp=document.getElementById('popupNomeInput');
     if(inp)inp.value=nomeSalvo;
+    atualizarPreviewNome(nomeSalvo);
     var rsvpNome=document.querySelector('#rF input[name="nome"]');
     if(rsvpNome&&!rsvpNome.value)rsvpNome.value=nomeSalvo;
   }
