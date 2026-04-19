@@ -1418,11 +1418,12 @@ color:var(--a);
   width:calc(100% - 32px);
 }
 
-#presentes_subtitulo{
-  position:absolute;
-  left:clamp(16px,5vw,28px);
-  right:clamp(16px,5vw,28px);
-  bottom:15%;
+.pres-grid-header{
+  width:100%;
+  padding:16px 12px 10px;
+}
+
+.pres-grid-header #presentes_subtitulo{
   margin:0;
   font-family:var(--fh);
   font-weight:500;
@@ -1432,8 +1433,7 @@ color:var(--a);
   letter-spacing:-.01em;
   text-align:left;
   color:var(--im);
-  text-shadow:none;
-  max-width:68%;
+  max-width:100%;
 }
 
 @media(min-width:520px){
@@ -2032,10 +2032,9 @@ color:var(--a);
     <div class="pres-polaroid-wrap">
       <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
     </div>
-    <div class="pres-hero-overlay">
-      <h2 id="presentes_titulo"></h2>
-      <p class="txt" id="presentes_subtitulo"></p>
-    </div>
+  <div class="pres-hero-overlay">
+  <h2 id="presentes_titulo"></h2>
+</div>
   </div>
 
   
@@ -2046,11 +2045,16 @@ color:var(--a);
   </div>
 
 <!-- Grid de categorias -->
-  <div class="pres-cats-wrap">
-    <div class="pres-cats-panel">
-      <div class="cat-grid" id="cG"></div>
+<div class="pres-cats-wrap">
+  <div class="pres-cats-panel">
+    
+    <div class="pres-grid-header">
+      <p id="presentes_subtitulo"></p>
     </div>
+
+    <div class="cat-grid" id="cG"></div>
   </div>
+</div>
  
   
   <!-- Painéis de presentes por categoria -->
