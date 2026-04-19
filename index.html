@@ -2211,6 +2211,14 @@ function getSessaoId(){
   }catch(e){return's_anonimo';}
 }
 
+function gerarNovaSessao(){
+  try{
+    var sid='s_'+Math.random().toString(36).substr(2,9)+'_'+Date.now().toString(36);
+    sessionStorage.setItem('sessao_id',sid);
+    return sid;
+  }catch(e){return's_anonimo';}
+}
+
 function getNomeSalvo(){
   try{return localStorage.getItem('convidado_nome')||'';}catch(e){return'';}
 }
@@ -3447,6 +3455,7 @@ function initVestidoSwap(){
 ══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded',function(){
   if('scrollRestoration' in history)history.scrollRestoration='manual';
+  gerarNovaSessao();
   goToHeroStart();
   loadAll();
   var nomeSalvo=getNomeSalvo();
