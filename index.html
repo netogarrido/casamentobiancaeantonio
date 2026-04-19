@@ -1974,18 +1974,21 @@ section[id]{scroll-margin-top:78px}
       <div class="fg"><label class="fl" id="rsvp_campo_adultos"></label><input class="fi" name="adultos" type="number" min="1" value="1"></div>
       <div class="fg"><label class="fl" id="rsvp_campo_criancas"></label><input class="fi" name="criancas" type="number" min="0" value="0"></div>
     </div>
-    <div class="fg">
-      <label class="fl" id="rsvp_campo_participacao"></label>
-      <select class="fsel" name="participacao" required>
-        <option value="">Selecione...</option>
-        <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna"></option>
-        <option value="hospedagem_outro" id="rsvp_opcao_hospedagem_outro"></option>
-        <option value="dayuse" id="rsvp_opcao_dayuse"></option>
-        <option value="festa" id="rsvp_opcao_festa"></option>
-        <option value="nao_sei" id="rsvp_opcao_nao_sei"></option>
-      </select>
-      <p style="font-size:.66rem;color:rgba(250,244,232,.3);margin-top:4px" id="rsvp_dayuse_aviso"></p>
-    </div>
+   <div class="fg">
+  <label class="fl" id="rsvp_campo_participacao"></label>
+  <select class="fsel" name="participacao" required id="rsvp_select_participacao" onchange="onParticiplacaoChange(this.value)">
+    <option value="">Selecione...</option>
+    <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna"></option>
+    <option value="hospedagem_outro" id="rsvp_opcao_hospedagem_outro"></option>
+    <option value="dayuse" id="rsvp_opcao_dayuse"></option>
+    <option value="festa" id="rsvp_opcao_festa"></option>
+  </select>
+  <p style="font-size:.66rem;color:rgba(250,244,232,.3);margin-top:4px" id="rsvp_dayuse_aviso"></p>
+</div>
+<div class="fg" id="rsvp_nome_hotel_wrap" style="display:none">
+  <label class="fl">Nome do hotel</label>
+  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="Nome do hotel onde vai se hospedar">
+</div>
     <div class="fg"><label class="fl" id="rsvp_campo_restricoes"></label><textarea class="fta" name="restricoes" rows="2" id="rsvp_restricoes_ta"></textarea></div>
     <div class="fg"><label class="fl" id="rsvp_campo_sugestao_musica_label">Sugira uma música para a banda</label><input class="fi" name="sugestao_musica" id="rsvp_sug_input"></div>
     <div class="fg"><label class="fl" id="rsvp_campo_msg_publica"></label><textarea class="fta" name="mensagem" rows="2" id="rsvp_msg_ta"></textarea></div>
@@ -3064,30 +3067,33 @@ function sSug(inputId){
 }
 
 /* ══════════════════════════════════════════
+   RSVP — CAMPO HOTEL DINÂMICO
+══════════════════════════════════════════ */
+function onParticiplacaoChange(val){
+  var wrap=document.getElementById('rsvp_nome_hotel_wrap');
+  var input=document.getElementById('rsvp_nome_hotel_input');
+  if(val==='hospedagem_santanna'){
+    wrap.style.display='block';
+    input.value="Sant'Anna Fazenda Hotel — Amparo/SP";
+    input.readOnly=true;
+    input.style.opacity='.55';
+  }else if(val==='hospedagem_outro'){
+    wrap.style.display='block';
+    input.value='';
+    input.readOnly=false;
+    input.style.opacity='1';
+  }else{
+    wrap.style.display='none';
+    input.value='';
+    input.readOnly=false;
+    input.style.opacity='1';
+  }
+}
+
+/* ══════════════════════════════════════════
    RSVP SUBMIT
 ══════════════════════════════════════════ */
 function sR(e){
-  e.preventDefault();
-  var fd=new FormData(e.target);
-  var d={type:'rsvp'};
-  fd.forEach(function(v,k){d[k]=v;});
-  if(!d.nome)d.nome=getNomeSalvo();
-  var sug=(d.sugestao_musica||'').trim();
-  var msg=(d.mensagem||'').trim();
-  delete d.sugestao_musica;
-  delete d.mensagem;
-  trackEvento('rsvp_enviou',d.participacao||'');
-  enviar(d);
-  if(sug){
-    trackEvento('sugestao_musica_enviou',sug);
-    enviar({type:'sugestao_musica',musica:sug});
-  }
-  if(msg){
-    enviar({type:'presente',presente:'Mensagem via RSVP',valor:0,mensagem:msg});
-  }
-  document.getElementById('rF').style.display='none';
-  document.getElementById('rO').classList.add('on');
-}
 
 /* ══════════════════════════════════════════
    COUNTDOWN
