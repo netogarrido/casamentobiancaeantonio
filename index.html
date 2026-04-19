@@ -545,9 +545,8 @@ section[id]{scroll-margin-top:78px}
 @media(min-width:520px){.hero-ctas{align-items:flex-start}}
 .hero-cd-lbl{font-size:.50rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(250,244,232,.25);margin-bottom:4px}
 
-/* seta sempre no final, colada na base */
-#hero_cta_terciario,
-#vestido_seta_presentes{
+/* seta da entrada do hero — mantém redonda */
+#hero_cta_terciario{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -565,12 +564,38 @@ section[id]{scroll-margin-top:78px}
   opacity:.7;
 }
 
+/* pílula "nossa lista ↓" do fim do Vestido */
 #vestido_seta_presentes{
-  background:none;
-  border-radius:0;
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 22px 12px 26px;
+  background:transparent;
+  border:1.2px solid var(--a);
+  border-radius:999px;
+  color:var(--a);
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:1.15rem;
+  letter-spacing:.02em;
+  text-transform:none;
+  line-height:1;
   box-shadow:none;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
+  animation:setaBounce 1.6s ease-in-out infinite;
+  transition:background .25s ease, color .25s ease;
+}
+#vestido_seta_presentes::after{
+  content:'↓';
+  font-size:1.35rem;
+  line-height:1;
+  display:inline-block;
+}
+#vestido_seta_presentes:hover{
+  background:var(--a);
+  color:var(--p);
 }
 
 /* ──────────── VESTIDO ──────────── */
@@ -1332,83 +1357,74 @@ color:var(--a);
   z-index:0;
 }
 
+
 /* ── Hero de entrada dos presentes ── */
 .pres-hero{
   position:relative;
   z-index:1;
   width:100%;
-  margin:0 0 22px;
+  margin:0 0 28px;
   cursor:pointer;
+  background:#3f8fc7; /* azul do céu da foto — preenche sobras */
 }
 
 .pres-polaroid-wrap{
   position:relative;
   z-index:1;
   width:100%;
-  max-width:none;
-  margin:0;
+  max-width:640px;
+  margin:0 auto;
+  aspect-ratio:4/5;
+  overflow:hidden;
 }
 
 .pres-polaroid-wrap img{
   width:100%;
-  height:min(72vw,420px);
-  object-fit:cover;
+  height:100%;
+  object-fit:contain;
   object-position:center center;
   display:block;
-  background:transparent;
-  padding:0;
-  border-radius:0;
-  box-shadow:none;
+  background:#3f8fc7;
 }
 
 .pres-hero-overlay{
-  position:absolute;
-  inset:0;
-  z-index:2;
-  display:flex;
-align-items:flex-end;
-justify-content:flex-start;
-text-align:left;
-  padding:clamp(26px,8vw,42px) 20px 20px;
-  background:linear-gradient(180deg,rgba(15,23,32,.38) 0%,rgba(15,23,32,.10) 38%,rgba(15,23,32,0) 70%);
-  pointer-events:none;
+  position:static;
+  inset:auto;
+  padding:22px 20px 0;
+  background:none;
+  pointer-events:auto;
+  text-align:center;
+  display:block;
 }
 
 #presentes_titulo{
   font-family:var(--fh);
-font-weight:400;
-letter-spacing:-0.01em;
-  font-size:clamp(2.1rem,9vw,3.4rem);
+  font-style:italic;
+  font-weight:400;
+  letter-spacing:-0.01em;
+  font-size:clamp(2.6rem,10vw,3.8rem);
   line-height:1.02;
-  color:var(--p);
-  text-shadow:0 2px 18px rgba(0,0,0,.28);
-  max-width:8ch;
+  color:var(--n);
+  text-shadow:none;
+  max-width:none;
   margin:0;
+  text-align:center;
 }
 
 @media(min-width:520px){
   .pres-hero{
-    max-width:520px;
-    margin:0 auto 26px;
+    max-width:640px;
+    margin:0 auto 32px;
     border-radius:22px;
     overflow:hidden;
     box-shadow:0 16px 44px rgba(15,23,32,.16), 0 4px 14px rgba(15,23,32,.10);
   }
-
-  .pres-polaroid-wrap img{
-    height:360px;
-    border-radius:0;
-  }
-
-  .pres-hero-overlay{
-    padding:34px 28px 20px;
-  }
-
-  #presentes_titulo{
+  .pres-polaroid-wrap{
     max-width:none;
-    font-size:clamp(2.2rem,5.5vw,3.3rem);
+    aspect-ratio:4/5;
   }
 }
+  
 
 /* ── Bloco texto introdução ── */
 .pres-intro{
@@ -1974,7 +1990,7 @@ letter-spacing:-0.01em;
 <div class="cx-cards" id="cxVestido"></div>
 
 <div style="display:flex;justify-content:center;padding:8px 0 32px">
-  <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')">↓</a>
+  <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')"><span id="vestido_seta_presentes_txt"></span></a>
 </div>
 
 </div></section>
@@ -2749,8 +2765,12 @@ function applyConteudo(rows){
     else if(tag==='OPTION'){el.textContent=cleaned;}
     else if(key==='nav_logo'){el.innerHTML=cleaned.replace(/\n/g,'<br>');}
     else{el.innerHTML=cleaned.replace(/\n/g,'<br>');}
-  });
+});
+  var pt=document.getElementById('presentes_titulo');
+  var ps=document.getElementById('vestido_seta_presentes_txt');
+  if(pt&&ps)ps.textContent=pt.textContent;
 }
+    
 
 /* ══════════════════════════════════════════
    APPLY PRESENTES
