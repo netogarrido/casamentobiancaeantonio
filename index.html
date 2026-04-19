@@ -1408,17 +1408,19 @@ color:var(--a);
 
 #presentes_titulo{
   font-family:var(--fh);
-  font-style:italic;
-  font-weight:400;
-  letter-spacing:-0.005em;
-  font-size:clamp(2.4rem,9vw,3.6rem);
-  line-height:1;
+  font-weight:500;
+  font-style:normal;
+  font-size:clamp(2.8rem,10vw,4rem);
+  line-height:1.08;
+  letter-spacing:-.01em;
   color:#fff;
   text-shadow:0 2px 16px rgba(15,23,32,.18);
   max-width:none;
-  margin:0;
-  text-align:right;
+  margin:0 auto;
+  text-align:center;
+  white-space:nowrap;
 }
+#presentes_titulo i{font-style:italic;color:var(--al)}
 
 @media(min-width:520px){
   .pres-hero{
@@ -1430,9 +1432,6 @@ color:var(--a);
   .pres-hero-overlay{
     padding:36px 32px 0 0;
     width:55%;
-  }
-  #presentes_titulo{
-    font-size:clamp(2.6rem,5vw,3.4rem);
   }
 }
 
