@@ -2198,12 +2198,39 @@ function lockScroll(){
   _scrollY=window.scrollY;
   document.body.style.top='-'+_scrollY+'px';
   document.body.classList.add('scroll-locked');
+  try{sessionStorage.setItem('_scrollY_lock',String(_scrollY));}catch(e){}
 }
 function unlockScroll(){
   document.body.classList.remove('scroll-locked');
   document.body.style.top='';
   window.scrollTo(0,_scrollY);
+  try{sessionStorage.removeItem('_scrollY_lock');}catch(e){}
 }
+/* Recupera posição se o usuário voltar de outra aba/app com o body ainda travado */
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){
+    var travado=document.body.classList.contains('scroll-locked');
+    if(travado){
+      unlockScroll();
+      return;
+    }
+    /* Mesmo sem o body travado, iOS às vezes reseta o scroll ao voltar */
+    try{
+      var saved=sessionStorage.getItem('_scrollY_lock');
+      if(saved){
+        var y=parseInt(saved,10);
+        if(!isNaN(y)&&y>0){
+          document.documentElement.style.scrollBehavior='auto';
+          window.scrollTo(0,y);
+          requestAnimationFrame(function(){
+            document.documentElement.style.scrollBehavior='';
+          });
+          sessionStorage.removeItem('_scrollY_lock');
+        }
+      }
+    }catch(e){}
+  }
+});
 
 /* ══════════════════════════════════════════
    CONFIG
@@ -3023,19 +3050,22 @@ function tL(){
   }else{
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
-    /* trava o scroll imediatamente para evitar o salto durante o colapso */
+    /* Captura a posição-alvo ANTES do colapso, enquanto o DOM ainda está expandido */
+    var cxFora=document.getElementById('cxVestido');
+    var alvo=cxFora||document.getElementById('vestido');
+    var targetY=alvo
+      ? alvo.getBoundingClientRect().top+window.scrollY-120
+      : window.scrollY;
+    /* Desliga scroll-behavior para o salto não ser animado */
     document.documentElement.style.scrollBehavior='auto';
-    var scrollTravado=window.scrollY;
-    window.scrollTo(0,scrollTravado);
-    setTimeout(function(){
-      document.documentElement.style.scrollBehavior='';
-      var vestido=document.getElementById('vestido');
-      if(!vestido)return;
-      var secBottom=vestido.getBoundingClientRect().bottom+window.scrollY;
-      var viewH=window.innerHeight;
-      var y=secBottom-viewH;
-      window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
-    },860);
+    /* Ancora imediatamente no alvo — o colapso acontece com o viewport já posicionado */
+    window.scrollTo(0, targetY);
+    /* Religa o smooth depois que o reflow terminou */
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        document.documentElement.style.scrollBehavior='';
+      });
+    });
   }
 }
 
