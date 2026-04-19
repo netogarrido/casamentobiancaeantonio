@@ -1330,26 +1330,82 @@ section[id]{scroll-margin-top:78px}
   z-index:0;
 }
 
-/* ── Foto polaroid centralizada ── */
+/* ── Hero de entrada dos presentes ── */
+.pres-hero{
+  position:relative;
+  z-index:1;
+  width:100%;
+  margin:0 0 22px;
+  cursor:pointer;
+}
+
 .pres-polaroid-wrap{
   position:relative;
   z-index:1;
-  width:82%;
-  max-width:400px;
-  margin:0 auto 28px;
-  cursor:pointer;
+  width:100%;
+  max-width:none;
+  margin:0;
 }
 
 .pres-polaroid-wrap img{
   width:100%;
-  aspect-ratio:auto;
+  height:min(72vw,420px);
   object-fit:cover;
   object-position:center center;
   display:block;
   background:transparent;
   padding:0;
-  border-radius:18px;
-  box-shadow:0 14px 36px rgba(15,23,32,.18), 0 3px 10px rgba(15,23,32,.08);
+  border-radius:0;
+  box-shadow:none;
+}
+
+.pres-hero-overlay{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  text-align:center;
+  padding:clamp(26px,8vw,42px) 20px 20px;
+  background:linear-gradient(180deg,rgba(15,23,32,.38) 0%,rgba(15,23,32,.10) 38%,rgba(15,23,32,0) 70%);
+  pointer-events:none;
+}
+
+#presentes_titulo{
+  font-family:var(--fh);
+  font-weight:600;
+  font-style:italic;
+  font-size:clamp(2.1rem,9vw,3.4rem);
+  line-height:1.02;
+  color:var(--p);
+  text-shadow:0 2px 18px rgba(0,0,0,.28);
+  max-width:8ch;
+  margin:0;
+}
+
+@media(min-width:520px){
+  .pres-hero{
+    max-width:520px;
+    margin:0 auto 26px;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 16px 44px rgba(15,23,32,.16), 0 4px 14px rgba(15,23,32,.10);
+  }
+
+  .pres-polaroid-wrap img{
+    height:360px;
+    border-radius:0;
+  }
+
+  .pres-hero-overlay{
+    padding:34px 28px 20px;
+  }
+
+  #presentes_titulo{
+    max-width:none;
+    font-size:clamp(2.2rem,5.5vw,3.3rem);
+  }
 }
 
 /* ── Bloco texto introdução ── */
@@ -1924,19 +1980,20 @@ section[id]{scroll-margin-top:78px}
   
 
  
-  
-<!-- PRESENTES -->
+  <!-- PRESENTES -->
 <section class="presentes" id="presentes">
   
-<!-- Título da seção presentes -->
-  <div style="padding:clamp(32px,8vw,52px) 20px clamp(16px,4vw,24px);text-align:center;position:relative;z-index:1;">
- <h2 id="presentes_titulo" style="font-family:var(--fh);font-weight:600;font-style:italic;font-size:clamp(2rem,7vw,3.4rem);line-height:1.08;color:#5C3D2A;"></h2>
+  <!-- Hero da seção presentes -->
+  <div class="pres-hero" onclick="openCarousel('presentes',0)">
+    <div class="pres-polaroid-wrap">
+      <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
+    </div>
+    <div class="pres-hero-overlay">
+      <h2 id="presentes_titulo"></h2>
+    </div>
   </div>
+
   
-  <!-- Foto polaroid centralizada -->
-  <div class="pres-polaroid-wrap" onclick="openCarousel('presentes',0)">
-    <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
-  </div>
   <!-- Texto de introdução -->
   <div class="pres-intro">
     <p class="txt" id="presentes_subtitulo" style="font-size:0.97rem;font-weight:700;"></p>
