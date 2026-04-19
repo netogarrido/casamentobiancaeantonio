@@ -2308,21 +2308,43 @@ function initSecaoObserver(){
 }
 
 /* ══════════════════════════════════════════
-   INATIVIDADE — 15 MINUTOS
-   Após 15min sem interação, encerra sessão
-   e registra. Se voltar, nova sessão.
+   INATIVIDADE — pausa o cronômetro após 5min
+   Retoma no primeiro scroll/clique/toque.
 ══════════════════════════════════════════ */
 var _inativTimer=null;
 var _sessaoEncerrada=false;
-var INATIV_MS=15*60*1000;
+var INATIV_MS=5*60*1000;   /* 5 minutos */
+
+/* acumulador de tempo ativo */
+var _tempoAtivoSeg=0;
+var _periodoAtivoInicio=Date.now();
+var _periodoAtivo=true;
+
+function _pausarCronometro(){
+  if(!_periodoAtivo)return;
+  _tempoAtivoSeg+=Math.round((Date.now()-_periodoAtivoInicio)/1000);
+  _periodoAtivo=false;
+}
+
+function _retomarCronometro(){
+  if(_periodoAtivo)return;
+  _periodoAtivoInicio=Date.now();
+  _periodoAtivo=true;
+}
+
+function getTempoAtivoSeg(){
+  if(_periodoAtivo){
+    return _tempoAtivoSeg+Math.round((Date.now()-_periodoAtivoInicio)/1000);
+  }
+  return _tempoAtivoSeg;
+}
 
 function resetInatividade(){
   if(_sessaoEncerrada)return;
+  _retomarCronometro();
   clearTimeout(_inativTimer);
   _inativTimer=setTimeout(function(){
-    _sessaoEncerrada=true;
-    trackSecaoFim();
-    registrarSaida('inatividade');
+    _pausarCronometro();
   },INATIV_MS);
 }
 
@@ -2332,7 +2354,6 @@ function initInatividade(){
   });
   resetInatividade();
 }
-
 /* ══════════════════════════════════════════
    RASTREAMENTO DE SCROLL E SEÇÕES VISTAS
 ══════════════════════════════════════════ */
@@ -2359,8 +2380,6 @@ window.addEventListener('scroll',function(){
 /* ══════════════════════════════════════════
    REGISTRAR ENTRADA (analytics)
 ══════════════════════════════════════════ */
-var _visitaInicio=Date.now();
-
 function registrarEntrada(nome,comMusica){
   enviar({
     type:'analytics',
@@ -2391,7 +2410,8 @@ function registrarSaida(motivo){
     _audioSegTocando+=Math.round((Date.now()-_audioUltimoPlay)/1000);
     _audioUltimoPlay=null;
   }
-  var tempo=Math.round((Date.now()-_visitaInicio)/1000);
+  _pausarCronometro();
+  var tempo=getTempoAtivoSeg();
   /* % da música ouvida — duração real do áudio se disponível */
   var duracaoAudio=au&&au.duration&&!isNaN(au.duration)?Math.round(au.duration):0;
   var audioPct=duracaoAudio>0?Math.min(100,Math.round((_audioSegTocando/duracaoAudio)*100)):0;
