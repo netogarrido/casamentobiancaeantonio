@@ -3107,34 +3107,47 @@ function tL(){
   var sec=document.getElementById('vestido');
   if(!b)return;
   var willOpen=!b.classList.contains('open');
-  b.classList.toggle('open');
-  if(sec)sec.classList.toggle('lyr-aberta',willOpen);
   var btn=document.getElementById('musica_btn_letra');
-  if(btn)btn.textContent=willOpen?'recolher os versos':'abrir os versos';
-  trackEvento(willOpen?'letra_abriu':'letra_fechou','');
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
+
   if(willOpen){
+    b.classList.add('open');
+    if(sec)sec.classList.add('lyr-aberta');
+    if(btn)btn.textContent='recolher os versos';
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
+    trackEvento('letra_abriu','');
     setTimeout(function(){
       var stage=b.querySelector('.lyr-stage')||b;
       var y=stage.getBoundingClientRect().top+window.scrollY-110;
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
-  }else{
-    if(cDentro)cDentro.style.display='none';
-    if(cFora)cFora.style.display='';
-
-    setTimeout(function(){
-      var pres=document.getElementById('presentes');
-      if(!pres)return;
-      var y=pres.getBoundingClientRect().top+window.scrollY-window.innerHeight*0.85;
-      window.scrollTo({top:y,behavior:'smooth'});
-    },880);
+    return;
   }
+
+  // Fechando: ancora no botão "abrir os versos" antes do colapso acontecer.
+  // Calcula onde ele estará *depois* do colapso (subtraindo a altura da letra),
+  // rola instantâneo pra lá e só então dispara o colapso — sem montanha-russa.
+  var invite=document.getElementById('lyrInviteExt');
+  var alturaLetra=b.offsetHeight;
+  var yDestino=0;
+  if(invite){
+    var yInviteAtual=invite.getBoundingClientRect().top+window.scrollY;
+    var yInviteFuturo=yInviteAtual-alturaLetra;
+    // centraliza o invite na viewport (ligeiramente abaixo do centro pra caber o final do Vestido acima)
+    yDestino=yInviteFuturo-(window.innerHeight*0.55);
+  }
+
+  window.scrollTo({top:Math.max(0,yDestino),behavior:'auto'});
+
+  b.classList.remove('open');
+  if(sec)sec.classList.remove('lyr-aberta');
+  if(btn)btn.textContent='abrir os versos';
+  if(cDentro)cDentro.style.display='none';
+  if(cFora)cFora.style.display='';
+  trackEvento('letra_fechou','');
 }
-  
 /* ══════════════════════════════════════════
    CARROSSEL / LIGHTBOX
 ══════════════════════════════════════════ */
