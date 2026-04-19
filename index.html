@@ -1539,8 +1539,7 @@ color:var(--a);
 .pres-hero-badge{
   position:absolute;
   bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
+  right:clamp(14px,4vw,22px);
   background:linear-gradient(135deg,var(--a),var(--al));
   color:var(--n);
   font-size:.62rem;
@@ -1559,7 +1558,7 @@ color:var(--a);
   gap:10px;
 }
 .pres-hero-badge:hover{
-  transform:translateX(-50%) scale(1.07);
+  transform:scale(1.07);
   box-shadow:0 6px 18px rgba(212,160,74,.5);
 }
 
