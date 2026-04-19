@@ -1459,7 +1459,7 @@ color:var(--a);
   width:100%;
   max-width:var(--mw);
   margin:0 auto;
-  padding:0 24px 10px;
+  padding:0 24px 8px;
   text-align:center;
   position:relative;
   z-index:1;
@@ -1473,19 +1473,39 @@ color:var(--a);
 
 /* ── Grid de categorias — "plaquinhas de viagem" ── */
 .pres-cats-wrap{
-  margin:0 16px;
+  margin:-54px 16px 0;
   position:relative;
-  z-index:1;
+  z-index:5;
 }
 
 .pres-cats-panel{
-  background:rgba(255,255,255,.38);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.30);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.52);
   border-radius:18px;
   padding:16px 14px 14px;
-  box-shadow:0 4px 18px rgba(15,23,32,.06);
+  box-shadow:
+    0 14px 34px rgba(15,23,32,.10),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+
+.pres-grid-header{
+  width:100%;
+  padding:4px 4px 12px;
+}
+
+.pres-grid-header #presentes_subtitulo{
+  margin:0;
+  font-family:var(--fh);
+  font-weight:500;
+  font-style:normal;
+  font-size:clamp(1.05rem,4.5vw,1.45rem);
+  line-height:1.12;
+  letter-spacing:-.01em;
+  text-align:left;
+  color:var(--im);
+  max-width:100%;
 }
 
 .pres-cats-label{
@@ -1506,6 +1526,20 @@ color:var(--a);
   gap:12px;
   max-width:420px;
   margin:0 auto;
+}
+
+@media(min-width:520px){
+  .pres-cats-wrap{
+    margin:-72px 16px 0;
+  }
+
+  .pres-cats-panel{
+    padding:18px 16px 16px;
+  }
+
+  .pres-grid-header{
+    padding:2px 6px 14px;
+  }
 }
 
 .cat-card{
@@ -2045,16 +2079,14 @@ color:var(--a);
   </div>
 
 <!-- Grid de categorias -->
-<div class="pres-cats-wrap">
-  <div class="pres-cats-panel">
-    
-    <div class="pres-grid-header">
-      <p id="presentes_subtitulo"></p>
+  <div class="pres-cats-wrap">
+    <div class="pres-cats-panel">
+      <div class="pres-grid-header">
+        <p id="presentes_subtitulo"></p>
+      </div>
+      <div class="cat-grid" id="cG"></div>
     </div>
-
-    <div class="cat-grid" id="cG"></div>
   </div>
-</div>
  
   
   <!-- Painéis de presentes por categoria -->
