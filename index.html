@@ -2292,7 +2292,6 @@ function trackSecaoFim(){
 
 /* ── Observer de seções visíveis ── */
 function initSecaoObserver(){
-  var secoes=['hero','vestido','presentes','fds','prog','traje','rsvp','hosp','faq'];
   if(!('IntersectionObserver' in window))return;
   var obs=new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
@@ -2303,9 +2302,8 @@ function initSecaoObserver(){
       }
     });
   },{threshold:0.4});
-  secoes.forEach(function(id){
-    var el=document.getElementById(id);
-    if(el)obs.observe(el);
+  document.querySelectorAll('section[id]').forEach(function(el){
+    obs.observe(el);
   });
 }
 
@@ -2347,10 +2345,10 @@ window.addEventListener('scroll',function(){
     var pct=Math.round((window.scrollY/total)*100);
     if(pct>_scrollMax)_scrollMax=pct;
   }
-  ['hero','vestido','presentes','fds','prog','traje','rsvp','hosp','faq'].forEach(function(id){
+  document.querySelectorAll('section[id]').forEach(function(el){
+    var id=el.id;
     if(_secoesVistas.indexOf(id)>=0)return;
-    var el=document.getElementById(id);
-    if(el&&el.getBoundingClientRect().top<window.innerHeight*0.8){
+    if(el.getBoundingClientRect().top<window.innerHeight*0.8){
       _secoesVistas.push(id);
     }
   });
