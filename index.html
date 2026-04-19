@@ -2767,8 +2767,9 @@ function renderFAQ(faqs){
     }
     var d=document.createElement('div');d.className='faq-it';
     d.innerHTML='<div class="faq-q"><span>'+f.q+'</span><div class="faq-tg">+</div></div><div class="faq-a"><div class="faq-a-in">'+f.a+'</div></div>';
-    d.querySelector('.faq-q').addEventListener('click',function(){
-      trackEvento('faq_abriu',f.q);
+d.querySelector('.faq-q').addEventListener('click',function(){
+      var jaAberto=d.classList.contains('op');
+      trackEvento(jaAberto?'faq_fechou':'faq_abriu',f.q);
       tF(this);
     });
     l.appendChild(d);
