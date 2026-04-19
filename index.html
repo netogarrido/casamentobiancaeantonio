@@ -1531,6 +1531,61 @@ color:var(--a);
   margin:0 auto;
 }
 
+  #presentes_btn_fotos{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  width:100%;
+  padding:0;
+  margin:0 0 10px;
+  background:none;
+  border:none;
+  color:var(--a);
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:1rem;
+  letter-spacing:.02em;
+  line-height:1;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:opacity .25s ease;
+}
+
+#presentes_btn_fotos::before{
+  content:'';
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,160,74,.35));
+}
+
+#presentes_btn_fotos > span{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+
+#presentes_btn_fotos > span::after{
+  content:'↓';
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:var(--a);
+  color:var(--p);
+  font-size:.7rem;
+  font-weight:700;
+  animation:setaPulsa 1.8s ease-in-out infinite;
+}
+
+#presentes_btn_fotos:hover{
+  opacity:.8;
+}
+
 @media(min-width:520px){
   .pres-cats-wrap{
     margin:-72px 16px 0;
@@ -2085,8 +2140,13 @@ color:var(--a);
   <div class="pres-cats-wrap">
     <div class="pres-cats-panel">
       <div class="pres-grid-header">
-        <p id="presentes_subtitulo"></p>
-      </div>
+
+  <button id="presentes_btn_fotos" onclick="openCarousel('presentes',0)">
+    <span id="presentes_btn_fotos_txt">ver fotos</span>
+  </button>
+
+  <p id="presentes_subtitulo"></p>
+</div>
       <div class="cat-grid" id="cG"></div>
     </div>
   </div>
