@@ -1810,10 +1810,10 @@ section[id]{scroll-margin-top:78px}
         <div class="cd-i"><span class="cd-n" id="cdM">--</span><span class="cd-l">min</span></div>
         <div class="cd-i"><span class="cd-n" id="cdS">--</span><span class="cd-l">seg</span></div>
       </div>
-      <div class="hero-ctas">
-        <a href="#rsvp" class="btn btn-a" id="hero_cta_primario"></a>
-        <a href="#presentes" class="btn btn-g" id="hero_cta_secundario"></a>
-        <a href="#vestido" class="btn btn-g btn-sm" style="border:none;opacity:.55;margin-top:2px" id="hero_cta_terciario"></a>
+<div class="hero-ctas">
+        <a href="#rsvp" class="btn btn-a" id="hero_cta_primario" onclick="trackEvento('hero_cta_clicou','primario')"></a>
+        <a href="#presentes" class="btn btn-g" id="hero_cta_secundario" onclick="trackEvento('hero_cta_clicou','secundario')"></a>
+        <a href="#vestido" class="btn btn-g btn-sm" style="border:none;opacity:.55;margin-top:2px" id="hero_cta_terciario" onclick="trackEvento('hero_cta_clicou','terciario')"></a>
       </div>
     </div>
   </div>
@@ -1924,9 +1924,9 @@ section[id]{scroll-margin-top:78px}
 </section>
 
 <!-- CTA -->
-<div class="cta-b"><p>Seu carinho já é o maior presente.</p><a href="#presentes" class="btn btn-d">🎁 Acessar Lista de Presentes</a></div>
-
-<!-- FIM DE SEMANA -->
+<div class="cta-b"><p id="cta_faixa_texto_1"></p><a href="#presentes" class="btn btn-d" onclick="trackEvento('cta_faixa_clicou','acessar_presentes_1')" id="cta_faixa_botao_1"></a></div>
+  
+  <!-- FIM DE SEMANA -->
 <section class="fds" id="fds"><div class="inn">
   <div class="lbl">Nossa Celebração</div>
   <h2 class="ttl" id="fds_titulo"></h2>
@@ -2076,9 +2076,9 @@ section[id]{scroll-margin-top:78px}
 </div></section>
 
 <!-- CTA -->
-<div class="cta-b"><p>Já sabe o que dar de presente?</p><a href="#presentes" class="btn btn-d">🎁 Ver Lista de Presentes</a></div>
-
-<!-- FAQ -->
+<div class="cta-b"><p id="cta_faixa_texto_2"></p><a href="#presentes" class="btn btn-d" onclick="trackEvento('cta_faixa_clicou','ver_presentes_2')" id="cta_faixa_botao_2"></a></div>
+    
+  <!-- FAQ -->
 <section class="faq-s" id="faq"><div class="inn">
   <div class="lbl">Dúvidas Frequentes</div>
   <h2 class="ttl" id="faq_titulo"></h2>
@@ -2090,9 +2090,9 @@ section[id]{scroll-margin-top:78px}
   <div class="ft-nm" id="rodape_nomes"></div>
   <div class="ft-dt" id="rodape_data"></div>
   <div class="ft-loc" id="rodape_local"></div>
-  <div style="display:flex;flex-direction:column;gap:8px;align-items:center;margin-bottom:22px">
-    <a href="#rsvp" class="btn btn-a" id="rodape_cta_primario"></a>
-    <a href="#presentes" class="btn btn-g" id="rodape_cta_secundario"></a>
+<div style="display:flex;flex-direction:column;gap:8px;align-items:center;margin-bottom:22px">
+    <a href="#rsvp" class="btn btn-a" id="rodape_cta_primario" onclick="trackEvento('footer_cta_clicou','rsvp')"></a>
+    <a href="#presentes" class="btn btn-g" id="rodape_cta_secundario" onclick="trackEvento('footer_cta_clicou','presentes')"></a>
   </div>
   <div class="ft-ct" id="rodape_contato_titulo"></div>
   <div class="ft-ct" id="rodape_contato_nome"></div>
@@ -2902,11 +2902,14 @@ if(heroVideoMain&&heroVideoSeek){
     if(heroSeekDragging)return;
     if(heroVideoMain.duration){heroVideoSeek.value=(heroVideoMain.currentTime/heroVideoMain.duration)*100;}
   });
-  heroVideoSeek.addEventListener('input',function(){
+heroVideoSeek.addEventListener('input',function(){
     heroSeekDragging=true;
     if(heroVideoMain.duration){heroVideoMain.currentTime=(heroVideoSeek.value/100)*heroVideoMain.duration;}
   });
-  heroVideoSeek.addEventListener('change',function(){heroSeekDragging=false;});
+  heroVideoSeek.addEventListener('change',function(){
+    heroSeekDragging=false;
+    trackEvento('video_scrubber_usado',Math.round(heroVideoSeek.value)+'%');
+  });
 }
 
 /* ══════════════════════════════════════════
@@ -3074,6 +3077,12 @@ function openModal(g){
 var oM=openModal;
 
 function cM(){
+  if(curGift){
+    var ty=document.getElementById('tY');
+    if(!ty||!ty.classList.contains('on')){
+      trackEvento('presente_modal_fechou_sem_pagar',curGift.n+' — '+curGift.p);
+    }
+  }
   document.getElementById('mo').classList.remove('on');
   unlockScroll();
 }
@@ -3266,10 +3275,12 @@ function cpFallback(text,msg){
 }
 function cpEmail(){
   var v=document.getElementById('reserva_marcela_email').textContent.trim();
+  trackEvento('contato_marcela_copiou','email');
   cp(v,'E-mail copiado!');
 }
 function cpWA(){
   var v=document.getElementById('reserva_marcela_whatsapp').textContent.trim().replace(/\D/g,'');
+  trackEvento('contato_marcela_copiou','whatsapp');
   cp(v,'WhatsApp copiado!');
 }
 
