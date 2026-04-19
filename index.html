@@ -2014,13 +2014,15 @@ color:var(--a);
     <div id="sP"></div>
     <div class="livre">
       <p id="presentes_valor_livre_texto"></p>
-      <div class="g-card" onclick="openLivre()" style="justify-content:center;border-style:dashed;margin:0">
-        <div class="g-ico">💌</div>
+
+<div class="g-card" onclick="openLivre()" style="justify-content:center;border-style:dashed;margin:0">
+        <div class="g-ico" id="livre_ico">🎁</div>
         <div class="g-inf">
           <div class="g-nm" id="livre_nome"></div>
           <div class="g-desc" id="livre_desc"></div>
         </div>
       </div>
+      
     </div>
   </div>
 </section>
@@ -2781,10 +2783,11 @@ function applyPresentes(rows){
   renderCats();
   renderCaixinhasVestido();
   renderCaixinhaProg();
-  var outro=GIFTS.outro_valor&&GIFTS.outro_valor[0];
+var outro=GIFTS.outro_valor&&GIFTS.outro_valor[0];
   if(outro){
     var ln=document.getElementById('livre_nome');if(ln)ln.textContent=outro.n;
     var ld=document.getElementById('livre_desc');if(ld)ld.textContent=outro.d;
+    var li=document.getElementById('livre_ico');if(li&&outro.i)li.textContent=outro.i;
   }
 }
 
