@@ -2834,21 +2834,16 @@ function toggleCat(id){
   document.querySelectorAll('.cat-card').forEach(function(c){c.classList.toggle('on',c.dataset.c===activeCat);});
   document.querySelectorAll('.sub-panel').forEach(function(p){p.classList.toggle('on',p.id==='sp-'+activeCat);});
 
-  setTimeout(function(){
-    var anchor=document.getElementById('presentes_categorias_titulo');
-    if(!anchor)return;
+  if(!activeCat)return;
 
-    var rect=anchor.getBoundingClientRect();
+  setTimeout(function(){
+    var anchor=document.querySelector('.pres-cats-wrap');
+    if(!anchor)return;
     var nav=document.getElementById('nav');
     var navH=nav?nav.getBoundingClientRect().height:70;
-    var topLimit=navH+12;
-    var bottomLimit=Math.min(window.innerHeight*0.32,220);
-
-    if(rect.top<topLimit||rect.top>bottomLimit){
-      var y=rect.top+window.scrollY-navH-8;
-      window.scrollTo({top:y,behavior:'smooth'});
-    }
-  },100);
+    var y=anchor.getBoundingClientRect().top+window.scrollY-navH-12;
+    window.scrollTo({top:y,behavior:'smooth'});
+  },120);
 }
 
 /* ══════════════════════════════════════════
