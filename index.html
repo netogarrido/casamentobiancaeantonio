@@ -3014,14 +3014,12 @@ function tL(){
 }else{
     _migrarCxNoivoParaFora();
     setTimeout(function(){
-      var presentes=document.getElementById('presentes');
-      if(!presentes)return;
-      var presTop=presentes.getBoundingClientRect().top+window.scrollY;
-      var y=presTop-(window.innerHeight*0.85);
+      var titulo=document.getElementById('presentes_titulo');
+      if(!titulo)return;
+      var y=titulo.getBoundingClientRect().top+window.scrollY-90;
       window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
     },860);
   }
-}
 
 /* ══════════════════════════════════════════
    CARROSSEL / LIGHTBOX
