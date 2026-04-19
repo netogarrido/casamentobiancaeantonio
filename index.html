@@ -1532,27 +1532,35 @@ color:var(--a);
   margin:0 auto;
 }
 
-/* Botão "ver todas as fotos" — pílula imersa no final da hero dos presentes */
+/* Badge "fotos" — clone do .vestido-badge sobre a hero dos presentes */
 .pres-hero{overflow:visible;}
 .pres-polaroid-wrap{overflow:hidden;}
 
-.pres-hero-fotos-btn{
+.pres-hero-badge{
   position:absolute;
-  right:clamp(14px,4vw,22px);
-  bottom:-22px;
-  z-index:6;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--a),var(--al));
+  color:var(--n);
+  font-size:.62rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  padding:6px 11px;
+  border-radius:999px;
+  box-shadow:0 4px 14px rgba(212,160,74,.38);
   cursor:pointer;
+  z-index:6;
   -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease, box-shadow .2s ease;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-
-.pres-hero-fotos-btn .lyr-invite-ext-btn{
-  animation:setaBounce 1.6s ease-in-out infinite;
-  padding:11px 20px 11px 24px;
-  font-size:.98rem;
-}
-
-.pres-hero-fotos-btn .lyr-invite-ext-seta{
-  font-size:1.15rem;
+.pres-hero-badge:hover{
+  transform:translateX(-50%) scale(1.07);
+  box-shadow:0 6px 18px rgba(212,160,74,.5);
 }
 
 @media(min-width:520px){
@@ -2102,12 +2110,9 @@ color:var(--a);
   <div class="pres-hero-overlay">
   <h2 id="presentes_titulo"></h2>
 </div>
-    <div class="pres-hero-fotos-btn" onclick="event.stopPropagation();openCarousel('presentes',0)">
-      <button class="lyr-invite-ext-btn" aria-label="Ver todas as fotos">
-        <span id="presentes_btn_fotos_txt">ver todas as fotos</span>
-        <span class="lyr-invite-ext-seta">→</span>
-      </button>
-    </div>
+    
+<div class="pres-hero-badge" id="presHeroBadge" onclick="event.stopPropagation();openCarousel('presentes',0)"><span id="fotos_vestido_mirror"></span></div>
+    
   </div>
   
 
@@ -2866,9 +2871,12 @@ function applyConteudo(rows){
     else if(key==='nav_logo'){el.innerHTML=cleaned.replace(/\n/g,'<br>');}
     else{el.innerHTML=cleaned.replace(/\n/g,'<br>');}
 });
-  var pt=document.getElementById('presentes_titulo');
+ var pt=document.getElementById('presentes_titulo');
   var ps=document.getElementById('vestido_seta_presentes_txt');
   if(pt&&ps)ps.textContent=pt.textContent;
+  var fv=document.getElementById('fotos_vestido');
+  var fvm=document.getElementById('fotos_vestido_mirror');
+  if(fv&&fvm)fvm.textContent=fv.textContent;
 }
     
 
