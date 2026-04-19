@@ -3128,14 +3128,12 @@ function tL(){
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
 
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        var alvo=document.getElementById('musica_cta')||cFora||sec;
-        if(!alvo)return;
-        var y=alvo.getBoundingClientRect().top+window.scrollY-110;
-        window.scrollTo({top:y,behavior:'smooth'});
-      });
-    });
+    setTimeout(function(){
+      var pres=document.getElementById('presentes');
+      if(!pres)return;
+      var y=pres.getBoundingClientRect().top+window.scrollY-window.innerHeight*0.85;
+      window.scrollTo({top:y,behavior:'smooth'});
+    },880);
   }
 }
   
