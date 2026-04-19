@@ -3050,51 +3050,35 @@ function tL(){
   var b=document.getElementById('lB');
   var sec=document.getElementById('vestido');
   if(!b)return;
-
   var willOpen=!b.classList.contains('open');
+  b.classList.toggle('open');
+  if(sec)sec.classList.toggle('lyr-aberta',willOpen);
   var btn=document.getElementById('musica_btn_letra');
+  if(btn)btn.textContent=willOpen?'recolher os versos':'abrir os versos';
+  trackEvento(willOpen?'letra_abriu':'letra_fechou','');
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
-
   if(willOpen){
-    b.classList.add('open');
-    if(sec)sec.classList.add('lyr-aberta');
-    if(btn)btn.textContent='recolher os versos';
-    trackEvento('letra_abriu','');
-
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
-
     setTimeout(function(){
       var stage=b.querySelector('.lyr-stage')||b;
       var y=stage.getBoundingClientRect().top+window.scrollY-110;
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
+  }else{
+    if(cDentro)cDentro.style.display='none';
+    if(cFora)cFora.style.display='';
 
-    return;
-  }
-
-  var prevTop=b.getBoundingClientRect().top;
-
-  if(cDentro)cDentro.style.display='none';
-  if(cFora)cFora.style.display='';
-
-  b.classList.remove('open');
-  if(sec)sec.classList.remove('lyr-aberta');
-  if(btn)btn.textContent='abrir os versos';
-  trackEvento('letra_fechou','');
-
-  requestAnimationFrame(function(){
-    var newTop=b.getBoundingClientRect().top;
-    var delta=newTop-prevTop;
-    if(delta){
-      document.documentElement.style.scrollBehavior='auto';
-      window.scrollTo(0,window.scrollY+delta);
+    requestAnimationFrame(function(){
       requestAnimationFrame(function(){
-        document.documentElement.style.scrollBehavior='';
+        var alvo=document.getElementById('musica_cta')||cFora||sec;
+        if(!alvo)return;
+        var y=alvo.getBoundingClientRect().top+window.scrollY-110;
+        window.scrollTo({top:y,behavior:'smooth'});
       });
-    }
-  });
+    });
+  }
 }
   
 /* ══════════════════════════════════════════
