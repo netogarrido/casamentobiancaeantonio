@@ -1916,7 +1916,7 @@ section[id]{scroll-margin-top:78px}
   <p id="musica_cta"></p>
 <div class="cx-cards" id="cxVestido"></div>
 
-<div style="text-align:center;padding:8px 0 32px">
+<div style="display:flex;justify-content:center;padding:8px 0 32px">
   <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')">↓</a>
 </div>
 
@@ -3013,7 +3013,6 @@ function tL(){
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
   if(willOpen){
-    /* abrindo: mostra caixinhas dentro, oculta fora */
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
     setTimeout(function(){
@@ -3022,10 +3021,14 @@ function tL(){
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
   }else{
-    /* fechando: mostra caixinhas fora, oculta dentro */
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
+    /* trava o scroll imediatamente para evitar o salto durante o colapso */
+    document.documentElement.style.scrollBehavior='auto';
+    var scrollTravado=window.scrollY;
+    window.scrollTo(0,scrollTravado);
     setTimeout(function(){
+      document.documentElement.style.scrollBehavior='';
       var vestido=document.getElementById('vestido');
       if(!vestido)return;
       var secBottom=vestido.getBoundingClientRect().bottom+window.scrollY;
