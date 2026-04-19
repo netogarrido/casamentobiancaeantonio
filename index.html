@@ -2893,9 +2893,9 @@ if(audioSeekEl){
     if(au.duration){au.currentTime=(audioSeekEl.value/100)*au.duration;}
   });
   audioSeekEl.addEventListener('change',function(){
-  audioSeekDragging=false;
-  trackEvento('audio_scrubber_usado',Math.round(audioSeekEl.value)+'%');
-});
+    audioSeekDragging=false;
+    trackEvento('audio_scrubber_usado',Math.round(audioSeekEl.value)+'%');
+  });
 }
 
 /* Scrubber de vídeo hero */
@@ -3241,16 +3241,24 @@ function navScrollTo(e){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
+var navEventMap={
+    '#presentes':'nav_presentes_clicou',
+    '#rsvp':'nav_rsvp_clicou',
+    '#hosp':'nav_hotel_clicou',
+    '#faq':'nav_faq_clicou'
+  };
   document.querySelectorAll('.nav-lk a').forEach(function(a){
     a.addEventListener('click',function(e){
-      trackEvento('nav_clicou',a.getAttribute('href')||'');
+      var href=a.getAttribute('href')||'';
+      var evName=navEventMap[href]||('nav_clicou_'+href.replace('#',''));
+      trackEvento(evName,'');
       navScrollTo.call(a,e);
     });
   });
   var navLogo=document.querySelector('.nav-logo');
   if(navLogo){
     navLogo.addEventListener('click',function(e){
-      trackEvento('nav_clicou','#hero');
+      trackEvento('nav_logo_clicou','');
       navScrollTo.call(this,e);
     });
   }
