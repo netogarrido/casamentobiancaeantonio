@@ -1207,27 +1207,7 @@ section[id]{scroll-margin-top:78px}
   text-align:center;
   margin-bottom:12px;
 }
-  
-/* ── Caixinhas dentro da letra — separador editorial ── */
-.cx-noivo-dentro{
-  border-top:1px solid rgba(212,160,74,.22);
-  padding-top:20px !important;
-  margin-top:16px !important;
-}
-.cx-noivo-dentro::before{
-  content:'apoie o noivo artista';
-  display:block;
-  font-family:var(--fh);
-  font-style:italic;
-  font-size:.72rem;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:var(--a);
-  opacity:.7;
-  text-align:center;
-  margin-bottom:12px;
-}
-  
+    
 .cx-card{
   display:grid;
   grid-template-columns:36px 1fr auto;
@@ -2753,30 +2733,7 @@ function toggleCat(id){
 /* ══════════════════════════════════════════
    RENDER CAIXINHAS
 ══════════════════════════════════════════ */
-  var _cxNoivoReveladas=false;
-
-function _buildCxCard(cx,variant){
-  var card=document.createElement('div');
-  card.className='cx-card cx-card--'+variant;
-  (function(g){
-    card.onclick=function(){
-      trackEvento('presente_modal_abriu',g.n+' — '+g.p);
-      openModal(g);
-    };
-  })(cx);
-  card.innerHTML=
-    '<div class="cx-card-top">'+
-      '<div class="cx-ico">'+cx.i+'</div>'+
-      '<div class="cx-inf-top">'+
-        '<div class="cx-nm">'+cx.n+'</div>'+
-        '<div class="cx-valor">'+cx.p+'</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="cx-desc">'+cx.d+'</div>'+
-    '<div class="cx-sep"></div>'+
-    '<div class="cx-apoiar">Apoiar</div>';
-  return card;
-}
+var _cxNoivoReveladas=false;
 
 function _buildCxCard(cx,variant){
   var card=document.createElement('div');
@@ -2816,65 +2773,6 @@ function renderCaixinhasVestido(){
 
 function renderCaixinhaProg(){
   /* Rei do Camarote removido — mantida vazia para não quebrar chamada em applyPresentes */
-}
-
-function _initCxSentinel(){
-  var sentinel=document.getElementById('lyrCxSentinel');
-  if(!sentinel)return;
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting&&!_cxNoivoReveladas){
-        _revelarCxNoivo();
-      }
-    });
-  },{threshold:1.0});
-  obs.observe(sentinel);
-}
-
-function _revelarCxNoivo(){
-  _cxNoivoReveladas=true;
-  var cDentro=document.getElementById('cxNoivoDentro');
-  if(cDentro)cDentro.style.opacity='1';
-}
-
-function _migrarCxNoivoParaFora(){
-  /* Chamado ao fechar a letra — move cards pro #cxVestido */
-  var cFora=document.getElementById('cxVestido');
-  if(!cFora)return;
-  cFora.innerHTML='';
-  CAIXINHAS.forEach(function(cx){
-    if(cx.catId!=='noivo_artista')return;
-    cFora.appendChild(_buildCxCard(cx,'dark'));
-  });
-  /* Esconde o container interno */
-  var cDentro=document.getElementById('cxNoivoDentro');
-  if(cDentro){cDentro.innerHTML='';cDentro.style.opacity='0';}
-}
-
-function renderCaixinhaProg(){
-  var c=document.getElementById('cxProg');if(!c)return;c.innerHTML='';
-  CAIXINHAS.forEach(function(cx){
-    if(cx.catId!=='festa')return;
-    var card=document.createElement('div');card.className='cx-card cx-card--light';
-    (function(g){
-      card.onclick=function(){
-        trackEvento('presente_modal_abriu',g.n+' — '+g.p);
-        openModal(g);
-      };
-    })(cx);
-    card.innerHTML=
-      '<div class="cx-card-top">'+
-        '<div class="cx-ico">'+cx.i+'</div>'+
-        '<div class="cx-inf-top">'+
-          '<div class="cx-nm">'+cx.n+'</div>'+
-          '<div class="cx-valor">'+cx.p+'</div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="cx-desc">'+cx.d+'</div>'+
-      '<div class="cx-sep"></div>'+
-      '<div class="cx-apoiar">Apoiar</div>';
-    c.appendChild(card);
-  });
 }
 
 /* ══════════════════════════════════════════
