@@ -1811,10 +1811,10 @@ section[id]{scroll-margin-top:78px}
         <div class="cd-i"><span class="cd-n" id="cdS">--</span><span class="cd-l">seg</span></div>
       </div>
 <div class="hero-ctas">
-        <a href="#rsvp" class="btn btn-a" id="hero_cta_primario" onclick="trackEvento('hero_cta_clicou','primario')"></a>
-        <a href="#presentes" class="btn btn-g" id="hero_cta_secundario" onclick="trackEvento('hero_cta_clicou','secundario')"></a>
-        <a href="#vestido" class="btn btn-g btn-sm" style="border:none;opacity:.55;margin-top:2px" id="hero_cta_terciario" onclick="trackEvento('hero_cta_clicou','terciario')"></a>
-      </div>
+<a href="#rsvp" class="btn btn-a" id="hero_cta_primario"></a>
+<a href="#presentes" class="btn btn-g" id="hero_cta_secundario"></a>
+<a href="#vestido" class="btn btn-g btn-sm" style="border:none;opacity:.55;margin-top:2px" id="hero_cta_terciario"></a>
+</div>
     </div>
   </div>
 </section>
@@ -1924,7 +1924,7 @@ section[id]{scroll-margin-top:78px}
 </section>
 
 <!-- CTA -->
-<div class="cta-b"><p id="cta_faixa_texto_1"></p><a href="#presentes" class="btn btn-d" onclick="trackEvento('cta_faixa_clicou','acessar_presentes_1')" id="cta_faixa_botao_1"></a></div>
+<a href="#presentes" class="btn btn-d" id="cta_faixa_botao_1"></a>
   
   <!-- FIM DE SEMANA -->
 <section class="fds" id="fds"><div class="inn">
@@ -2076,8 +2076,8 @@ section[id]{scroll-margin-top:78px}
 </div></section>
 
 <!-- CTA -->
-<div class="cta-b"><p id="cta_faixa_texto_2"></p><a href="#presentes" class="btn btn-d" onclick="trackEvento('cta_faixa_clicou','ver_presentes_2')" id="cta_faixa_botao_2"></a></div>
-    
+<a href="#presentes" class="btn btn-d" id="cta_faixa_botao_2"></a>
+  
   <!-- FAQ -->
 <section class="faq-s" id="faq"><div class="inn">
   <div class="lbl">Dúvidas Frequentes</div>
@@ -2091,9 +2091,9 @@ section[id]{scroll-margin-top:78px}
   <div class="ft-dt" id="rodape_data"></div>
   <div class="ft-loc" id="rodape_local"></div>
 <div style="display:flex;flex-direction:column;gap:8px;align-items:center;margin-bottom:22px">
-    <a href="#rsvp" class="btn btn-a" id="rodape_cta_primario" onclick="trackEvento('footer_cta_clicou','rsvp')"></a>
-    <a href="#presentes" class="btn btn-g" id="rodape_cta_secundario" onclick="trackEvento('footer_cta_clicou','presentes')"></a>
-  </div>
+  <a href="#rsvp" class="btn btn-a" id="rodape_cta_primario"></a>
+<a href="#presentes" class="btn btn-g" id="rodape_cta_secundario"></a> 
+</div>
   <div class="ft-ct" id="rodape_contato_titulo"></div>
   <div class="ft-ct" id="rodape_contato_nome"></div>
   <div class="ft-ct" id="rodape_contato_email"></div>
@@ -2338,6 +2338,8 @@ function initInatividade(){
 ══════════════════════════════════════════ */
 var _scrollMax=0;
 var _secoesVistas=[];
+var _audioSegTocando=0;
+var _audioUltimoPlay=null;
 
 window.addEventListener('scroll',function(){
   var total=document.body.scrollHeight-window.innerHeight;
@@ -2384,7 +2386,15 @@ function registrarSaida(motivo){
   if(_sessaoEncerrada&&motivo!=='inatividade')return;
   _sessaoEncerrada=true;
   trackSecaoFim();
+  /* fecha acumulador de áudio se ainda estava tocando */
+  if(_audioUltimoPlay){
+    _audioSegTocando+=Math.round((Date.now()-_audioUltimoPlay)/1000);
+    _audioUltimoPlay=null;
+  }
   var tempo=Math.round((Date.now()-_visitaInicio)/1000);
+  /* % da música ouvida — duração real do áudio se disponível */
+  var duracaoAudio=au&&au.duration&&!isNaN(au.duration)?Math.round(au.duration):0;
+  var audioPct=duracaoAudio>0?Math.min(100,Math.round((_audioSegTocando/duracaoAudio)*100)):0;
   var payload={
     type:'analytics_saida',
     convidado_id:getConvidadoId(),
@@ -2393,6 +2403,7 @@ function registrarSaida(motivo){
     tempo_total_seg:tempo,
     scroll_max_pct:_scrollMax,
     secoes_visitadas:_secoesVistas.join(', '),
+    audio_pct_ouvido:audioPct,
     timestamp:new Date().toISOString()
   };
   fetch(SU,{
@@ -2486,9 +2497,19 @@ function applyMidia(rows){
     var key=el.getAttribute('data-midia-bg');
     if(MIDIAS[key])el.src=MIDIAS[key];
   });
-  var au=document.getElementById('bgMusic');
-  au.addEventListener('play',syncPlayerUI);
-  au.addEventListener('pause',syncPlayerUI);
+var au=document.getElementById('bgMusic');
+  au.addEventListener('play',function(){
+    _audioUltimoPlay=Date.now();
+    syncPlayerUI();
+  });
+  au.addEventListener('pause',function(){
+    if(_audioUltimoPlay){
+      _audioSegTocando+=Math.round((Date.now()-_audioUltimoPlay)/1000);
+      _audioUltimoPlay=null;
+    }
+    syncPlayerUI();
+  });
+  
   var src=document.getElementById('audioSrc');
   if(au&&src&&MIDIAS.vestido_audio){
     src.src=MIDIAS.vestido_audio;
@@ -3240,17 +3261,11 @@ function navScrollTo(e){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-var navEventMap={
-    '#presentes':'nav_presentes_clicou',
-    '#rsvp':'nav_rsvp_clicou',
-    '#hosp':'nav_hotel_clicou',
-    '#faq':'nav_faq_clicou'
-  };
-  document.querySelectorAll('.nav-lk a').forEach(function(a){
+document.querySelectorAll('.nav-lk a').forEach(function(a){
     a.addEventListener('click',function(e){
       var href=a.getAttribute('href')||'';
-      var evName=navEventMap[href]||('nav_clicou_'+href.replace('#',''));
-      trackEvento(evName,'');
+      var destino=href.replace('#','').trim()||'desconhecido';
+      trackEvento('nav_'+destino+'_clicou','');
       navScrollTo.call(a,e);
     });
   });
@@ -3261,8 +3276,22 @@ var navEventMap={
       navScrollTo.call(this,e);
     });
   }
+/* ── Links âncora internos — rastreamento automático ── */
   document.querySelectorAll('a[href^="#"]:not(.nav-lk a):not(.nav-logo)').forEach(function(a){
-    a.addEventListener('click',navScrollTo);
+    a.addEventListener('click',function(e){
+      navScrollTo.call(this,e);
+      var id=a.id||'';
+      var href=(a.getAttribute('href')||'').replace('#','').trim();
+      if(!href)return;
+      /* detecta grupo pelo prefixo do id */
+      var grupo='link';
+      if(id.indexOf('hero_cta_')===0)grupo='hero_cta';
+      else if(id.indexOf('cta_faixa_')===0)grupo='cta_faixa';
+      else if(id.indexOf('rodape_cta_')===0)grupo='rodape_cta';
+      /* nome do evento: grupo_destino_clicou */
+      var evName=grupo+'_'+href+'_clicou';
+      trackEvento(evName,id||href);
+    });
   });
 });
 
