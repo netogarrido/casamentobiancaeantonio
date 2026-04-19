@@ -2784,19 +2784,24 @@ function _buildCxCard(cx,variant){
     '<div class="cx-apoiar">Apoiar</div>';
   return card;
 }
-
 function renderCaixinhasVestido(){
   var cDentro=document.getElementById('cxNoivoDentro');
-  if(!cDentro)return;
-  cDentro.innerHTML='';
+  var cFora=document.getElementById('cxVestido');
+  if(!cDentro&&!cFora)return;
+  if(cDentro)cDentro.innerHTML='';
+  if(cFora)cFora.innerHTML='';
   var temItens=false;
   CAIXINHAS.forEach(function(cx){
     if(cx.catId!=='noivo_artista')return;
-    cDentro.appendChild(_buildCxCard(cx,'dark'));
+    if(cDentro)cDentro.appendChild(_buildCxCard(cx,'dark'));
+    if(cFora)cFora.appendChild(_buildCxCard(cx,'dark'));
     temItens=true;
   });
-  if(temItens)cDentro.classList.add('tem-itens');
+  if(temItens&&cDentro)cDentro.classList.add('tem-itens');
+  /* fora começa oculto — só aparece ao fechar a letra */
+  if(cFora)cFora.style.display='none';
 }
+
 
 function renderCaixinhaProg(){
   /* Rei do Camarote removido — mantida vazia para não quebrar chamada em applyPresentes */
@@ -3010,18 +3015,27 @@ function tL(){
   var btn=document.getElementById('musica_btn_letra');
   if(btn)btn.textContent=willOpen?'recolher os versos':'abrir os versos';
   trackEvento(willOpen?'letra_abriu':'letra_fechou','');
+  var cFora=document.getElementById('cxVestido');
+  var cDentro=document.getElementById('cxNoivoDentro');
   if(willOpen){
+    /* abrindo: mostra caixinhas dentro, oculta fora */
+    if(cFora)cFora.style.display='none';
+    if(cDentro)cDentro.style.display='';
     setTimeout(function(){
       var stage=b.querySelector('.lyr-stage')||b;
       var y=stage.getBoundingClientRect().top+window.scrollY-110;
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
-}else{
-    _migrarCxNoivoParaFora();
+  }else{
+    /* fechando: mostra caixinhas fora, oculta dentro */
+    if(cDentro)cDentro.style.display='none';
+    if(cFora)cFora.style.display='';
     setTimeout(function(){
-      var titulo=document.getElementById('presentes_titulo');
-      if(!titulo)return;
-      var y=titulo.getBoundingClientRect().top+window.scrollY-90;
+      var vestido=document.getElementById('vestido');
+      if(!vestido)return;
+      var secBottom=vestido.getBoundingClientRect().bottom+window.scrollY;
+      var viewH=window.innerHeight;
+      var y=secBottom-viewH;
       window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
     },860);
   }
