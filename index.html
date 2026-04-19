@@ -2195,17 +2195,27 @@ section[id]{scroll-margin-top:78px}
 ══════════════════════════════════════════ */
 var _scrollY=0;
 function lockScroll(){
-  _scrollY=window.scrollY;
+  _scrollY=window.scrollY||window.pageYOffset||0;
   document.body.style.top='-'+_scrollY+'px';
   document.body.classList.add('scroll-locked');
   try{sessionStorage.setItem('_scrollY_lock',String(_scrollY));}catch(e){}
 }
 function unlockScroll(){
+  var top=parseInt(document.body.style.top||'0',10);
+  var y=!isNaN(top)?Math.abs(top):(_scrollY||0);
+
+  document.documentElement.style.scrollBehavior='auto';
   document.body.classList.remove('scroll-locked');
   document.body.style.top='';
-  window.scrollTo(0,_scrollY);
+  window.scrollTo(0,y);
+
+  requestAnimationFrame(function(){
+    document.documentElement.style.scrollBehavior='';
+  });
+
   try{sessionStorage.removeItem('_scrollY_lock');}catch(e){}
 }
+  
 /* Recupera posição se o usuário voltar de outra aba/app com o body ainda travado */
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
@@ -3031,37 +3041,53 @@ function tL(){
   var b=document.getElementById('lB');
   var sec=document.getElementById('vestido');
   if(!b)return;
+
   var willOpen=!b.classList.contains('open');
-  b.classList.toggle('open');
-  if(sec)sec.classList.toggle('lyr-aberta',willOpen);
   var btn=document.getElementById('musica_btn_letra');
-  if(btn)btn.textContent=willOpen?'recolher os versos':'abrir os versos';
-  trackEvento(willOpen?'letra_abriu':'letra_fechou','');
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
+
   if(willOpen){
+    b.classList.add('open');
+    if(sec)sec.classList.add('lyr-aberta');
+    if(btn)btn.textContent='recolher os versos';
+    trackEvento('letra_abriu','');
+
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
+
     setTimeout(function(){
       var stage=b.querySelector('.lyr-stage')||b;
       var y=stage.getBoundingClientRect().top+window.scrollY-110;
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
-  }else{
-    if(cDentro)cDentro.style.display='none';
-    if(cFora)cFora.style.display='';
 
-/* Aguarda o colapso (.8s) e scrola para o fim da section #vestido */
-    var sec2=document.getElementById('vestido');
-    setTimeout(function(){
-      if(!sec2)return;
-      var y=sec2.getBoundingClientRect().bottom+window.scrollY-window.innerHeight;
-      window.scrollTo({top:y,behavior:'smooth'});
-    },860);
-    
+    return;
   }
-}
 
+  var prevTop=b.getBoundingClientRect().top;
+
+  if(cDentro)cDentro.style.display='none';
+  if(cFora)cFora.style.display='';
+
+  b.classList.remove('open');
+  if(sec)sec.classList.remove('lyr-aberta');
+  if(btn)btn.textContent='abrir os versos';
+  trackEvento('letra_fechou','');
+
+  requestAnimationFrame(function(){
+    var newTop=b.getBoundingClientRect().top;
+    var delta=newTop-prevTop;
+    if(delta){
+      document.documentElement.style.scrollBehavior='auto';
+      window.scrollTo(0,window.scrollY+delta);
+      requestAnimationFrame(function(){
+        document.documentElement.style.scrollBehavior='';
+      });
+    }
+  });
+}
+  
 /* ══════════════════════════════════════════
    CARROSSEL / LIGHTBOX
 ══════════════════════════════════════════ */
