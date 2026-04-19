@@ -1476,7 +1476,7 @@ color:var(--a);
 
 /* ── Grid de categorias — "plaquinhas de viagem" ── */
 .pres-cats-wrap{
-  margin:-54px 6px 0;
+  margin:18px 16px 0;
   position:relative;
   z-index:5;
 }
@@ -1539,36 +1539,41 @@ color:var(--a);
 .cat-grid > *:nth-child(4){ grid-row:span 3; }   /* ~120px */
 
 /* Botão "ver todas as fotos" — pílula imersa no final da hero dos presentes */
+.pres-hero{overflow:visible;}
+.pres-polaroid-wrap{overflow:hidden;}
+
 .pres-hero-fotos-btn{
   position:absolute;
   right:clamp(14px,4vw,22px);
-  bottom:10px;
-  z-index:5;
+  bottom:-22px;
+  z-index:6;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
 
 .pres-hero-fotos-btn .lyr-invite-ext-btn{
   animation:setaBounce 1.6s ease-in-out infinite;
+  padding:11px 20px 11px 24px;
+  font-size:.98rem;
 }
 
 .pres-hero-fotos-btn .lyr-invite-ext-seta{
-  font-size:1.05rem;
+  font-size:1.15rem;
 }
 
 @media(min-width:520px){
   .pres-cats-wrap{
-    margin:-72px 16px 0;
+    margin:24px 16px 0;
   }
 
   .pres-cats-panel{
-    padding:18px 20px 18px;
+    padding:18px 16px 16px;
   }
 
   .pres-grid-header{
     padding:2px 6px 14px;
   }
-
+}
   .cat-grid{
     grid-auto-rows:46px;
     gap:14px;
