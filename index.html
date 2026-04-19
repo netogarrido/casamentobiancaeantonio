@@ -2384,6 +2384,7 @@ function registrarEntrada(nome,comMusica){
 ══════════════════════════════════════════ */
 function registrarSaida(motivo){
   if(_sessaoEncerrada&&motivo!=='inatividade')return;
+  _sessaoEncerrada=true;
   trackSecaoFim();
   var tempo=Math.round((Date.now()-_visitaInicio)/1000);
   var payload={
@@ -2396,16 +2397,18 @@ function registrarSaida(motivo){
     secoes_visitadas:_secoesVistas.join(', '),
     timestamp:new Date().toISOString()
   };
-  var blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
-  if(navigator.sendBeacon){
-    navigator.sendBeacon(SU,blob);
-  }else{
-    fetch(SU,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});
-  }
+  fetch(SU,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).catch(function(){});
 }
 
 window.addEventListener('pagehide',function(){registrarSaida('pagehide');});
-window.addEventListener('beforeunload',function(){registrarSaida('beforeunload');});
+window.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='hidden')registrarSaida('hidden');
+});
 
 /* ══════════════════════════════════════════
    FETCH SHEETS via gviz
@@ -2889,7 +2892,10 @@ if(audioSeekEl){
     audioSeekDragging=true;
     if(au.duration){au.currentTime=(audioSeekEl.value/100)*au.duration;}
   });
-  audioSeekEl.addEventListener('change',function(){audioSeekDragging=false;});
+  audioSeekEl.addEventListener('change',function(){
+  audioSeekDragging=false;
+  trackEvento('audio_scrubber_usado',Math.round(audioSeekEl.value)+'%');
+});
 }
 
 /* Scrubber de vídeo hero */
@@ -3235,9 +3241,19 @@ function navScrollTo(e){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  document.querySelectorAll('.nav-lk a, .nav-logo').forEach(function(a){
-    a.addEventListener('click',navScrollTo);
+  document.querySelectorAll('.nav-lk a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      trackEvento('nav_clicou',a.getAttribute('href')||'');
+      navScrollTo.call(a,e);
+    });
   });
+  var navLogo=document.querySelector('.nav-logo');
+  if(navLogo){
+    navLogo.addEventListener('click',function(e){
+      trackEvento('nav_clicou','#hero');
+      navScrollTo.call(this,e);
+    });
+  }
   document.querySelectorAll('a[href^="#"]:not(.nav-lk a):not(.nav-logo)').forEach(function(a){
     a.addEventListener('click',navScrollTo);
   });
