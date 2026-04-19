@@ -3102,6 +3102,31 @@ function onParticiplacaoChange(val){
    RSVP SUBMIT
 ══════════════════════════════════════════ */
 function sR(e){
+  e.preventDefault();
+  var fd=new FormData(e.target);
+  var d={type:'rsvp'};
+  fd.forEach(function(v,k){d[k]=v;});
+  if(!d.nome)d.nome=getNomeSalvo();
+  var sug=(d.sugestao_musica||'').trim();
+  var msg=(d.mensagem||'').trim();
+  delete d.sugestao_musica;
+  delete d.mensagem;
+  trackEvento('rsvp_enviou',d.participacao||'');
+  enviar(d);
+  if(sug){
+    trackEvento('sugestao_musica_enviou',sug);
+    enviar({type:'sugestao_musica',musica:sug});
+  }
+  if(msg){
+    enviar({type:'presente',presente:'Mensagem via RSVP',valor:0,mensagem:msg});
+  }
+  document.getElementById('rF').style.display='none';
+  document.getElementById('rO').classList.add('on');
+}
+
+/* ══════════════════════════════════════════
+   COUNTDOWN
+══════════════════════════════════════════ */
 
 /* ══════════════════════════════════════════
    COUNTDOWN
