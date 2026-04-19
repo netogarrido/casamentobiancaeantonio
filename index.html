@@ -3050,22 +3050,15 @@ function tL(){
   }else{
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
-    /* Captura a posição-alvo ANTES do colapso, enquanto o DOM ainda está expandido */
-    var cxFora=document.getElementById('cxVestido');
-    var alvo=cxFora||document.getElementById('vestido');
-    var targetY=alvo
-      ? alvo.getBoundingClientRect().top+window.scrollY-120
-      : window.scrollY;
-    /* Desliga scroll-behavior para o salto não ser animado */
-    document.documentElement.style.scrollBehavior='auto';
-    /* Ancora imediatamente no alvo — o colapso acontece com o viewport já posicionado */
-    window.scrollTo(0, targetY);
-    /* Religa o smooth depois que o reflow terminou */
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        document.documentElement.style.scrollBehavior='';
-      });
-    });
+
+/* Aguarda o colapso (.8s) e scrola para o fim da section #vestido */
+    var sec2=document.getElementById('vestido');
+    setTimeout(function(){
+      if(!sec2)return;
+      var y=sec2.getBoundingClientRect().bottom+window.scrollY-window.innerHeight;
+      window.scrollTo({top:y,behavior:'smooth'});
+    },860);
+    
   }
 }
 
