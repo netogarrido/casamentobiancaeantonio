@@ -1183,9 +1183,51 @@ section[id]{scroll-margin-top:78px}
   .lyr-text{font-size:.96rem;line-height:1.88}
   .lyr-stage{padding:26px 16px 24px}
 }
-
-/* CAIXINHA CARDS — compactas, estreitas, valor ao lado, apoiar abaixo */
-.cx-cards{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+/* ── Caixinhas dentro da letra ── */
+.cx-noivo-dentro{
+  border-top:1px solid rgba(212,160,74,.22);
+  padding-top:20px !important;
+  margin-top:20px !important;
+  display:none;
+}
+.cx-noivo-dentro.tem-itens{
+  display:flex;
+}
+.cx-noivo-dentro::before{
+  content:'apoie o noivo artista';
+  display:block;
+  width:100%;
+  font-family:var(--fh);
+  font-style:italic;
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--a);
+  opacity:.7;
+  text-align:center;
+  margin-bottom:12px;
+}
+  
+/* ── Caixinhas dentro da letra — separador editorial ── */
+.cx-noivo-dentro{
+  border-top:1px solid rgba(212,160,74,.22);
+  padding-top:20px !important;
+  margin-top:16px !important;
+}
+.cx-noivo-dentro::before{
+  content:'apoie o noivo artista';
+  display:block;
+  font-family:var(--fh);
+  font-style:italic;
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--a);
+  opacity:.7;
+  text-align:center;
+  margin-bottom:12px;
+}
+  
 .cx-card{
   display:grid;
   grid-template-columns:36px 1fr auto;
@@ -1870,6 +1912,7 @@ section[id]{scroll-margin-top:78px}
     <div class="lyr-stage">
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">✕</button>
       <div class="lyr-text" id="musica_letra"></div>
+      <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
     </div>
   </div>
 
@@ -1960,8 +2003,7 @@ section[id]{scroll-margin-top:78px}
     <div class="tl-evs" id="domingo_texto"></div>
   </div>
   <div class="tl-note"><p id="programacao_nota_alimentacao"></p></div>
-  <!-- Caixinha camarote contextual -->
-  <div class="cx-prog"><div class="lbl" style="margin-top:16px">Experiência na festa</div><div id="cxProg"></div></div>
+
   <!-- Sugestão de música -->
   <div class="sug-musica">
     <h4 id="rsvp_campo_sugestao_musica"></h4>
@@ -2189,10 +2231,9 @@ var PIX={
   'nara_15':'https://nubank.com.br/cobrar/2dfgs/69d03958-b9ca-4ea6-ba82-b334aabea53a',
   'nara_16':'https://nubank.com.br/cobrar/2dfgs/69d03986-152f-4aa8-b98e-af36465d96ef',
   'outro_valor_17':'https://nubank.com.br/cobrar/2dfgs/69d03a91-bc68-40a1-9edc-d544e0a24295',
-  'noivo_artista_18':'https://nubank.com.br/cobrar/2dfgs/69d1dd6e-cc3c-45bc-89dc-4c1a42859b58',
-  'noivo_artista_21':'https://nubank.com.br/cobrar/2dfgs/69d1de9d-1584-4c0f-8dd2-27a824d83337',
-  'noivo_artista_19':'https://nubank.com.br/cobrar/2dfgs/69d039fd-0971-4902-b76a-fe14b01c1e58',
-  'festa_20':'https://nubank.com.br/cobrar/2dfgs/69d03a2f-5cfb-4f6c-8be6-a7ffac960824'
+  'noivo_artista_18':'https://nubank.com.br/cobrar/2dfgs/69e51024-14ec-4bd5-80c8-985fe552cba8',
+  'noivo_artista_21':'https://nubank.com.br/cobrar/2dfgs/69e5111a-bd26-4d7b-9487-581a0ddaa3a1',
+  'noivo_artista_19':'https://nubank.com.br/cobrar/2dfgs/69e5116a-7148-4af7-9de8-d5f567432e8f'
 };
 
 /* ══════════════════════════════════════════
@@ -2712,30 +2753,102 @@ function toggleCat(id){
 /* ══════════════════════════════════════════
    RENDER CAIXINHAS
 ══════════════════════════════════════════ */
+  var _cxNoivoReveladas=false;
+
+function _buildCxCard(cx,variant){
+  var card=document.createElement('div');
+  card.className='cx-card cx-card--'+variant;
+  (function(g){
+    card.onclick=function(){
+      trackEvento('presente_modal_abriu',g.n+' — '+g.p);
+      openModal(g);
+    };
+  })(cx);
+  card.innerHTML=
+    '<div class="cx-card-top">'+
+      '<div class="cx-ico">'+cx.i+'</div>'+
+      '<div class="cx-inf-top">'+
+        '<div class="cx-nm">'+cx.n+'</div>'+
+        '<div class="cx-valor">'+cx.p+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="cx-desc">'+cx.d+'</div>'+
+    '<div class="cx-sep"></div>'+
+    '<div class="cx-apoiar">Apoiar</div>';
+  return card;
+}
+
+function _buildCxCard(cx,variant){
+  var card=document.createElement('div');
+  card.className='cx-card cx-card--'+variant;
+  (function(g){
+    card.onclick=function(){
+      trackEvento('presente_modal_abriu',g.n+' — '+g.p);
+      openModal(g);
+    };
+  })(cx);
+  card.innerHTML=
+    '<div class="cx-card-top">'+
+      '<div class="cx-ico">'+cx.i+'</div>'+
+      '<div class="cx-inf-top">'+
+        '<div class="cx-nm">'+cx.n+'</div>'+
+        '<div class="cx-valor">'+cx.p+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="cx-desc">'+cx.d+'</div>'+
+    '<div class="cx-sep"></div>'+
+    '<div class="cx-apoiar">Apoiar</div>';
+  return card;
+}
+
 function renderCaixinhasVestido(){
-  var c=document.getElementById('cxVestido');if(!c)return;c.innerHTML='';
+  var cDentro=document.getElementById('cxNoivoDentro');
+  if(!cDentro)return;
+  cDentro.innerHTML='';
+  var temItens=false;
   CAIXINHAS.forEach(function(cx){
     if(cx.catId!=='noivo_artista')return;
-    var card=document.createElement('div');card.className='cx-card cx-card--dark';
-    (function(g){
-      card.onclick=function(){
-        trackEvento('presente_modal_abriu',g.n+' — '+g.p);
-        openModal(g);
-      };
-    })(cx);
-    card.innerHTML=
-      '<div class="cx-card-top">'+
-        '<div class="cx-ico">'+cx.i+'</div>'+
-        '<div class="cx-inf-top">'+
-          '<div class="cx-nm">'+cx.n+'</div>'+
-          '<div class="cx-valor">'+cx.p+'</div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="cx-desc">'+cx.d+'</div>'+
-      '<div class="cx-sep"></div>'+
-      '<div class="cx-apoiar">Apoiar</div>';
-    c.appendChild(card);
+    cDentro.appendChild(_buildCxCard(cx,'dark'));
+    temItens=true;
   });
+  if(temItens)cDentro.classList.add('tem-itens');
+}
+
+function renderCaixinhaProg(){
+  /* Rei do Camarote removido — mantida vazia para não quebrar chamada em applyPresentes */
+}
+
+function _initCxSentinel(){
+  var sentinel=document.getElementById('lyrCxSentinel');
+  if(!sentinel)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&!_cxNoivoReveladas){
+        _revelarCxNoivo();
+      }
+    });
+  },{threshold:1.0});
+  obs.observe(sentinel);
+}
+
+function _revelarCxNoivo(){
+  _cxNoivoReveladas=true;
+  var cDentro=document.getElementById('cxNoivoDentro');
+  if(cDentro)cDentro.style.opacity='1';
+}
+
+function _migrarCxNoivoParaFora(){
+  /* Chamado ao fechar a letra — move cards pro #cxVestido */
+  var cFora=document.getElementById('cxVestido');
+  if(!cFora)return;
+  cFora.innerHTML='';
+  CAIXINHAS.forEach(function(cx){
+    if(cx.catId!=='noivo_artista')return;
+    cFora.appendChild(_buildCxCard(cx,'dark'));
+  });
+  /* Esconde o container interno */
+  var cDentro=document.getElementById('cxNoivoDentro');
+  if(cDentro){cDentro.innerHTML='';cDentro.style.opacity='0';}
 }
 
 function renderCaixinhaProg(){
@@ -2978,7 +3091,8 @@ function tL(){
       var y=stage.getBoundingClientRect().top+window.scrollY-110;
       window.scrollTo({top:y,behavior:'smooth'});
     },180);
-  }else{
+}else{
+    _migrarCxNoivoParaFora();
     setTimeout(function(){
       var presentes=document.getElementById('presentes');
       if(!presentes)return;
