@@ -3156,17 +3156,14 @@ function tL(){
     return;
   }
 
-  // Fechando: ancora no botão "abrir os versos" antes do colapso acontecer.
-  // Calcula onde ele estará *depois* do colapso (subtraindo a altura da letra),
-  // rola instantâneo pra lá e só então dispara o colapso — sem montanha-russa.
+// Fechando: o botão "abrir os versos" está ACIMA da letra no DOM,
+  // então sua posição não muda com o colapso. Ancora nele direto, sem montanha-russa.
   var invite=document.getElementById('lyrInviteExt');
-  var alturaLetra=b.offsetHeight;
   var yDestino=0;
   if(invite){
-    var yInviteAtual=invite.getBoundingClientRect().top+window.scrollY;
-    var yInviteFuturo=yInviteAtual-alturaLetra;
-    // centraliza o invite na viewport (ligeiramente abaixo do centro pra caber o final do Vestido acima)
-    yDestino=yInviteFuturo-(window.innerHeight*0.55);
+    var yInvite=invite.getBoundingClientRect().top+window.scrollY;
+    // centraliza o invite na parte inferior da viewport (mostra o final do Vestido acima dele)
+    yDestino=yInvite-(window.innerHeight*0.65);
   }
 
   window.scrollTo({top:Math.max(0,yDestino),behavior:'auto'});
