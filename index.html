@@ -1538,59 +1538,22 @@ color:var(--a);
 .cat-grid > *:nth-child(3){ grid-row:span 2; margin-top:-20px; } /* médio  ~156px, sobe um pouco  */
 .cat-grid > *:nth-child(4){ grid-row:span 3; }   /* alto   ~234px */
 
-  #presentes_btn_fotos{
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  gap:12px;
-  width:100%;
-  padding:0;
-  margin:0 0 10px;
-  background:none;
-  border:none;
-  color:var(--a);
-  font-family:var(--fh);
-  font-style:italic;
-  font-weight:400;
-  font-size:1rem;
-  letter-spacing:.02em;
-  line-height:1;
+/* Botão "ver todas as fotos" — pílula imersa no final da hero dos presentes */
+.pres-hero-fotos-btn{
+  position:absolute;
+  right:clamp(14px,4vw,22px);
+  bottom:10px;
+  z-index:5;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:opacity .25s ease;
 }
 
-#presentes_btn_fotos::before{
-  content:'';
-  flex:1;
-  height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,160,74,.35));
+.pres-hero-fotos-btn .lyr-invite-ext-btn{
+  animation:setaBounce 1.6s ease-in-out infinite;
 }
 
-#presentes_btn_fotos > span{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  flex-shrink:0;
-}
-
-#presentes_btn_fotos > span::after{
-  content:'↓';
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:var(--a);
-  color:var(--p);
-  font-size:.7rem;
-  font-weight:700;
-  animation:setaPulsa 1.8s ease-in-out infinite;
-}
-
-#presentes_btn_fotos:hover{
-  opacity:.8;
+.pres-hero-fotos-btn .lyr-invite-ext-seta{
+  font-size:1.05rem;
 }
 
 @media(min-width:520px){
@@ -2133,7 +2096,7 @@ color:var(--a);
  <!-- PRESENTES -->
 <section class="presentes" id="presentes">
   
-  <!-- Hero da seção presentes -->
+<!-- Hero da seção presentes -->
   <div class="pres-hero" onclick="openCarousel('presentes',0)">
     <div class="pres-polaroid-wrap">
       <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
@@ -2141,7 +2104,14 @@ color:var(--a);
   <div class="pres-hero-overlay">
   <h2 id="presentes_titulo"></h2>
 </div>
+    <div class="pres-hero-fotos-btn" onclick="event.stopPropagation();openCarousel('presentes',0)">
+      <button class="lyr-invite-ext-btn" aria-label="Ver todas as fotos">
+        <span id="presentes_btn_fotos_txt">ver todas as fotos</span>
+        <span class="lyr-invite-ext-seta">→</span>
+      </button>
+    </div>
   </div>
+  
 
   
   <!-- Texto de introdução -->
@@ -2153,12 +2123,7 @@ color:var(--a);
 <!-- Grid de categorias -->
   <div class="pres-cats-wrap">
     <div class="pres-cats-panel">
-      <div class="pres-grid-header">
-
-  <button id="presentes_btn_fotos" onclick="openCarousel('presentes',0)">
-    <span id="presentes_btn_fotos_txt">ver fotos</span>
-  </button>
-
+<div class="pres-grid-header">
   <p id="presentes_subtitulo"></p>
 </div>
       <div class="cat-grid" id="cG"></div>
