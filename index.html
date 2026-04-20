@@ -3214,7 +3214,8 @@ function loadAll(){
 function applyMidia(rows){
   rows.forEach(function(r){
     if(String(r.ativo||'').toLowerCase()==='nao')return;
-    var k=r.chave_midia;var p=r.caminho_github;
+    var k=String(r.chave_midia||'').trim();
+    var p=String(r.caminho_github||'').trim();
     if(k&&p)MIDIAS[k]=GITHUB_BASE+'/'+p;
   });
   document.querySelectorAll('[data-midia]').forEach(function(el){
