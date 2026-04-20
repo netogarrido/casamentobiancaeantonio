@@ -3296,7 +3296,7 @@ function applyConfiguracoes(rows){
 ══════════════════════════════════════════ */
 function applyConteudo(rows){
   rows.forEach(function(r){
-    var key=r.local_exato;
+    var key=r.chave;
     var val=r.descricao;
     if(!key)return;
     var cleaned=(val===null||val===undefined)?'':String(val).replace(/\\n/g,'\n');
