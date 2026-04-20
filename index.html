@@ -1749,7 +1749,47 @@ color:var(--a);
 }
 
   /* ──────────── PROGRAMAÇÃO ──────────── */
-.prog{background:var(--s)}
+.prog{background:var(--s);position:relative;overflow:hidden}
+.prog-hero-v2{background:#3f8fc7;margin:0 0 10px}
+.prog-hero-v2::after{
+  content:'';
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:45%;
+  background:linear-gradient(180deg,
+    rgba(250,244,232,0) 0%,
+    rgba(250,244,232,.6) 30%,
+    rgba(250,244,232,.75) 35%,
+    rgba(250,244,232,.8) 50%,
+    rgba(250,244,232,.95) 100%);
+  pointer-events:none;
+  z-index:3;
+}
+#programacao_label{
+  font-family:var(--fh);
+  font-weight:500;
+  font-style:normal;
+  font-size:clamp(2.8rem,10vw,4rem);
+  line-height:1.08;
+  text-align:center;
+  color:#fff;
+  text-shadow:0 1px 2px rgba(15,23,32,.18);
+  margin:0 auto;
+  letter-spacing:-.01em;
+  position:absolute;
+  top:clamp(10px,3vw,20px);
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 32px);
+}
+@media(min-width:520px){
+  #programacao_label{
+    font-size:clamp(2.8rem,5vw,4rem);
+    top:-25px;
+    width:calc(100% - 56px);
+  }
+}
+  
 #programacao_label{
   font-family:var(--fh);
   font-weight:500;
@@ -2203,13 +2243,21 @@ color:var(--a);
 </section>
   
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
-<section class="prog" id="prog"><div class="inn">
-  <h2 class="prog-label" id="programacao_label"></h2>
-  <h2 class="ttl" id="fds_titulo" style="display:none"></h2>
-  <div class="prog-hero">
-    <img data-midia="foto_hotel_hero" alt="">
+<section class="prog" id="prog">
+
+  <!-- Hero da seção programação -->
+  <div class="pres-hero prog-hero-v2" onclick="openCarousel('programacao',0)">
+    <div class="pres-polaroid-wrap">
+      <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
+    </div>
+    <div class="pres-hero-overlay">
+      <h2 id="programacao_label"></h2>
+    </div>
+    <div class="pres-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
   </div>
-  
+
+  <div class="inn">
+  <h2 class="ttl" id="fds_titulo" style="display:none"></h2>
   <p class="txt" id="fds_texto_1"></p>
   <p class="txt" id="fds_texto_2"></p>
 
@@ -2923,12 +2971,16 @@ function applyConteudo(rows){
     else if(key==='nav_logo'){el.innerHTML=cleaned.replace(/\n/g,'<br>');}
     else{el.innerHTML=cleaned.replace(/\n/g,'<br>');}
 });
- var pt=document.getElementById('presentes_titulo');
+var pt=document.getElementById('presentes_titulo');
   var ps=document.getElementById('vestido_seta_presentes_txt');
   if(pt&&ps)ps.textContent=pt.textContent;
   var fv=document.getElementById('fotos_vestido');
   var fvm=document.getElementById('fotos_vestido_mirror');
   if(fv&&fvm)fvm.textContent=fv.textContent;
+  var fp=document.getElementById('fotos_programacao');
+  var fpm=document.getElementById('fotos_programacao_mirror');
+  if(fp&&fpm)fpm.textContent=fp.textContent;
+  else if(fpm && !fp && fvm)fpm.textContent=fvm.textContent;
 }
     
 
@@ -3355,6 +3407,13 @@ function buildLboxAlbums(){
   var pi=1;
   while(MIDIAS['presentes_foto_'+pi]){p.push(MIDIAS['presentes_foto_'+pi]);pi++;}
   LBOX.albums.presentes=p;
+  var pr=[];
+  if(MIDIAS.foto_hotel_hero)pr.push(MIDIAS.foto_hotel_hero);
+  var pri=1;
+  while(MIDIAS['foto_hotel_lazer_'+pri]){pr.push(MIDIAS['foto_hotel_lazer_'+pri]);pri++;}
+  LBOX.albums.programacao=pr;
+  var progBadge=document.getElementById('progHeroBadge');
+  if(progBadge){progBadge.style.display=pr.length>1?'flex':'none';}
 }
 
 function openCarousel(album,idx){
