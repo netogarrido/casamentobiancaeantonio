@@ -1747,16 +1747,39 @@ color:var(--a);
   -webkit-box-orient:vertical;
   line-height:1.4;
 }
-/* ──────────── PROGRAMAÇÃO ──────────── */
+
+  
+  /* ──────────── PROGRAMAÇÃO ──────────── */
 .prog{
-  background:var(--s);
+  background:#0B1F3A;
+  color:#FAF4E8;
   position:relative;
   overflow:hidden;
   padding:0 0 var(--pad);
 }
 .prog .inn{padding:0 20px}
-.prog .ttl{text-align:left}
-.prog .txt{text-align:left}
+.prog .ttl{text-align:left;color:#FAF4E8}
+.prog .txt{text-align:left;color:#FAF4E8}
+
+/* ── Faixa de título acima da foto ── */
+.prog-hero-title{
+  background:#0B1F3A;
+  padding:clamp(28px,7vw,48px) 20px clamp(20px,5vw,32px);
+  text-align:center;
+}
+.prog-hero-title h2{
+  font-family:var(--fh);
+  font-weight:500;
+  font-style:normal;
+  font-size:clamp(2.8rem,10vw,4rem);
+  line-height:1.05;
+  color:#FAF4E8;
+  letter-spacing:-.01em;
+  margin:0;
+}
+@media(min-width:520px){
+  .prog-hero-title h2{font-size:clamp(2.8rem,5vw,4rem)}
+}
 
 /* ── Hero horizontal foto + fade azul ── */
 .prog-hero-wrap{
@@ -1764,7 +1787,7 @@ color:var(--a);
   width:100%;
   margin:0 0 24px;
   cursor:pointer;
-  background:#3f8fc7;
+  background:#0B1F3A;
   overflow:hidden;
 }
 .prog-hero-img-wrap{
@@ -1779,52 +1802,21 @@ color:var(--a);
   object-fit:cover;
   display:block;
 }
-/* fade azul no rodapé da foto, dissolvendo na cor da seção */
+/* fade azul no rodapé da foto, dissolvendo na seção */
 .prog-hero-wrap::after{
   content:'';
   position:absolute;
   left:0;right:0;bottom:0;
   height:45%;
   background:linear-gradient(180deg,
-    rgba(63,143,199,0) 0%,
-    rgba(63,143,199,.35) 25%,
-    rgba(98,157,199,.65) 55%,
-    rgba(168,193,204,.85) 80%,
-    var(--s) 100%);
+    rgba(11,31,58,0) 0%,
+    rgba(11,31,58,.35) 30%,
+    rgba(11,31,58,.75) 65%,
+    #0B1F3A 100%);
   pointer-events:none;
   z-index:2;
 }
-.prog-hero-overlay{
-  position:absolute;
-  inset:0;
-  padding:clamp(14px,4vw,24px) clamp(16px,5vw,28px);
-  pointer-events:none;
-  z-index:3;
-}
-#programacao_label{
-  font-family:var(--fh);
-  font-weight:500;
-  font-style:normal;
-  font-size:clamp(2.8rem,10vw,4rem);
-  line-height:1.08;
-  text-align:center;
-  color:#fff;
-  text-shadow:0 1px 8px rgba(15,23,32,.30);
-  letter-spacing:-.01em;
-  margin:0;
-  position:absolute;
-  top:clamp(10px,3vw,20px);
-  left:50%;
-  transform:translateX(-50%);
-  width:calc(100% - 32px);
-}
-@media(min-width:520px){
-  #programacao_label{
-    font-size:clamp(2.8rem,5vw,4rem);
-    top:clamp(14px,3vw,24px);
-    width:calc(100% - 56px);
-  }
-}
+  
 .prog-hero-badge{
   position:absolute;
   bottom:clamp(14px,4vw,22px);
@@ -2553,13 +2545,15 @@ color:var(--a);
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
 <section class="prog" id="prog">
 
+<!-- Faixa de título azul acima da foto -->
+  <div class="prog-hero-title">
+    <h2 id="programacao_label"></h2>
+  </div>
+
   <!-- Hero horizontal: foto hotel + fade azul -->
   <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
     <div class="prog-hero-img-wrap">
       <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
-    </div>
-    <div class="prog-hero-overlay">
-      <h2 id="programacao_label"></h2>
     </div>
     <div class="prog-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
   </div>
