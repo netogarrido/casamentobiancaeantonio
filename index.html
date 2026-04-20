@@ -1747,21 +1747,57 @@ color:var(--a);
   -webkit-box-orient:vertical;
   line-height:1.4;
 }
+/* ──────────── PROGRAMAÇÃO ──────────── */
+.prog{
+  background:var(--s);
+  position:relative;
+  overflow:hidden;
+  padding:0 0 var(--pad);
+}
+.prog .inn{padding:0 20px}
+.prog .ttl{text-align:left}
+.prog .txt{text-align:left}
 
-  /* ──────────── PROGRAMAÇÃO ──────────── */
-.prog{background:var(--s);position:relative;overflow:hidden}
-.prog-hero-v2{background:#3f8fc7;margin:0 0 10px}
-.prog-hero-v2::after{
+/* ── Hero horizontal foto + fade azul ── */
+.prog-hero-wrap{
+  position:relative;
+  width:100%;
+  margin:0 0 24px;
+  cursor:pointer;
+  background:#3f8fc7;
+  overflow:hidden;
+}
+.prog-hero-img-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/10;
+  overflow:hidden;
+}
+.prog-hero-img-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+/* fade azul no rodapé da foto, dissolvendo na cor da seção */
+.prog-hero-wrap::after{
   content:'';
   position:absolute;
   left:0;right:0;bottom:0;
   height:45%;
   background:linear-gradient(180deg,
-    rgba(250,244,232,0) 0%,
-    rgba(250,244,232,.6) 30%,
-    rgba(250,244,232,.75) 35%,
-    rgba(250,244,232,.8) 50%,
-    rgba(250,244,232,.95) 100%);
+    rgba(63,143,199,0) 0%,
+    rgba(63,143,199,.35) 25%,
+    rgba(98,157,199,.65) 55%,
+    rgba(168,193,204,.85) 80%,
+    var(--s) 100%);
+  pointer-events:none;
+  z-index:2;
+}
+.prog-hero-overlay{
+  position:absolute;
+  inset:0;
+  padding:clamp(14px,4vw,24px) clamp(16px,5vw,28px);
   pointer-events:none;
   z-index:3;
 }
@@ -1773,9 +1809,9 @@ color:var(--a);
   line-height:1.08;
   text-align:center;
   color:#fff;
-  text-shadow:0 1px 2px rgba(15,23,32,.18);
-  margin:0 auto;
+  text-shadow:0 1px 8px rgba(15,23,32,.30);
   letter-spacing:-.01em;
+  margin:0;
   position:absolute;
   top:clamp(10px,3vw,20px);
   left:50%;
@@ -1785,50 +1821,364 @@ color:var(--a);
 @media(min-width:520px){
   #programacao_label{
     font-size:clamp(2.8rem,5vw,4rem);
-    top:-25px;
+    top:clamp(14px,3vw,24px);
     width:calc(100% - 56px);
   }
 }
-  
-#programacao_label{
-  font-family:var(--fh);
-  font-weight:500;
-  font-style:normal;
-  font-size:clamp(2.8rem,10vw,4rem);
-  line-height:1.08;
+.prog-hero-badge{
+  position:absolute;
+  bottom:clamp(14px,4vw,22px);
+  right:clamp(14px,4vw,22px);
+  background:linear-gradient(135deg,var(--a),var(--al));
+  color:var(--n);
+  font-size:.62rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  padding:6px 11px;
+  border-radius:999px;
+  box-shadow:0 4px 14px rgba(212,160,74,.38);
+  cursor:pointer;
+  z-index:4;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease, box-shadow .2s ease;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.prog-hero-badge:hover{
+  transform:scale(1.07);
+  box-shadow:0 6px 18px rgba(212,160,74,.5);
+}
+
+/* ── CAIXINHA 1 — LAZER (glassmorphism, interativo) ── */
+.prog-lazer-wrap{
+  margin:0 0 36px;
+}
+.prog-lazer-panel{
+  background:rgba(255,255,255,.50);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:18px;
+  padding:14px 12px 12px;
+  box-shadow:
+    0 14px 34px rgba(15,23,32,.08),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+.prog-lazer-ttl{
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--a);
   text-align:center;
+  margin:0 0 12px;
+  padding:4px 4px 0;
+}
+.prog-lazer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.prog-lazer-card{
+  position:relative;
+  aspect-ratio:1;
+  border-radius:12px;
+  overflow:hidden;
+  background:var(--ag);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.prog-lazer-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .5s ease;
+}
+.prog-lazer-card span{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  padding:10px 12px;
+  background:linear-gradient(0deg,rgba(15,23,32,.82),rgba(15,23,32,.35) 60%,transparent);
+  color:var(--s);
+  font-size:.74rem;
+  font-weight:500;
+  letter-spacing:.01em;
+}
+.prog-lazer-card:hover img{transform:scale(1.05)}
+.prog-lazer-card.on{
+  box-shadow:0 0 0 2px var(--a), 0 8px 22px rgba(212,160,74,.30);
+}
+.prog-lazer-card.on img{transform:scale(1.06)}
+
+.prog-lazer-panels{
+  margin-top:0;
+}
+.prog-lazer-panel-txt{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .5s ease, margin .3s ease;
+  margin-top:0;
+}
+.prog-lazer-panel-txt.on{
+  max-height:800px;
+  margin-top:12px;
+}
+.prog-lazer-panel-txt p{
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:12px;
+  padding:14px 14px;
+  font-size:.82rem;
+  line-height:1.6;
   color:var(--im);
-  letter-spacing:-.01em;
-  margin:0 auto 18px;
-  max-width:100%;
 }
-@media(min-width:520px){
-  #programacao_label{
-    font-size:clamp(2.8rem,5vw,4rem);
-  }
+
+/* ── TIMELINE (sem caixa externa) ── */
+.prog-timeline{
+  margin:0 0 32px;
 }
-.prog-hero{margin:18px auto 24px;max-width:560px;border-radius:14px;overflow:hidden;box-shadow:0 10px 32px rgba(0,0,0,.18)}
-.prog-hero img{width:100%;height:auto;display:block;object-fit:cover;aspect-ratio:3/2}
-  
-.prog .ttl{text-align:left}
-.prog .txt{text-align:left}
-.tl-day{background:#fff;border-radius:var(--r);overflow:hidden;border:1px solid var(--st);margin-bottom:12px}
-.tl-h{padding:14px 16px;background:var(--n);display:flex;align-items:center;gap:10px}
-.tl-h-i{font-size:1.05rem}.tl-h-n{font-family:var(--fh);font-size:.98rem;color:var(--s)}.tl-h-d{font-size:.62rem;color:var(--al);margin-left:auto;font-weight:600}
+.tl-day{
+  background:#fff;
+  border-radius:var(--r);
+  overflow:hidden;
+  border:1px solid var(--st);
+  margin-bottom:12px;
+}
+.tl-h{
+  padding:14px 16px;
+  background:var(--n);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.tl-h-i{font-size:1.05rem}
+.tl-h-n{font-family:var(--fh);font-size:.98rem;color:var(--s)}
+.tl-h-d{font-size:.62rem;color:var(--al);margin-left:auto;font-weight:600}
 .tl-evs{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .tl-ev{display:flex;gap:10px;align-items:flex-start}
 .tl-dot{width:6px;height:6px;border-radius:50%;background:var(--a);margin-top:7px;flex-shrink:0}
-.tl-ev h4{font-size:.8rem;font-weight:400}.tl-ev p{font-size:.7rem;color:var(--is);margin-top:1px}
-.tl-note{margin-top:12px;padding:12px 14px;background:var(--ag);border-radius:var(--rs);border-left:3px solid var(--ap)}
-.tl-note p{font-size:.72rem;color:var(--im);line-height:1.6}.tl-note strong{color:var(--i);font-weight:600}
+.tl-ev h4{font-size:.8rem;font-weight:400}
+.tl-ev p{font-size:.7rem;color:var(--is);margin-top:1px}
+.tl-note{
+  margin-top:12px;
+  padding:12px 14px;
+  background:var(--ag);
+  border-radius:var(--rs);
+  border-left:3px solid var(--ap);
+}
+.tl-note p{font-size:.72rem;color:var(--im);line-height:1.6}
+.tl-note strong{color:var(--i);font-weight:600}
 
-/* ──────────── TRAJE ──────────── */
-.traje{background:var(--p)}
-.traje-grid{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.traje-card{display:flex;gap:12px;padding:14px 16px;background:#fff;border-radius:var(--r);border:1px solid var(--st)}
-.traje-ico{font-size:1.2rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:9px;flex-shrink:0}
-.traje-info h4{font-size:.82rem;font-weight:500;margin-bottom:2px}
-.traje-info p{font-size:.74rem;color:var(--is);line-height:1.5}
+/* ── Chamada "só resta day use" ── */
+.prog-cta-dayuse{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:28px 0 18px;
+}
+.prog-cta-line{
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--a),transparent);
+  opacity:.5;
+}
+.prog-cta-txt{
+  font-size:.62rem;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--a);
+  white-space:nowrap;
+}
+
+/* ── Card DAY USE (sólido branco, protagonista) ── */
+.prog-dayuse{
+  background:#fff;
+  border:1px solid var(--st);
+  border-radius:var(--r);
+  padding:22px 20px 0;
+  margin:0 0 32px;
+  box-shadow:0 8px 28px rgba(15,23,32,.08);
+  overflow:hidden;
+}
+.prog-dayuse-ttl{
+  font-family:var(--fh);
+  font-size:1.3rem;
+  font-weight:500;
+  color:var(--i);
+  margin:0 0 10px;
+  line-height:1.25;
+}
+.prog-dayuse-txt{
+  font-size:.84rem;
+  color:var(--im);
+  line-height:1.6;
+  margin:0 0 18px;
+}
+.prog-dayuse-info{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:0 0 20px;
+}
+.pdu-i{display:flex;gap:10px;align-items:baseline}
+.pdu-i span:first-child{font-size:.82rem;flex-shrink:0;width:22px}
+.pdu-i span:last-child{font-size:.82rem;color:var(--im);line-height:1.5}
+
+/* Reserva com Marcela dentro do card day use */
+.prog-marcela{
+  background:var(--ag);
+  border-top:1px solid var(--st);
+  margin:0 -20px;
+  padding:18px 20px 20px;
+}
+.prog-marcela h4{
+  font-family:var(--fh);
+  font-size:1rem;
+  font-weight:500;
+  color:var(--i);
+  margin:0 0 4px;
+}
+.prog-marcela-lead{
+  font-size:.76rem;
+  color:var(--im);
+  margin:0 0 14px;
+}
+.prog-marcela-ct{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:14px;
+}
+.prog-marcela-it{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 13px;
+  background:#fff;
+  border-radius:var(--rs);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  border:1px solid var(--st);
+  transition:background .2s;
+}
+.prog-marcela-it:hover{background:var(--s)}
+.prog-marcela-ico{font-size:.95rem}
+.prog-marcela-inf{flex:1;text-align:left}
+.prog-marcela-lb{
+  font-size:.54rem;
+  color:var(--is);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:600;
+}
+.prog-marcela-vl{font-size:.8rem;color:var(--i)}
+.prog-marcela-cp{
+  font-size:.54rem;
+  color:var(--a);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:600;
+}
+.prog-marcela-hrs{
+  font-size:.68rem;
+  color:var(--is);
+  line-height:1.7;
+}
+.prog-marcela-hrs strong{color:var(--im);font-weight:600}
+.prog-marcela-aviso{
+  font-size:.7rem;
+  color:var(--is);
+  margin-top:8px;
+}
+
+/* ── Divisor tipográfico ── */
+.prog-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:28px 0 18px;
+}
+.prog-divider-line{
+  flex:1;
+  height:1px;
+  background:var(--st);
+}
+.prog-divider-txt{
+  font-size:.58rem;
+  font-weight:600;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--is);
+  white-space:nowrap;
+}
+
+/* ── Alternativas (tipográfico, sem card externo) ── */
+.prog-alt-wrap{
+  margin:0 0 24px;
+}
+.prog-alt-intro{
+  font-size:.8rem;
+  color:var(--im);
+  line-height:1.6;
+  margin:0 0 14px;
+}
+.prog-alt-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.prog-alt-hc{
+  background:#fff;
+  border:1px solid var(--st);
+  border-radius:var(--rs);
+  padding:14px 12px;
+  text-align:center;
+}
+.prog-alt-hc h4{
+  font-family:var(--fh);
+  font-size:.9rem;
+  font-weight:500;
+  margin-bottom:3px;
+  color:var(--i);
+}
+.prog-alt-hc p{
+  font-size:.68rem;
+  color:var(--is);
+  margin-bottom:6px;
+}
+.prog-alt-hc span{
+  font-size:.7rem;
+  color:var(--a);
+  font-weight:500;
+}
+
+/* ── Só festa (card menor) ── */
+.prog-sofesta{
+  background:#fff;
+  border:1px solid var(--st);
+  border-radius:var(--rs);
+  padding:16px 16px;
+  text-align:center;
+}
+.prog-sofesta h4{
+  font-family:var(--fh);
+  font-size:1rem;
+  font-weight:500;
+  color:var(--i);
+  margin:0 0 6px;
+}
+.prog-sofesta p{
+  font-size:.78rem;
+  color:var(--im);
+  line-height:1.55;
+  margin:0;
+}
+
 
 /* ──────────── RSVP ──────────── */
 .rsvp{background:var(--n);color:var(--s)}
@@ -1845,57 +2195,15 @@ color:var(--a);
 .rsvp-note{font-size:.68rem;color:rgba(250,244,232,.3);margin-top:8px;line-height:1.5}
 .rsvp-ok{display:none;text-align:center;padding:28px 0}.rsvp-ok.on{display:block}
 
-/* ──────────── RESERVAS ──────────── */
-.reservas{background:var(--p)}
-.reservas .ttl{text-align:left;margin-bottom:22px}
-.res-card{background:#fff;border:1px solid var(--st);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;overflow:hidden}
-.res-card-tag{display:inline-block;font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--is);background:var(--ag);padding:5px 11px;border-radius:20px;margin-bottom:12px}
-.res-card-tag-hi{color:#2E7D32;background:rgba(46,125,50,.1)}
-.res-card-ttl{font-family:var(--fh);font-size:1.25rem;font-weight:500;color:var(--i);margin-bottom:10px;line-height:1.25}
-.res-card-txt{font-size:.82rem;color:var(--im);line-height:1.55;margin-bottom:14px}
-.res-santanna .res-card-tag{color:#B71C1C;background:rgba(183,28,28,.08)}
-.sep-thin{height:1px;background:var(--st);margin:16px 0 14px}
-.alt-h{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
-.alt-hc{background:var(--s);border-radius:var(--rs);padding:14px;text-align:center;border:1px solid var(--st)}
-.alt-hc h4{font-family:var(--fh);font-size:.88rem;margin-bottom:3px}
-.alt-hc p{font-size:.68rem;color:var(--is);margin-bottom:6px}
-.alt-hc span{font-size:.7rem;color:var(--a);text-decoration:none;font-weight:500}
+/* ──────────── TRAJE ──────────── */
+.traje{background:var(--p)}
+.traje-grid{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.traje-card{display:flex;gap:12px;padding:14px 16px;background:#fff;border-radius:var(--r);border:1px solid var(--st)}
+.traje-ico{font-size:1.2rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:9px;flex-shrink:0}
+.traje-info h4{font-size:.82rem;font-weight:500;margin-bottom:2px}
+.traje-info p{font-size:.74rem;color:var(--is);line-height:1.5}
 
-/* Day use — hero e cards lazer */
-.res-dayuse{padding:0;overflow:hidden}
-.res-dayuse .res-card-tag{margin:18px 18px 10px}
-.du-hero{width:100%;aspect-ratio:16/9;overflow:hidden;margin-bottom:14px;background:var(--ag)}
-.du-hero img{width:100%;height:100%;object-fit:cover;display:block}
-.res-dayuse .res-card-ttl,.res-dayuse .res-card-txt{padding:0 18px}
-.res-dayuse .res-card-ttl{margin-bottom:8px}
-.res-lazer-ttl{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--al);padding:14px 18px 10px;margin:0}
-.du-lazer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px 16px}
-.du-lazer-card{position:relative;aspect-ratio:1;border-radius:var(--rs);overflow:hidden;background:var(--ag)}
-.du-lazer-card img{width:100%;height:100%;object-fit:cover;display:block}
-.du-lazer-card span{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:linear-gradient(0deg,rgba(15,23,32,.78),transparent);color:var(--s);font-size:.72rem;font-weight:500}
-
-/* Bloco info day use */
-.du-info{padding:0 18px 16px;display:flex;flex-direction:column;gap:6px}
-.du-i{display:flex;gap:8px;align-items:baseline}
-.du-i span:first-child{font-size:.78rem;flex-shrink:0;width:22px}
-.du-i span:last-child{font-size:.78rem;color:var(--im);line-height:1.5}
-
-/* Reserva com Marcela */
-.res-dayuse .reserva{background:var(--ag);border-radius:0;border:none;border-top:1px solid var(--st);padding:18px;margin:0;text-align:left}
-.reserva h3{font-family:var(--fh);font-size:1rem;margin-bottom:4px;font-weight:500}
-.reserva>p{font-size:.76rem;color:var(--im);margin-bottom:14px}
-.res-ct{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.res-it{display:flex;align-items:center;gap:10px;padding:12px 13px;background:#fff;border-radius:var(--rs);cursor:pointer;-webkit-tap-highlight-color:transparent;border:1px solid var(--st)}
-.res-it:hover{background:var(--s)}
-.res-ico{font-size:.95rem}.res-inf{flex:1;text-align:left}
-.res-lb{font-size:.54rem;color:var(--is);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.res-vl{font-size:.8rem;color:var(--i)}
-.res-cp{font-size:.54rem;color:var(--a);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.res-hrs{font-size:.68rem;color:var(--is);line-height:1.7}.res-hrs strong{color:var(--im);font-weight:600}
-
-/* Card só festa */
-.res-festa .res-card-tag{color:#1565C0;background:rgba(21,101,192,.08)}
-
+  
 /* ──────────── FAQ ──────────── */
 .faq-s{background:var(--s)}
 .faq-cat{font-family:var(--fh);font-size:1rem;font-weight:500;color:var(--a);margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--st)}
@@ -2245,114 +2553,156 @@ color:var(--a);
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
 <section class="prog" id="prog">
 
-  <!-- Hero da seção programação -->
-  <div class="pres-hero prog-hero-v2" onclick="openCarousel('programacao',0)">
-    <div class="pres-polaroid-wrap">
+  <!-- Hero horizontal: foto hotel + fade azul -->
+  <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
+    <div class="prog-hero-img-wrap">
       <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
     </div>
-    <div class="pres-hero-overlay">
+    <div class="prog-hero-overlay">
       <h2 id="programacao_label"></h2>
     </div>
-    <div class="pres-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
+    <div class="prog-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
   </div>
 
   <div class="inn">
+
+  <!-- Intro -->
   <h2 class="ttl" id="fds_titulo" style="display:none"></h2>
   <p class="txt" id="fds_texto_1"></p>
   <p class="txt" id="fds_texto_2"></p>
 
-  <!-- Timeline -->
-  <h3 class="ttl" style="font-size:1.2rem;margin:28px 0 14px" id="programacao_titulo"></h3>
-  <p class="txt" style="font-size:.78rem;color:var(--is);margin-bottom:14px" id="programacao_subtitulo"></p>
-  <div class="tl-day">
-    <div class="tl-h"><span class="tl-h-i">🌅</span><span class="tl-h-n" id="sexta_titulo"></span></div>
-    <div class="tl-evs" id="sexta_texto"></div>
-  </div>
-  <div class="tl-day">
-    <div class="tl-h"><span class="tl-h-i">🎉</span><span class="tl-h-n" id="sabado_titulo"></span></div>
-    <div class="tl-evs" id="sabado_texto"></div>
-  </div>
-  <div class="tl-day">
-    <div class="tl-h"><span class="tl-h-i">☀️</span><span class="tl-h-n" id="domingo_titulo"></span></div>
-    <div class="tl-evs" id="domingo_texto"></div>
-  </div>
-  <div class="tl-note"><p id="programacao_nota_alimentacao"></p></div>
-</div></section>
-
-<!-- RESERVAS / COMO PARTICIPAR -->
-<section class="reservas" id="reservas"><div class="inn">
-  <div class="lbl" id="reservas_label">Como participar</div>
-  <h2 class="ttl" id="reservas_titulo"></h2>
-
-  <!-- CARD 1 — SANT'ANNA (ESGOTADO + ALTERNATIVAS) -->
-  <div class="res-card res-santanna">
-    <div class="res-card-tag" id="reserva_santanna_tag"></div>
-    <h3 class="res-card-ttl" id="hotel_principal_titulo"></h3>
-    <p class="res-card-txt" id="reserva_santanna_texto"></p>
-    <div class="sep-thin"></div>
-    <div class="lbl" style="text-align:left;margin-bottom:10px" id="reserva_alternativas_titulo"></div>
-    <div class="alt-h">
-      <div class="alt-hc"><h4 id="hotel_prado_nome"></h4><p>~20 min</p><span id="hotel_prado_contato" style="font-size:.7rem;color:var(--a)"></span></div>
-      <div class="alt-hc"><h4 id="hotel_ancona_nome"></h4><p>~20 min</p><span id="hotel_ancona_contato" style="font-size:.7rem;color:var(--a)"></span></div>
+  <!-- CAIXINHA 1 — LAZER 2×2 (glassmorphism, interativo) -->
+  <div class="prog-lazer-wrap">
+    <div class="prog-lazer-panel">
+      <p class="prog-lazer-ttl" id="reserva_dayuse_lazer_titulo"></p>
+      <div class="prog-lazer-grid" id="progLazerGrid">
+        <div class="prog-lazer-card" data-lz="1" onclick="toggleLazer(1)">
+          <img data-midia="foto_hotel_lazer_1" alt="">
+          <span id="reserva_dayuse_lazer_card_1"></span>
+        </div>
+        <div class="prog-lazer-card" data-lz="2" onclick="toggleLazer(2)">
+          <img data-midia="foto_hotel_lazer_2" alt="">
+          <span id="reserva_dayuse_lazer_card_2"></span>
+        </div>
+        <div class="prog-lazer-card" data-lz="3" onclick="toggleLazer(3)">
+          <img data-midia="foto_hotel_lazer_3" alt="">
+          <span id="reserva_dayuse_lazer_card_3"></span>
+        </div>
+        <div class="prog-lazer-card" data-lz="4" onclick="toggleLazer(4)">
+          <img data-midia="foto_hotel_lazer_4" alt="">
+          <span id="reserva_dayuse_lazer_card_4"></span>
+        </div>
+      </div>
+      <!-- Painel de texto que abre -->
+      <div class="prog-lazer-panels">
+        <div class="prog-lazer-panel-txt" id="plPanel-1"><p id="programacao_lazer_1"></p></div>
+        <div class="prog-lazer-panel-txt" id="plPanel-2"><p id="programacao_lazer_2"></p></div>
+        <div class="prog-lazer-panel-txt" id="plPanel-3"><p id="programacao_lazer_3"></p></div>
+        <div class="prog-lazer-panel-txt" id="plPanel-4"><p id="programacao_lazer_4"></p></div>
+      </div>
     </div>
   </div>
 
-  <!-- CARD 2 — DAY USE -->
-  <div class="res-card res-dayuse">
-    <div class="res-card-tag res-card-tag-hi" id="reserva_dayuse_tag"></div>
-    <div class="du-hero">
-      <img id="du_hero_img" data-midia="foto_hotel_hero" alt="">
+  <!-- Timeline 3 dias (sem caixa externa) -->
+  <div class="prog-timeline">
+    <h3 class="ttl" style="font-size:1.2rem;margin:0 0 8px" id="programacao_titulo"></h3>
+    <p class="txt" style="font-size:.78rem;color:var(--is);margin-bottom:16px" id="programacao_subtitulo"></p>
+    <div class="tl-day">
+      <div class="tl-h"><span class="tl-h-i">🌅</span><span class="tl-h-n" id="sexta_titulo"></span></div>
+      <div class="tl-evs" id="sexta_texto"></div>
     </div>
-    <h3 class="res-card-ttl" id="reserva_dayuse_chamada"></h3>
-    <p class="res-card-txt" id="reserva_dayuse_convite"></p>
-
-    <!-- Grid de cards de lazer -->
-    <p class="res-lazer-ttl" id="reserva_dayuse_lazer_titulo"></p>
-    <div class="du-lazer-grid">
-      <div class="du-lazer-card"><img data-midia="foto_hotel_lazer_1" alt=""><span id="reserva_dayuse_lazer_card_1"></span></div>
-      <div class="du-lazer-card"><img data-midia="foto_hotel_lazer_2" alt=""><span id="reserva_dayuse_lazer_card_2"></span></div>
-      <div class="du-lazer-card"><img data-midia="foto_hotel_lazer_3" alt=""><span id="reserva_dayuse_lazer_card_3"></span></div>
-      <div class="du-lazer-card"><img data-midia="foto_hotel_lazer_4" alt=""><span id="reserva_dayuse_lazer_card_4"></span></div>
+    <div class="tl-day">
+      <div class="tl-h"><span class="tl-h-i">🎉</span><span class="tl-h-n" id="sabado_titulo"></span></div>
+      <div class="tl-evs" id="sabado_texto"></div>
     </div>
+    <div class="tl-day">
+      <div class="tl-h"><span class="tl-h-i">☀️</span><span class="tl-h-n" id="domingo_titulo"></span></div>
+      <div class="tl-evs" id="domingo_texto"></div>
+    </div>
+    <div class="tl-note"><p id="programacao_nota_alimentacao"></p></div>
+  </div>
 
-    <!-- Info operacional -->
-    <div class="du-info">
-      <div class="du-i"><span>💰</span><span id="dayuse_valores"></span></div>
-      <div class="du-i"><span>🍽️</span><span id="dayuse_refeicoes"></span></div>
-      <div class="du-i"><span>⏰</span><span id="dayuse_horario"></span></div>
-      <div class="du-i"><span>👕</span><span id="dayuse_orientacao"></span></div>
-      <div class="du-i"><span>📋</span><span id="dayuse_vagas"></span></div>
-      <div class="du-i"><span>📌</span><span id="dayuse_reserva"></span></div>
+  <!-- Chamada: só resta day use -->
+  <div class="prog-cta-dayuse">
+    <span class="prog-cta-line"></span>
+    <span class="prog-cta-txt" id="reserva_dayuse_tag"></span>
+    <span class="prog-cta-line"></span>
+  </div>
+
+  <!-- CARD DAY USE (sólido branco — protagonista) -->
+  <div class="prog-dayuse">
+    <h3 class="prog-dayuse-ttl" id="reserva_dayuse_chamada"></h3>
+    <p class="prog-dayuse-txt" id="reserva_dayuse_convite"></p>
+
+    <div class="prog-dayuse-info">
+      <div class="pdu-i"><span>💰</span><span id="dayuse_valores"></span></div>
+      <div class="pdu-i"><span>🍽️</span><span id="dayuse_refeicoes"></span></div>
+      <div class="pdu-i"><span>⏰</span><span id="dayuse_horario"></span></div>
+      <div class="pdu-i"><span>👕</span><span id="dayuse_orientacao"></span></div>
+      <div class="pdu-i"><span>📋</span><span id="dayuse_vagas"></span></div>
+      <div class="pdu-i"><span>📌</span><span id="dayuse_reserva"></span></div>
     </div>
 
     <!-- Reserva com Marcela -->
-    <div class="reserva">
-      <h3 id="reserva_titulo"></h3>
-      <p>Diretamente com <strong id="reserva_marcela_nome"></strong>:</p>
-      <div class="res-ct">
-        <div class="res-it" onclick="cpEmail()">
-          <span class="res-ico">📧</span>
-          <div class="res-inf"><div class="res-lb">E-mail</div><div class="res-vl" id="reserva_marcela_email"></div></div>
-          <span class="res-cp">Copiar</span>
+    <div class="prog-marcela">
+      <h4 id="reserva_titulo"></h4>
+      <p class="prog-marcela-lead">Diretamente com <strong id="reserva_marcela_nome"></strong>:</p>
+      <div class="prog-marcela-ct">
+        <div class="prog-marcela-it" onclick="cpEmail()">
+          <span class="prog-marcela-ico">📧</span>
+          <div class="prog-marcela-inf"><div class="prog-marcela-lb">E-mail</div><div class="prog-marcela-vl" id="reserva_marcela_email"></div></div>
+          <span class="prog-marcela-cp">Copiar</span>
         </div>
-        <div class="res-it" onclick="cpWA()">
-          <span class="res-ico">💬</span>
-          <div class="res-inf"><div class="res-lb">WhatsApp</div><div class="res-vl" id="reserva_marcela_whatsapp"></div></div>
-          <span class="res-cp">Copiar</span>
+        <div class="prog-marcela-it" onclick="cpWA()">
+          <span class="prog-marcela-ico">💬</span>
+          <div class="prog-marcela-inf"><div class="prog-marcela-lb">WhatsApp</div><div class="prog-marcela-vl" id="reserva_marcela_whatsapp"></div></div>
+          <span class="prog-marcela-cp">Copiar</span>
         </div>
       </div>
-      <div class="res-hrs" id="reserva_marcela_horarios"></div>
-      <p style="font-size:.7rem;color:var(--is);margin-top:8px" id="reserva_marcela_aviso"></p>
+      <div class="prog-marcela-hrs" id="reserva_marcela_horarios"></div>
+      <p class="prog-marcela-aviso" id="reserva_marcela_aviso"></p>
     </div>
   </div>
 
-  <!-- CARD 3 — SÓ FESTA -->
-  <div class="res-card res-festa">
-    <div class="res-card-tag" id="reserva_sofesta_tag"></div>
-    <h3 class="res-card-ttl" id="reserva_sofesta_titulo"></h3>
-    <p class="res-card-txt" id="reserva_sofesta_texto"></p>
+  <!-- Divisor: "ou, se preferir fora" -->
+  <div class="prog-divider">
+    <span class="prog-divider-line"></span>
+    <span class="prog-divider-txt" id="reserva_alternativas_titulo"></span>
+    <span class="prog-divider-line"></span>
   </div>
-</div></section>
+
+  <!-- Alternativas (tipográfico, sem card) -->
+  <div class="prog-alt-wrap">
+    <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
+    <div class="prog-alt-grid">
+      <div class="prog-alt-hc">
+        <h4 id="hotel_prado_nome"></h4>
+        <p>~20 min</p>
+        <span id="hotel_prado_contato"></span>
+      </div>
+      <div class="prog-alt-hc">
+        <h4 id="hotel_ancona_nome"></h4>
+        <p>~20 min</p>
+        <span id="hotel_ancona_contato"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Divisor: "se vier só pra festa" -->
+  <div class="prog-divider">
+    <span class="prog-divider-line"></span>
+    <span class="prog-divider-txt" id="reserva_sofesta_tag"></span>
+    <span class="prog-divider-line"></span>
+  </div>
+
+  <!-- Só festa (card sólido menor) -->
+  <div class="prog-sofesta">
+    <h4 id="reserva_sofesta_titulo"></h4>
+    <p id="reserva_sofesta_texto"></p>
+  </div>
+
+  </div>
+</section>
 
 <!-- CONFIRME SUA PRESENÇA (RSVP) -->
 <section class="rsvp" id="rsvp"><div class="inn">
@@ -3747,6 +4097,7 @@ function cpFallback(text,msg){
   var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
   document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast(msg);
 }
+
 function cpEmail(){
   var v=document.getElementById('reserva_marcela_email').textContent.trim();
   trackEvento('contato_marcela_copiou','email');
@@ -3757,6 +4108,22 @@ function cpWA(){
   trackEvento('contato_marcela_copiou','whatsapp');
   cp(v,'WhatsApp copiado!');
 }
+
+/* ══════════════════════════════════════════
+   PROG — LAZER CLICÁVEL
+══════════════════════════════════════════ */
+var _lazerAtivo=null;
+function toggleLazer(id){
+  var novoId=(_lazerAtivo===id)?null:id;
+  document.querySelectorAll('.prog-lazer-card').forEach(function(c){
+    c.classList.toggle('on',String(c.dataset.lz)===String(novoId));
+  });
+  document.querySelectorAll('.prog-lazer-panel-txt').forEach(function(p){
+    p.classList.toggle('on',p.id==='plPanel-'+novoId);
+  });
+  _lazerAtivo=novoId;
+  if(novoId){trackEvento('prog_lazer_abriu',String(novoId));}
+}  
 
 /* ══════════════════════════════════════════
    VALOR LIVRE
