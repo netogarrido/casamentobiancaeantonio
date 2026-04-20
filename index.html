@@ -1369,9 +1369,9 @@ color:var(--a);
   left:0;right:0;bottom:0;
   height:45%;
   background:linear-gradient(180deg,
-    rgba(232,220,196,.40) 0%,
+    rgba(232,220,196,0) 40%,
     rgba(232,220,196,.55) 70%,
-    rgba(232,220,196,1) 92%);
+    rgba(232,220,196,1) 100%);
   pointer-events:none;
   z-index:3;
 }
@@ -1476,7 +1476,7 @@ color:var(--a);
 
 /* ── Grid de categorias — "plaquinhas de viagem" ── */
 .pres-cats-wrap{
-  margin:-40% 16px 0;
+  margin:-70% 16px 0;
   position:relative;
   z-index:5;
 }
@@ -1538,7 +1538,7 @@ color:var(--a);
 
 .pres-hero-badge{
   position:absolute;
-  bottom:56%;
+  bottom:66%;
   right:clamp(14px,4vw,22px);
   background:linear-gradient(135deg,var(--a),var(--al));
   color:var(--n);
