@@ -976,54 +976,62 @@ section[id]{scroll-margin-top:78px}
 }
 .player-sub{display:none}
 
-/* Scrubber — linha fina que avança conforme toca */
+/* Scrubber — linha ondulada estilo Spotify, centralizada no botão play */
 .player-scrub{
   display:flex;
   align-items:center;
   width:100%;
   margin:0;
+  height:34px; /* mesma altura do .play-btn → centraliza a onda na pílula */
 }
 .player-scrub-ico{display:none}
 .player-scrub input[type="range"]{
   flex:1;
   margin:0;
-  height:10px;
+  height:12px;
   appearance:none;
   -webkit-appearance:none;
   background:transparent;
   cursor:pointer;
 }
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
-  height:2px;
+  height:12px;
+  border:none;
   border-radius:999px;
-  background:rgba(212,160,74,.2);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 12' preserveAspectRatio='none'><path d='M0 6 Q5 1 10 6 T20 6 T30 6 T40 6' stroke='%23D4A04A' stroke-opacity='0.55' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:repeat-x;
+  background-size:40px 12px;
+  background-position:center;
 }
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:9px;
-  height:9px;
+  width:10px;
+  height:10px;
   border-radius:50%;
   background:var(--al);
   border:none;
-  box-shadow:0 0 0 2px rgba(15,23,32,.35);
-  margin-top:-3.5px;
+  box-shadow:none;
+  margin-top:1px;
 }
 .player-scrub input[type="range"]::-moz-range-track{
-  height:2px;
+  height:12px;
   border:none;
   border-radius:999px;
-  background:rgba(212,160,74,.2);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 12' preserveAspectRatio='none'><path d='M0 6 Q5 1 10 6 T20 6 T30 6 T40 6' stroke='%23D4A04A' stroke-opacity='0.55' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:repeat-x;
+  background-size:40px 12px;
+  background-position:center;
 }
 .player-scrub input[type="range"]::-moz-range-thumb{
-  width:9px;
-  height:9px;
+  width:10px;
+  height:10px;
   border:none;
   border-radius:50%;
   background:var(--al);
-  box-shadow:0 0 0 2px rgba(15,23,32,.35);
+  box-shadow:none;
 }
-
+  
 /* Botão abrir versos — pílula dourada, abaixo do player */
 .lyr-invite-ext{
   display:flex;
