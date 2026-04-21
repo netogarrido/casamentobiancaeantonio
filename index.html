@@ -3313,6 +3313,30 @@ function applyConfiguracoes(rows){
     if(!key||ativo==='nao')return;
     CONFIG[key]=val;
   });
+  aplicarFlagsUI();
+}
+
+function CFG_BOOL(chave,def){
+  var v=CONFIG[chave];
+  if(v===undefined||v===null||v==='')return def;
+  var s=String(v).toLowerCase().trim();
+  if(s==='0'||s==='nao'||s==='não'||s==='false'||s==='off')return false;
+  return true;
+}
+
+function aplicarFlagsUI(){
+  if(!CFG_BOOL('feature_song_suggestions',true)){
+    var sug=document.getElementById('rsvp_sug_input');
+    if(sug&&sug.closest('.fg'))sug.closest('.fg').style.display='none';
+  }
+  if(!CFG_BOOL('feature_public_messages',true)){
+    var msg=document.getElementById('rsvp_msg_ta');
+    if(msg&&msg.closest('.fg'))msg.closest('.fg').style.display='none';
+  }
+  if(!CFG_BOOL('mini_player_enabled',true)){
+    var mini=document.getElementById('mini');
+    if(mini)mini.style.display='none';
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -4033,14 +4057,10 @@ function sR(e){
 /* ══════════════════════════════════════════
    COUNTDOWN
 ══════════════════════════════════════════ */
-
-/* ══════════════════════════════════════════
-   COUNTDOWN
-══════════════════════════════════════════ */
 var countdownInterval=null;
 
 function tick(){
-  var enabled=String(CONFIG.countdown_enabled||'sim').toLowerCase().trim();
+  var enabled=CFG_BOOL('countdown_enabled',true);
   var targetRaw=CONFIG.countdown_target||'2026-10-23T19:30:00-03:00';
   var target;
   if(typeof targetRaw==='string'){
@@ -4059,7 +4079,7 @@ function tick(){
     target=new Date(targetRaw);
   }
   var cdEl=document.getElementById('cd');
-  if(enabled==='nao'){cdEl.style.display='none';return;}
+  if(!enabled){cdEl.style.display='none';return;}
   if(!targetRaw){cdEl.style.display='none';return;}
   if(isNaN(target.getTime())){cdEl.style.display='none';return;}
   var now=new Date();
