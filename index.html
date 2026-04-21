@@ -976,13 +976,13 @@ section[id]{scroll-margin-top:78px}
 }
 .player-sub{display:none}
 
-/* Scrubber — onda cinza no lado tocado, linha reta no lado por tocar */
+/* Scrubber — onda cinza no lado tocado, reta no lado por tocar */
 .player-scrub{
   display:flex;
   align-items:center;
   width:100%;
   margin:0;
-  height:34px; /* mesma altura do .play-btn → centraliza na pílula */
+  height:34px;
 }
 .player-scrub-ico{display:none}
 .player-scrub input[type="range"]{
@@ -995,24 +995,17 @@ section[id]{scroll-margin-top:78px}
   cursor:pointer;
   --prog:0%;
 }
-/* ── WEBKIT ── */
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
   height:14px;
   border:none;
   border-radius:999px;
   background:
-    /* onda cinza (tocado) */
-    linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,0) var(--prog), transparent var(--prog)) 0 0 / auto no-repeat,
-    /* linha reta dourada (por tocar) — fica por baixo */
-    linear-gradient(to right, transparent 0, transparent var(--prog), rgba(212,160,74,.22) var(--prog), rgba(212,160,74,.22) 100%) 0 center / 100% 2px no-repeat,
-    /* onda cinza repetida no lado tocado */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>") 0 center / 40px 14px repeat-x;
-  background-clip:padding-box;
-  -webkit-mask-image:linear-gradient(to right, #000 0, #000 var(--prog), transparent var(--prog)),
-                    linear-gradient(to right, transparent 0, transparent var(--prog), #000 var(--prog), #000 100%);
-  /* fallback sem mask */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.75' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>") left center / 40px 14px repeat-x,
+    linear-gradient(rgba(212,160,74,.22),rgba(212,160,74,.22)) right center / 100% 2px no-repeat;
+  background-size:var(--prog) 14px, 100% 2px;
+  background-repeat:repeat-x, no-repeat;
+  background-position:left center, left center;
 }
-/* Truque: usa dois backgrounds empilhados com clip por % */
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
@@ -1024,7 +1017,6 @@ section[id]{scroll-margin-top:78px}
   box-shadow:none;
   margin-top:1.5px;
 }
-/* ── FIREFOX ── */
 .player-scrub input[type="range"]::-moz-range-track{
   height:2px;
   border:none;
@@ -1034,8 +1026,7 @@ section[id]{scroll-margin-top:78px}
 .player-scrub input[type="range"]::-moz-range-progress{
   height:14px;
   border:none;
-  border-radius:999px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.75' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
   background-repeat:repeat-x;
   background-size:40px 14px;
   background-position:center;
@@ -1048,7 +1039,6 @@ section[id]{scroll-margin-top:78px}
   background:var(--al);
   box-shadow:none;
 }
-  
   
 /* Botão abrir versos — pílula dourada, abaixo do player */
 .lyr-invite-ext{
@@ -3806,14 +3796,21 @@ function syncPlayerUI(){
 var audioSeekEl=document.getElementById('audioSeek');
 var audioSeekDragging=false;
 if(audioSeekEl){
-  au.addEventListener('timeupdate',function(){
+
+au.addEventListener('timeupdate',function(){
     if(audioSeekDragging)return;
-    if(au.duration){audioSeekEl.value=(au.currentTime/au.duration)*100;}
+    if(au.duration){
+      var p=(au.currentTime/au.duration)*100;
+      audioSeekEl.value=p;
+      audioSeekEl.style.setProperty('--prog',p+'%');
+    }
   });
   audioSeekEl.addEventListener('input',function(){
     audioSeekDragging=true;
+    audioSeekEl.style.setProperty('--prog',audioSeekEl.value+'%');
     if(au.duration){au.currentTime=(audioSeekEl.value/100)*au.duration;}
   });
+  
   audioSeekEl.addEventListener('change',function(){
     audioSeekDragging=false;
     trackEvento('audio_scrubber_usado',Math.round(audioSeekEl.value)+'%');
