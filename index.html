@@ -2349,34 +2349,43 @@ color:var(--a);
     <img src="" data-midia="popup_bg_4" alt="">
   </div>
 </div>
- <div class="popup-c">
 
-<h2 id="popup_titulo"></h2>
-  <p id="popup_aviso_player"></p>
-  <div class="popup-nome-wrap">
 
-<input
-      class="popup-nome-input"
-      id="popup_nome"
-      type="text"
-      autocomplete="name"
-      autocorrect="off"
-      spellcheck="false"
-      placeholder="Seu nome completo"
-      oninput="atualizarPreviewNome(this.value)"
-    >
+  <!-- STAGE 0: coleta de nome -->
+ <div class="popup-c popup-c--zero" id="popupStageZero">
+   <h2 id="popup_nome_titulo"></h2>
+   <div class="popup-nome-wrap">
+     <input
+       class="popup-nome-input"
+       id="popup_nome"
+       type="text"
+       autocomplete="name"
+       autocorrect="off"
+       spellcheck="false"
+       placeholder="Seu nome completo"
+       oninput="atualizarPreviewNome(this.value)"
+     >
+     <div class="popup-nome-preview" id="popupNomePreview"></div>
+     <div class="popup-nome-erro" id="popupNomeErro">Por favor, escreva seu nome antes de continuar</div>
+   </div>
+   <div class="popup-btns">
+     <button class="btn btn-a" id="popup_botao_zero" onclick="handleZero()"></button>
+   </div>
+ </div>
+
+ <!-- STAGE 1: popup original (música sim/não) -->
+ <div class="popup-c popup-c--um" id="popupStageUm" style="display:none">
+   <h2 id="popup_titulo"></h2>
+   <p id="popup_aviso_player"></p>
+   <p id="popup_texto"></p>
+   <div class="popup-btns">
+     <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
+     <button class="btn btn-a" id="popup_botao_primario" onclick="handleStart()"></button>
+   </div>
+ </div>
 
     
-    <div class="popup-nome-preview" id="popupNomePreview"></div>
-    <div class="popup-nome-erro" id="popupNomeErro">Por favor, escreva seu nome antes de continuar</div>
-  </div>
-  <p id="popup_texto"></p>
-  <div class="popup-btns">
-    <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
-    <button class="btn btn-a" id="popup_botao_primario" onclick="handleStart()"></button>
-  </div>
-  
-</div>
+
 </div>
 
 <!-- MINI PLAYER -->
@@ -3655,9 +3664,43 @@ function validarNomePopup(){
   return true;
 }
 
-function handleStart(){
+/* Stage 0 → Stage 1 (coleta nome, salva, avança pro popup de música) */
+function handleZero(){
   if(!validarNomePopup())return;
   var nome=getNomePopup();
+  salvarNomeConvidado(nome);
+  trackEvento('popup_nome_informou','');
+  avancarParaStageUm();
+}
+
+function avancarParaStageUm(){
+  var z=document.getElementById('popupStageZero');
+  var u=document.getElementById('popupStageUm');
+  if(z)z.style.display='none';
+  if(u)u.style.display='';
+}
+
+function pularParaStageUmSeNomeSalvo(){
+  var nomeSalvo=getNomeSalvo();
+  if(!nomeSalvo)return false;
+  var inp=document.getElementById('popup_nome');
+  if(inp)inp.value=nomeSalvo;
+  atualizarPreviewNome(nomeSalvo);
+  avancarParaStageUm();
+  return true;
+}
+
+function handleStart(){
+  var nome=getNomePopup()||getNomeSalvo();
+  if(!nome){
+    /* segurança: se por algum motivo chegou aqui sem nome, volta pro stage 0 */
+    var z=document.getElementById('popupStageZero');
+    var u=document.getElementById('popupStageUm');
+    if(z)z.style.display='';
+    if(u)u.style.display='none';
+    validarNomePopup();
+    return;
+  }
   salvarNomeConvidado(nome);
   registrarEntrada(nome,true);
   trackEvento('popup_entrou','');
@@ -3670,8 +3713,15 @@ function handleStart(){
 }
 
 function handleSkip(){
-  if(!validarNomePopup())return;
-  var nome=getNomePopup();
+  var nome=getNomePopup()||getNomeSalvo();
+  if(!nome){
+    var z=document.getElementById('popupStageZero');
+    var u=document.getElementById('popupStageUm');
+    if(z)z.style.display='';
+    if(u)u.style.display='none';
+    validarNomePopup();
+    return;
+  }
   salvarNomeConvidado(nome);
   registrarEntrada(nome,false);
   trackEvento('popup_pulou','');
@@ -4454,14 +4504,15 @@ document.addEventListener('DOMContentLoaded',function(){
   gerarNovaSessao();
   goToHeroStart();
   loadAll();
-  var nomeSalvo=getNomeSalvo();
+
+var nomeSalvo=getNomeSalvo();
   if(nomeSalvo){
-    var inp=document.getElementById('popup_nome');
-    if(inp)inp.value=nomeSalvo;
-    atualizarPreviewNome(nomeSalvo);
     var rsvpNome=document.querySelector('#rF input[name="nome"]');
     if(rsvpNome&&!rsvpNome.value)rsvpNome.value=nomeSalvo;
+    /* já tem nome salvo → pula stage 0 direto pro popup de música */
+    pularParaStageUmSeNomeSalvo();
   }
+  
   var vestidoSec=document.getElementById('vestido');
   if(vestidoSec&&'IntersectionObserver' in window){
     var vpObs=new IntersectionObserver(function(entries){
