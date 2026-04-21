@@ -2352,9 +2352,10 @@ color:var(--a);
 <h2 id="popup_titulo"></h2>
   <p id="popup_aviso_player"></p>
   <div class="popup-nome-wrap">
-    <input
+
+<input
       class="popup-nome-input"
-      id="popupNomeInput"
+      id="popup_nome"
       type="text"
       autocomplete="name"
       autocorrect="off"
@@ -2362,6 +2363,8 @@ color:var(--a);
       placeholder="Seu nome completo"
       oninput="atualizarPreviewNome(this.value)"
     >
+
+    
     <div class="popup-nome-preview" id="popupNomePreview"></div>
     <div class="popup-nome-erro" id="popupNomeErro">Por favor, escreva seu nome antes de continuar</div>
   </div>
@@ -2714,7 +2717,10 @@ color:var(--a);
   <h2 class="ttl" id="rsvp_titulo"></h2>
   <p class="txt" id="rsvp_subtitulo"></p>
   <form id="rF" onsubmit="sR(event)">
+    
+    
     <div class="fg"><label class="fl" id="rsvp_campo_nome"></label><input class="fi" name="nome" required placeholder="Seu nome completo"></div>
+    
     <div class="frow">
       <div class="fg"><label class="fl" id="rsvp_campo_adultos"></label><input class="fi" name="adultos" type="number" min="1" value="1"></div>
       <div class="fg"><label class="fl" id="rsvp_campo_criancas"></label><input class="fi" name="criancas" type="number" min="0" value="0"></div>
@@ -2735,7 +2741,9 @@ color:var(--a);
   <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="Nome do hotel onde vai se hospedar">
 </div>
     <div class="fg"><label class="fl" id="rsvp_campo_restricoes"></label><textarea class="fta" name="restricoes" rows="2" id="rsvp_restricoes_ta"></textarea></div>
-    <div class="fg"><label class="fl" id="rsvp_campo_sugestao_musica_label">Sugira uma música para a banda</label><input class="fi" name="sugestao_musica" id="rsvp_sug_input"></div>
+    
+    <div class="fg"><label class="fl" id="rsvp_campo_sugestao_musica"></label><input class="fi" name="sugestao_musica" id="rsvp_sug_input"></div>
+    
     <div class="fg"><label class="fl" id="rsvp_campo_msg_publica"></label><textarea class="fta" name="mensagem" rows="2" id="rsvp_msg_ta"></textarea></div>
     <button type="submit" class="btn btn-a" style="width:100%" id="rsvp_campo_botao"></button>
     <p class="rsvp-note" id="rsvp_texto_apoio"></p>
@@ -3569,11 +3577,11 @@ function goToHeroStart(){
   
 /* ── Validação do nome no popup ── */
 function getNomePopup(){
-  return(document.getElementById('popupNomeInput').value||'').trim();
+  return(document.getElementById('popup_nome').value||'').trim();
 }
 
 function validarNomePopup(){
-  var input=document.getElementById('popupNomeInput');
+ var input=document.getElementById('popup_nome');
   var erro=document.getElementById('popupNomeErro');
   var nome=getNomePopup();
   if(!nome){
@@ -4379,7 +4387,7 @@ document.addEventListener('DOMContentLoaded',function(){
   loadAll();
   var nomeSalvo=getNomeSalvo();
   if(nomeSalvo){
-    var inp=document.getElementById('popupNomeInput');
+    var inp=document.getElementById('popup_nome');
     if(inp)inp.value=nomeSalvo;
     atualizarPreviewNome(nomeSalvo);
     var rsvpNome=document.querySelector('#rF input[name="nome"]');
