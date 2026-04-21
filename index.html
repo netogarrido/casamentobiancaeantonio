@@ -1797,27 +1797,7 @@ color:var(--a);
 .prog .ttl{text-align:left;color:#FAF4E8}
 .prog .txt{text-align:left;color:#FAF4E8}
 
-/* ── Faixa de título acima da foto ── */
-.prog-hero-title{
-  background:#0B1F3A;
-  padding:clamp(28px,7vw,48px) 20px clamp(20px,5vw,32px);
-  text-align:center;
-}
-.prog-hero-title h2{
-  font-family:var(--fh);
-  font-weight:500;
-  font-style:normal;
-  font-size:clamp(2.8rem,10vw,4rem);
-  line-height:1.05;
-  color:#FAF4E8;
-  letter-spacing:-.01em;
-  margin:0;
-}
-@media(min-width:520px){
-  .prog-hero-title h2{font-size:clamp(2.8rem,5vw,4rem)}
-}
-
-/* ── Hero horizontal foto + fade azul (topo e base) ── */
+/* ── Hero horizontal foto + título sobreposto + fade azul ── */
 .prog-hero-wrap{
   position:relative;
   width:100%;
@@ -1829,11 +1809,11 @@ color:var(--a);
 .prog-hero-img-wrap{
   position:relative;
   width:100%;
-  aspect-ratio:4/5;
+  aspect-ratio:5/5;
   overflow:hidden;
 }
 @media(min-width:520px){
-  .prog-hero-img-wrap{aspect-ratio:16/11}
+  .prog-hero-img-wrap{aspect-ratio:16/9}
 }
 .prog-hero-img-wrap img{
   width:100%;
@@ -1846,11 +1826,11 @@ color:var(--a);
   content:'';
   position:absolute;
   left:0;right:0;top:0;
-  height:35%;
+  height:45%;
   background:linear-gradient(180deg,
     #0B1F3A 0%,
-    rgba(11,31,58,.75) 35%,
-    rgba(11,31,58,.35) 70%,
+    rgba(11,31,58,.85) 30%,
+    rgba(11,31,58,.5) 65%,
     rgba(11,31,58,0) 100%);
   pointer-events:none;
   z-index:2;
@@ -1868,6 +1848,30 @@ color:var(--a);
     #0B1F3A 100%);
   pointer-events:none;
   z-index:2;
+}
+/* Título sobreposto no topo da foto */
+.prog-hero-title{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  padding:clamp(28px,7vw,48px) 20px clamp(20px,5vw,32px);
+  text-align:center;
+  z-index:3;
+  pointer-events:none;
+}
+.prog-hero-title h2{
+  font-family:var(--fh);
+  font-weight:500;
+  font-style:normal;
+  font-size:clamp(2.8rem,10vw,4rem);
+  line-height:1.05;
+  color:#FAF4E8;
+  letter-spacing:-.01em;
+  margin:0;
+}
+@media(min-width:520px){
+  .prog-hero-title h2{font-size:clamp(2.8rem,5vw,4rem)}
 }
 
   
@@ -2618,15 +2622,13 @@ color:var(--a);
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
 <section class="prog" id="prog">
 
-<!-- Faixa de título azul acima da foto -->
-  <div class="prog-hero-title">
-    <h2 id="programacao_label"></h2>
-  </div>
-
-  <!-- Hero horizontal: foto hotel + fade azul -->
+<!-- Hero horizontal: foto hotel + título sobreposto + fade azul -->
   <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
     <div class="prog-hero-img-wrap">
       <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
+    </div>
+    <div class="prog-hero-title">
+      <h2 id="programacao_label"></h2>
     </div>
     <div class="prog-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
   </div>
