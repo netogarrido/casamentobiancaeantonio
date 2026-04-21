@@ -1817,7 +1817,7 @@ color:var(--a);
   .prog-hero-title h2{font-size:clamp(2.8rem,5vw,4rem)}
 }
 
-/* ── Hero horizontal foto + fade azul ── */
+/* ── Hero horizontal foto + fade azul (topo e base) ── */
 .prog-hero-wrap{
   position:relative;
   width:100%;
@@ -1829,14 +1829,31 @@ color:var(--a);
 .prog-hero-img-wrap{
   position:relative;
   width:100%;
-  aspect-ratio:16/10;
+  aspect-ratio:4/5;
   overflow:hidden;
+}
+@media(min-width:520px){
+  .prog-hero-img-wrap{aspect-ratio:16/11}
 }
 .prog-hero-img-wrap img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
+}
+/* fade azul no topo, dissolvendo a partir do título */
+.prog-hero-wrap::before{
+  content:'';
+  position:absolute;
+  left:0;right:0;top:0;
+  height:35%;
+  background:linear-gradient(180deg,
+    #0B1F3A 0%,
+    rgba(11,31,58,.75) 35%,
+    rgba(11,31,58,.35) 70%,
+    rgba(11,31,58,0) 100%);
+  pointer-events:none;
+  z-index:2;
 }
 /* fade azul no rodapé da foto, dissolvendo na seção */
 .prog-hero-wrap::after{
@@ -1852,6 +1869,7 @@ color:var(--a);
   pointer-events:none;
   z-index:2;
 }
+
   
 .prog-hero-badge{
   position:absolute;
