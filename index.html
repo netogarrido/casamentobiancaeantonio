@@ -2373,10 +2373,11 @@ color:var(--a);
    </div>
  </div>
 
- <!-- STAGE 1: popup original (música sim/não) -->
+<!-- STAGE 1: popup original (música sim/não) -->
  <div class="popup-c popup-c--um" id="popupStageUm" style="display:none">
    <h2 id="popup_titulo"></h2>
    <p id="popup_aviso_player"></p>
+   <div class="popup-nome-preview" id="popupNomePreviewUm"></div>
    <p id="popup_texto"></p>
    <div class="popup-btns">
      <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
@@ -3678,6 +3679,18 @@ function avancarParaStageUm(){
   var u=document.getElementById('popupStageUm');
   if(z)z.style.display='none';
   if(u)u.style.display='';
+  /* Mostra o nome como aposto acima do popup_texto no stage 1 */
+  var nome=getNomePopup()||getNomeSalvo();
+  var alvo=document.getElementById('popupNomePreviewUm');
+  if(alvo){
+    if(nome){
+      alvo.textContent=nome+',';
+      alvo.classList.add('vis');
+    }else{
+      alvo.textContent='';
+      alvo.classList.remove('vis');
+    }
+  }
 }
 
 function pularParaStageUmSeNomeSalvo(){
