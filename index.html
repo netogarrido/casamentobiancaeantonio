@@ -916,7 +916,7 @@ section[id]{scroll-margin-top:78px}
   border:1px solid rgba(212,160,74,.22);
   border-radius:999px;
   margin:0 auto 22px;
-  padding:6px 14px 6px 6px;
+  padding:6px 14px 6px 14px;
   max-width:min(94%,420px);
   box-shadow:0 1px 4px rgba(0,0,0,.10);
   backdrop-filter:blur(4px);
@@ -981,7 +981,7 @@ section[id]{scroll-margin-top:78px}
 
 
 
-/* Scrubber — onda fixa de 12 barriguinhas revelada progressivamente, linha dourada centrada no play */
+/* Scrubber — onda cinza só no lado tocado, linha dourada no lado por tocar, eixo centrado no play */
 .player-scrub{
   display:flex;
   align-items:center;
@@ -1006,13 +1006,24 @@ section[id]{scroll-margin-top:78px}
   border:none;
   border-radius:999px;
   background-image:
-    /* camada 1: onda cinza fixa — 12 barriguinhas em 100% da largura */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
-    /* camada 2: linha reta dourada — fica por cima, cobre a onda inteira inicialmente */
+    /* camada 1 (fica na frente): onda cinza — só aparece no lado tocado */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
+    /* camada 2 (atrás): linha reta dourada — só no lado por tocar */
     linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
   background-size:100% 100%, calc(100% - var(--prog)) 1px;
   background-position:left center, right center;
   background-repeat:no-repeat, no-repeat;
+  /* mask: só revela a camada onda até a posição da bolinha */
+  -webkit-mask-image:linear-gradient(to right, #000 0, #000 var(--prog), transparent var(--prog));
+  /* obs: mask afeta ambas camadas; reaplicamos a linha dourada via outline pseudo abaixo */
+}
+/* Fallback sem mask: usa dois runnable-tracks seria impossível.
+   Alternativa: onda passa a ter background-size proporcional a --prog,
+   e linha dourada ocupa o restante. */
+.player-scrub input[type="range"]::-webkit-slider-runnable-track{
+  -webkit-mask-image:none;
+  background-size:var(--prog) 100%, calc(100% - var(--prog)) 1px;
+  background-position:left center, right center;
 }
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
@@ -1030,16 +1041,18 @@ section[id]{scroll-margin-top:78px}
   height:12px;
   border:none;
   border-radius:999px;
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
-    linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
-  background-size:100% 100%, calc(100% - var(--prog)) 1px;
-  background-position:left center, right center;
-  background-repeat:no-repeat, no-repeat;
+  background-image:linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
+  background-size:100% 1px;
+  background-position:center;
+  background-repeat:no-repeat;
 }
 .player-scrub input[type="range"]::-moz-range-progress{
   height:12px;
-  background:transparent;
+  border:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
+  background-size:calc(100% * 100 / var(--prog,0.0001)) 100%;
+  background-repeat:no-repeat;
+  background-position:left center;
 }
 .player-scrub input[type="range"]::-moz-range-thumb{
   width:8px;
