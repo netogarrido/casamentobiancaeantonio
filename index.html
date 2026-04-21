@@ -2744,10 +2744,18 @@ color:var(--a);
   </select>
   <p style="font-size:.66rem;color:rgba(250,244,232,.3);margin-top:4px" id="rsvp_dayuse_aviso"></p>
 </div>
+
 <div class="fg" id="rsvp_nome_hotel_wrap" style="display:none">
   <label class="fl">Nome do hotel</label>
-  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="Nome do hotel onde vai se hospedar">
+  <select class="fsel" name="nome_hotel" id="rsvp_nome_hotel_select" onchange="onHotelChange(this.value)" disabled>
+    <option value="">Selecione…</option>
+    <option value="Hotel Ancona">Hotel Ancona</option>
+    <option value="Prado Hotel">Prado Hotel</option>
+    <option value="outro">Outro</option>
+  </select>
+  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="Nome do hotel onde vai se hospedar" style="margin-top:8px;display:none" disabled>
 </div>
+    
     <div class="fg"><label class="fl" id="rsvp_campo_restricoes"></label><textarea class="fta" name="restricoes" rows="2" id="rsvp_restricoes_ta"></textarea></div>
     
     <div class="fg"><label class="fl" id="rsvp_campo_sugestao_musica"></label><input class="fi" name="sugestao_musica" id="rsvp_sug_input"></div>
@@ -3963,22 +3971,36 @@ function sSug(inputId){
 ══════════════════════════════════════════ */
 function onParticiplacaoChange(val){
   var wrap=document.getElementById('rsvp_nome_hotel_wrap');
+  var sel=document.getElementById('rsvp_nome_hotel_select');
   var input=document.getElementById('rsvp_nome_hotel_input');
   if(val==='hospedagem_santanna'){
     wrap.style.display='block';
+    sel.style.display='none';sel.disabled=true;sel.value='';
+    input.style.display='block';input.disabled=false;
     input.value="Sant'Anna Fazenda Hotel — Amparo/SP";
-    input.readOnly=true;
-    input.style.opacity='.55';
+    input.readOnly=true;input.style.opacity='.55';
   }else if(val==='hospedagem_outro'){
     wrap.style.display='block';
-    input.value='';
-    input.readOnly=false;
-    input.style.opacity='1';
+    sel.style.display='block';sel.disabled=false;sel.value='';
+    input.style.display='none';input.disabled=true;
+    input.value='';input.readOnly=false;input.style.opacity='1';
   }else{
     wrap.style.display='none';
+    sel.style.display='none';sel.disabled=true;sel.value='';
+    input.style.display='none';input.disabled=true;
+    input.value='';input.readOnly=false;input.style.opacity='1';
+  }
+}
+
+function onHotelChange(val){
+  var input=document.getElementById('rsvp_nome_hotel_input');
+  if(val==='outro'){
+    input.style.display='block';input.disabled=false;
+    input.value='';input.readOnly=false;input.style.opacity='1';
+    input.focus();
+  }else{
+    input.style.display='none';input.disabled=true;
     input.value='';
-    input.readOnly=false;
-    input.style.opacity='1';
   }
 }
 
