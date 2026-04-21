@@ -976,61 +976,79 @@ section[id]{scroll-margin-top:78px}
 }
 .player-sub{display:none}
 
-/* Scrubber — linha ondulada estilo Spotify, centralizada no botão play */
+/* Scrubber — onda cinza no lado tocado, linha reta no lado por tocar */
 .player-scrub{
   display:flex;
   align-items:center;
   width:100%;
   margin:0;
-  height:34px; /* mesma altura do .play-btn → centraliza a onda na pílula */
+  height:34px; /* mesma altura do .play-btn → centraliza na pílula */
 }
 .player-scrub-ico{display:none}
 .player-scrub input[type="range"]{
   flex:1;
   margin:0;
-  height:12px;
+  height:14px;
   appearance:none;
   -webkit-appearance:none;
   background:transparent;
   cursor:pointer;
+  --prog:0%;
 }
+/* ── WEBKIT ── */
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
-  height:12px;
+  height:14px;
   border:none;
   border-radius:999px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 12' preserveAspectRatio='none'><path d='M0 6 Q5 1 10 6 T20 6 T30 6 T40 6' stroke='%23D4A04A' stroke-opacity='0.55' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
-  background-repeat:repeat-x;
-  background-size:40px 12px;
-  background-position:center;
+  background:
+    /* onda cinza (tocado) */
+    linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,0) var(--prog), transparent var(--prog)) 0 0 / auto no-repeat,
+    /* linha reta dourada (por tocar) — fica por baixo */
+    linear-gradient(to right, transparent 0, transparent var(--prog), rgba(212,160,74,.22) var(--prog), rgba(212,160,74,.22) 100%) 0 center / 100% 2px no-repeat,
+    /* onda cinza repetida no lado tocado */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>") 0 center / 40px 14px repeat-x;
+  background-clip:padding-box;
+  -webkit-mask-image:linear-gradient(to right, #000 0, #000 var(--prog), transparent var(--prog)),
+                    linear-gradient(to right, transparent 0, transparent var(--prog), #000 var(--prog), #000 100%);
+  /* fallback sem mask */
 }
+/* Truque: usa dois backgrounds empilhados com clip por % */
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:10px;
-  height:10px;
+  width:11px;
+  height:11px;
   border-radius:50%;
   background:var(--al);
   border:none;
   box-shadow:none;
-  margin-top:1px;
+  margin-top:1.5px;
 }
+/* ── FIREFOX ── */
 .player-scrub input[type="range"]::-moz-range-track{
-  height:12px;
+  height:2px;
   border:none;
   border-radius:999px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 12' preserveAspectRatio='none'><path d='M0 6 Q5 1 10 6 T20 6 T30 6 T40 6' stroke='%23D4A04A' stroke-opacity='0.55' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
+  background:rgba(212,160,74,.22);
+}
+.player-scrub input[type="range"]::-moz-range-progress{
+  height:14px;
+  border:none;
+  border-radius:999px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
   background-repeat:repeat-x;
-  background-size:40px 12px;
+  background-size:40px 14px;
   background-position:center;
 }
 .player-scrub input[type="range"]::-moz-range-thumb{
-  width:10px;
-  height:10px;
+  width:11px;
+  height:11px;
   border:none;
   border-radius:50%;
   background:var(--al);
   box-shadow:none;
 }
+  
   
 /* Botão abrir versos — pílula dourada, abaixo do player */
 .lyr-invite-ext{
