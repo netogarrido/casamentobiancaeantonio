@@ -906,30 +906,30 @@ section[id]{scroll-margin-top:78px}
   opacity:.55;
 }
 
-  /* ── Player — pílula delicada abaixo do título ── */
+/* ── Player — pílula delicada abaixo do título ── */
 .player{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   background:rgba(250,244,232,.04);
-  border:1px solid rgba(212,160,74,.28);
+  border:1px solid rgba(212,160,74,.22);
   border-radius:999px;
   margin:0 auto 22px;
-  padding:7px 16px 7px 7px;
-  max-width:min(96%,460px);
-  box-shadow:0 1px 6px rgba(0,0,0,.12);
+  padding:4px 14px 4px 4px;
+  max-width:min(94%,420px);
+  box-shadow:0 1px 4px rgba(0,0,0,.10);
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
   transition:border-color .25s ease, background .25s ease;
 }
 .player:hover{
-  border-color:rgba(212,160,74,.45);
+  border-color:rgba(212,160,74,.38);
   background:rgba(250,244,232,.06);
 }
 
 .play-btn{
-  width:34px;
-  height:34px;
+  width:28px;
+  height:28px;
   border-radius:50%;
   background:linear-gradient(135deg,var(--a),var(--al));
   display:flex;
@@ -945,8 +945,8 @@ section[id]{scroll-margin-top:78px}
 .play-btn:hover{transform:scale(1.06)}
 .play-btn.playing{animation:pulse 2s ease-in-out infinite}
 .play-btn svg{
-  width:12px;
-  height:12px;
+  width:10px;
+  height:10px;
   fill:var(--n);
   margin-left:1.5px;
 }
@@ -976,69 +976,76 @@ section[id]{scroll-margin-top:78px}
 }
 .player-sub{display:none}
 
-/* Scrubber — onda cinza no lado tocado, reta no lado por tocar */
+
+/* Scrubber — reta some, onda cinza aparece atrás da bolinha. 12 barriguinhas total */
 .player-scrub{
   display:flex;
   align-items:center;
   width:100%;
   margin:0;
-  height:34px;
+  height:28px;
 }
 .player-scrub-ico{display:none}
 .player-scrub input[type="range"]{
   flex:1;
   margin:0;
-  height:14px;
+  height:12px;
   appearance:none;
   -webkit-appearance:none;
   background:transparent;
   cursor:pointer;
   --prog:0%;
 }
+/* WEBKIT — onda no lado tocado + reta no lado restante, mesma posição vertical */
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
-  height:14px;
+  height:12px;
   border:none;
   border-radius:999px;
-  background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.75' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>") left center / 40px 14px repeat-x,
-    linear-gradient(rgba(212,160,74,.22),rgba(212,160,74,.22)) right center / 100% 2px no-repeat;
-  background-size:var(--prog) 14px, 100% 2px;
-  background-repeat:repeat-x, no-repeat;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M0 4 Q4.17 1 8.33 4 T16.67 4 T25 4 T33.33 4 T41.67 4 T50 4 T58.33 4 T66.67 4 T75 4 T83.33 4 T91.67 4 T100 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
+    linear-gradient(rgba(212,160,74,.22),rgba(212,160,74,.22));
+  background-repeat:no-repeat, no-repeat;
+  background-size:calc(100%/var(--prog-ratio,1)) 100%, 100% 1px;
   background-position:left center, left center;
+  /* fallback se --prog-ratio não setado */
+  background-size:var(--prog) 100%, calc(100% - var(--prog)) 1px;
+  background-position:left center, right center;
 }
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:11px;
-  height:11px;
+  width:8px;
+  height:8px;
   border-radius:50%;
   background:var(--al);
   border:none;
   box-shadow:none;
-  margin-top:1.5px;
+  margin-top:2px;
 }
+/* FIREFOX */
 .player-scrub input[type="range"]::-moz-range-track{
-  height:2px;
+  height:1px;
   border:none;
   border-radius:999px;
   background:rgba(212,160,74,.22);
 }
 .player-scrub input[type="range"]::-moz-range-progress{
-  height:14px;
+  height:12px;
   border:none;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14' preserveAspectRatio='none'><path d='M0 7 Q5 2 10 7 T20 7 T30 7 T40 7' stroke='%23B8B0A4' stroke-opacity='0.75' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
-  background-repeat:repeat-x;
-  background-size:40px 14px;
-  background-position:center;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M0 4 Q4.17 1 8.33 4 T16.67 4 T25 4 T33.33 4 T41.67 4 T50 4 T58.33 4 T66.67 4 T75 4 T83.33 4 T91.67 4 T100 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;
+  background-size:calc(100% * 100 / var(--prog-ratio,1)) 100%;
+  background-position:left center;
 }
 .player-scrub input[type="range"]::-moz-range-thumb{
-  width:11px;
-  height:11px;
+  width:8px;
+  height:8px;
   border:none;
   border-radius:50%;
   background:var(--al);
   box-shadow:none;
 }
+  
   
 /* Botão abrir versos — pílula dourada, abaixo do player */
 .lyr-invite-ext{
