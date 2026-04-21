@@ -2005,41 +2005,132 @@ color:var(--a);
   color:var(--im);
 }
 
-/* ── TIMELINE (sem caixa externa) ── */
-.prog-timeline{
+/* ── PROGRAMAÇÃO 3×1 (dias clicáveis) ── */
+.prog-dias-wrap{
   margin:0 0 32px;
 }
-.tl-day{
-  background:#fff;
-  border-radius:var(--r);
+.prog-dias-panel{
+  background:rgba(255,255,255,.50);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:18px;
+  padding:14px 12px 12px;
+  box-shadow:
+    0 14px 34px rgba(15,23,32,.08),
+    inset 0 1px 0 rgba(255,255,255,.55);
+}
+.prog-dias-head{
+  text-align:center;
+  margin:0 0 12px;
+  padding:4px 4px 0;
+}
+.prog-dias-head .ttl{
+  font-family:var(--fh);
+  font-size:1.1rem;
+  color:var(--i);
+  margin:0 0 4px;
+}
+.prog-dias-head .sub{
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--a);
+  margin:0;
+}
+.prog-dias-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+.prog-dia-card{
+  position:relative;
+  aspect-ratio:.82;
+  border-radius:12px;
   overflow:hidden;
-  border:1px solid var(--st);
-  margin-bottom:12px;
-}
-.tl-h{
-  padding:14px 16px;
-  background:var(--n);
+  background:linear-gradient(160deg,#FAF4E8 0%,#F0E5CE 100%);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .25s ease, box-shadow .25s ease;
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:10px;
+  justify-content:center;
+  padding:14px 6px 12px;
+  border:1px solid rgba(212,160,74,.22);
 }
-.tl-h-i{font-size:1.05rem}
-.tl-h-n{font-family:var(--fh);font-size:.98rem;color:var(--s)}
-.tl-h-d{font-size:.62rem;color:var(--al);margin-left:auto;font-weight:600}
-.tl-evs{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.tl-ev{display:flex;gap:10px;align-items:flex-start}
-.tl-dot{width:6px;height:6px;border-radius:50%;background:var(--a);margin-top:7px;flex-shrink:0}
-.tl-ev h4{font-size:.8rem;font-weight:400}
-.tl-ev p{font-size:.7rem;color:var(--is);margin-top:1px}
-.tl-note{
+.prog-dia-card:hover{transform:translateY(-2px)}
+.prog-dia-card.on{
+  box-shadow:0 0 0 2px var(--a), 0 8px 22px rgba(212,160,74,.30);
+  background:linear-gradient(160deg,#FFF8E8 0%,#F4E4BF 100%);
+}
+.prog-dia-num{
+  font-family:var(--fh);
+  font-size:2.2rem;
+  line-height:1;
+  color:var(--i);
+  font-weight:500;
+  letter-spacing:-.02em;
+}
+.prog-dia-line{
+  width:22px;
+  height:1px;
+  background:var(--a);
+  margin:8px 0 6px;
+  opacity:.8;
+}
+.prog-dia-dow{
+  font-size:.58rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  color:var(--a);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.prog-dia-emoji{
+  font-size:1.3rem;
+  line-height:1;
+  margin-bottom:6px;
+}
+.prog-dia-ev{
+  font-size:.64rem;
+  color:var(--im);
+  text-align:center;
+  line-height:1.25;
+  font-weight:500;
+  padding:0 2px;
+}
+.prog-dias-panels{
+  margin-top:0;
+}
+.prog-dia-panel-txt{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .5s ease, margin .3s ease;
+  margin-top:0;
+}
+.prog-dia-panel-txt.on{
+  max-height:800px;
+  margin-top:12px;
+}
+.prog-dia-panel-txt p{
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:12px;
+  padding:14px 14px;
+  font-size:.82rem;
+  line-height:1.6;
+  color:var(--im);
+}
+.prog-dias-nota{
   margin-top:12px;
   padding:12px 14px;
   background:var(--ag);
   border-radius:var(--rs);
   border-left:3px solid var(--ap);
 }
-.tl-note p{font-size:.72rem;color:var(--im);line-height:1.6}
-.tl-note strong{color:var(--i);font-weight:600}
+.prog-dias-nota p{font-size:.72rem;color:var(--im);line-height:1.6}
 
 /* ── Chamada "só resta day use" ── */
 .prog-cta-dayuse{
@@ -2658,6 +2749,45 @@ color:var(--a);
   <p class="txt" id="fds_texto_1"></p>
   <p class="txt" id="fds_texto_2"></p>
 
+<!-- PROGRAMAÇÃO 3×1 (dias clicáveis) -->
+  <div class="prog-dias-wrap">
+    <div class="prog-dias-panel">
+      <div class="prog-dias-head">
+        <h3 class="ttl" id="programacao_titulo"></h3>
+        <p class="sub" id="programacao_subtitulo"></p>
+      </div>
+      <div class="prog-dias-grid">
+        <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
+          <div class="prog-dia-num">23</div>
+          <div class="prog-dia-line"></div>
+          <div class="prog-dia-dow">Sex</div>
+          <div class="prog-dia-emoji">🌅</div>
+          <div class="prog-dia-ev"><span id="sexta_titulo"></span></div>
+        </div>
+        <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
+          <div class="prog-dia-num">24</div>
+          <div class="prog-dia-line"></div>
+          <div class="prog-dia-dow">Sáb</div>
+          <div class="prog-dia-emoji">💍</div>
+          <div class="prog-dia-ev"><span id="sabado_titulo"></span></div>
+        </div>
+        <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
+          <div class="prog-dia-num">25</div>
+          <div class="prog-dia-line"></div>
+          <div class="prog-dia-dow">Dom</div>
+          <div class="prog-dia-emoji">☕</div>
+          <div class="prog-dia-ev"><span id="domingo_titulo"></span></div>
+        </div>
+      </div>
+      <div class="prog-dias-panels">
+        <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
+        <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
+        <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
+      </div>
+      <div class="prog-dias-nota"><p id="programacao_nota_alimentacao"></p></div>
+    </div>
+  </div>
+    
   <!-- CAIXINHA 1 — LAZER 2×2 (glassmorphism, interativo) -->
   <div class="prog-lazer-wrap">
     <div class="prog-lazer-panel">
@@ -2690,25 +2820,9 @@ color:var(--a);
     </div>
   </div>
 
-  <!-- Timeline 3 dias (sem caixa externa) -->
-  <div class="prog-timeline">
-    <h3 class="ttl" style="font-size:1.2rem;margin:0 0 8px" id="programacao_titulo"></h3>
-    <p class="txt" style="font-size:.78rem;color:var(--is);margin-bottom:16px" id="programacao_subtitulo"></p>
-    <div class="tl-day">
-      <div class="tl-h"><span class="tl-h-i">🌅</span><span class="tl-h-n" id="sexta_titulo"></span></div>
-      <div class="tl-evs" id="sexta_texto"></div>
-    </div>
-    <div class="tl-day">
-      <div class="tl-h"><span class="tl-h-i">🎉</span><span class="tl-h-n" id="sabado_titulo"></span></div>
-      <div class="tl-evs" id="sabado_texto"></div>
-    </div>
-    <div class="tl-day">
-      <div class="tl-h"><span class="tl-h-i">☀️</span><span class="tl-h-n" id="domingo_titulo"></span></div>
-      <div class="tl-evs" id="domingo_texto"></div>
-    </div>
-    <div class="tl-note"><p id="programacao_nota_alimentacao"></p></div>
-  </div>
 
+
+    
   <!-- Chamada: só resta day use -->
   <div class="prog-cta-dayuse">
     <span class="prog-cta-line"></span>
@@ -4337,7 +4451,20 @@ function toggleLazer(id){
   });
   _lazerAtivo=novoId;
   if(novoId){trackEvento('prog_lazer_abriu',String(novoId));}
-}  
+}
+
+var _diaAtivo=null;
+function toggleDia(d){
+  var novo=(_diaAtivo===d)?null:d;
+  document.querySelectorAll('.prog-dia-card').forEach(function(c){
+    c.classList.toggle('on',c.dataset.dia===novo);
+  });
+  document.querySelectorAll('.prog-dia-panel-txt').forEach(function(p){
+    p.classList.toggle('on',p.id==='pdPanel-'+novo);
+  });
+  _diaAtivo=novo;
+  if(novo){trackEvento('prog_dia_abriu',novo);}
+}
 
 /* ══════════════════════════════════════════
    VALOR LIVRE
