@@ -916,13 +916,14 @@ section[id]{scroll-margin-top:78px}
   border:1px solid rgba(212,160,74,.22);
   border-radius:999px;
   margin:0 auto 22px;
-  padding:4px 14px 4px 4px;
+  padding:6px 14px 6px 6px;
   max-width:min(94%,420px);
   box-shadow:0 1px 4px rgba(0,0,0,.10);
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
   transition:border-color .25s ease, background .25s ease;
 }
+  
 .player:hover{
   border-color:rgba(212,160,74,.38);
   background:rgba(250,244,232,.06);
@@ -978,7 +979,9 @@ section[id]{scroll-margin-top:78px}
 .player-sub{display:none}
 
 
-/* Scrubber — reta some, onda cinza aparece atrás da bolinha. 12 barriguinhas total */
+
+
+/* Scrubber — onda fixa de 12 barriguinhas revelada progressivamente, linha dourada centrada no play */
 .player-scrub{
   display:flex;
   align-items:center;
@@ -997,20 +1000,19 @@ section[id]{scroll-margin-top:78px}
   cursor:pointer;
   --prog:0%;
 }
-/* WEBKIT — onda no lado tocado + reta no lado restante, mesma posição vertical */
+/* WEBKIT */
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
   height:12px;
   border:none;
   border-radius:999px;
   background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M0 4 Q4.17 1 8.33 4 T16.67 4 T25 4 T33.33 4 T41.67 4 T50 4 T58.33 4 T66.67 4 T75 4 T83.33 4 T91.67 4 T100 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
-    linear-gradient(rgba(212,160,74,.22),rgba(212,160,74,.22));
-  background-repeat:no-repeat, no-repeat;
-  background-size:calc(100%/var(--prog-ratio,1)) 100%, 100% 1px;
-  background-position:left center, left center;
-  /* fallback se --prog-ratio não setado */
-  background-size:var(--prog) 100%, calc(100% - var(--prog)) 1px;
+    /* camada 1: onda cinza fixa — 12 barriguinhas em 100% da largura */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
+    /* camada 2: linha reta dourada — fica por cima, cobre a onda inteira inicialmente */
+    linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
+  background-size:100% 100%, calc(100% - var(--prog)) 1px;
   background-position:left center, right center;
+  background-repeat:no-repeat, no-repeat;
 }
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
@@ -1025,18 +1027,19 @@ section[id]{scroll-margin-top:78px}
 }
 /* FIREFOX */
 .player-scrub input[type="range"]::-moz-range-track{
-  height:1px;
+  height:12px;
   border:none;
   border-radius:999px;
-  background:rgba(212,160,74,.22);
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
+    linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
+  background-size:100% 100%, calc(100% - var(--prog)) 1px;
+  background-position:left center, right center;
+  background-repeat:no-repeat, no-repeat;
 }
 .player-scrub input[type="range"]::-moz-range-progress{
   height:12px;
-  border:none;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M0 4 Q4.17 1 8.33 4 T16.67 4 T25 4 T33.33 4 T41.67 4 T50 4 T58.33 4 T66.67 4 T75 4 T83.33 4 T91.67 4 T100 4' stroke='%23B8B0A4' stroke-opacity='0.65' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
-  background-repeat:no-repeat;
-  background-size:calc(100% * 100 / var(--prog-ratio,1)) 100%;
-  background-position:left center;
+  background:transparent;
 }
 .player-scrub input[type="range"]::-moz-range-thumb{
   width:8px;
@@ -1046,6 +1049,8 @@ section[id]{scroll-margin-top:78px}
   background:var(--al);
   box-shadow:none;
 }
+
+  
   
   
 /* Botão abrir versos — pílula dourada, abaixo do player */
