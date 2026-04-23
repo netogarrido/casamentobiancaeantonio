@@ -981,49 +981,65 @@ section[id]{scroll-margin-top:78px}
 
 
 
-/* Scrubber — onda cinza só no lado tocado, linha dourada no lado por tocar, eixo centrado no play */
+/* Scrubber — onda fixa de 12 barriguinhas revelada progressivamente por mask, linha dourada por baixo */
 .player-scrub{
+  position:relative;
   display:flex;
   align-items:center;
   width:100%;
   margin:0;
   height:28px;
+  --prog:0%;
 }
 .player-scrub-ico{display:none}
+/* Camadas de fundo — ficam atrás do input, centralizadas no eixo vertical do botão play */
+.player-scrub-bg{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  height:8px;
+  pointer-events:none;
+}
+.player-scrub-line{
+  position:absolute;
+  top:50%;
+  left:var(--prog);
+  right:0;
+  height:1px;
+  transform:translateY(-.5px);
+  background:rgba(212,160,74,.32);
+}
+.player-scrub-wave{
+  position:absolute;
+  top:0;
+  left:0;
+  width:var(--prog);
+  height:100%;
+  overflow:hidden;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.75' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;
+  /* onda renderizada em 100% da largura TOTAL da track, clipada pela largura desta div */
+  background-size:calc(100% * 100 / var(--prog-num,100)) 100%;
+  background-position:left center;
+}
+/* Input por cima, transparente, só pra capturar toque e mover a bolinha */
 .player-scrub input[type="range"]{
+  position:relative;
   flex:1;
   margin:0;
-  height:12px;
+  height:28px;
   appearance:none;
   -webkit-appearance:none;
   background:transparent;
   cursor:pointer;
-  --prog:0%;
+  z-index:2;
 }
-/* WEBKIT */
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
-  height:12px;
+  height:28px;
+  background:transparent;
   border:none;
-  border-radius:999px;
-  background-image:
-    /* camada 1 (fica na frente): onda cinza — só aparece no lado tocado */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1' fill='none' stroke-linecap='round'/></svg>"),
-    /* camada 2 (atrás): linha reta dourada — só no lado por tocar */
-    linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
-  background-size:100% 100%, calc(100% - var(--prog)) 1px;
-  background-position:left center, right center;
-  background-repeat:no-repeat, no-repeat;
-  /* mask: só revela a camada onda até a posição da bolinha */
-  -webkit-mask-image:linear-gradient(to right, #000 0, #000 var(--prog), transparent var(--prog));
-  /* obs: mask afeta ambas camadas; reaplicamos a linha dourada via outline pseudo abaixo */
-}
-/* Fallback sem mask: usa dois runnable-tracks seria impossível.
-   Alternativa: onda passa a ter background-size proporcional a --prog,
-   e linha dourada ocupa o restante. */
-.player-scrub input[type="range"]::-webkit-slider-runnable-track{
-  -webkit-mask-image:none;
-  background-size:var(--prog) 100%, calc(100% - var(--prog)) 1px;
-  background-position:left center, right center;
 }
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
@@ -1034,25 +1050,12 @@ section[id]{scroll-margin-top:78px}
   background:var(--al);
   border:none;
   box-shadow:none;
-  margin-top:2px;
+  margin-top:10px;
 }
-/* FIREFOX */
 .player-scrub input[type="range"]::-moz-range-track{
-  height:12px;
+  height:28px;
+  background:transparent;
   border:none;
-  border-radius:999px;
-  background-image:linear-gradient(rgba(212,160,74,.28),rgba(212,160,74,.28));
-  background-size:100% 1px;
-  background-position:center;
-  background-repeat:no-repeat;
-}
-.player-scrub input[type="range"]::-moz-range-progress{
-  height:12px;
-  border:none;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.7' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
-  background-size:calc(100% * 100 / var(--prog,0.0001)) 100%;
-  background-repeat:no-repeat;
-  background-position:left center;
 }
 .player-scrub input[type="range"]::-moz-range-thumb{
   width:8px;
@@ -1062,6 +1065,7 @@ section[id]{scroll-margin-top:78px}
   background:var(--al);
   box-shadow:none;
 }
+  
 
   
   
@@ -2619,9 +2623,15 @@ color:var(--a);
       <div class="player-meta">
         <div class="player-title" id="musica_titulo"></div>
       </div>
-      <div class="player-scrub">
+      
+    <div class="player-scrub">
+        <div class="player-scrub-bg">
+          <div class="player-scrub-line"></div>
+          <div class="player-scrub-wave"></div>
+        </div>
         <input type="range" id="audioSeek" min="0" max="100" value="0" step="0.1" aria-label="Posição da música">
       </div>
+      
     </div>
   </div>
 
@@ -3957,17 +3967,24 @@ var audioSeekEl=document.getElementById('audioSeek');
 var audioSeekDragging=false;
 if(audioSeekEl){
 
-au.addEventListener('timeupdate',function(){
+var scrubWrap=audioSeekEl.closest('.player-scrub');
+  function setScrubProg(p){
+    if(scrubWrap){
+      scrubWrap.style.setProperty('--prog',p+'%');
+      scrubWrap.style.setProperty('--prog-num',p||0.0001);
+    }
+  }
+  au.addEventListener('timeupdate',function(){
     if(audioSeekDragging)return;
     if(au.duration){
       var p=(au.currentTime/au.duration)*100;
       audioSeekEl.value=p;
-      audioSeekEl.style.setProperty('--prog',p+'%');
+      setScrubProg(p);
     }
   });
   audioSeekEl.addEventListener('input',function(){
     audioSeekDragging=true;
-    audioSeekEl.style.setProperty('--prog',audioSeekEl.value+'%');
+    setScrubProg(audioSeekEl.value);
     if(au.duration){au.currentTime=(audioSeekEl.value/100)*au.duration;}
   });
   
