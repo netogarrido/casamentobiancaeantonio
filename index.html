@@ -1002,18 +1002,20 @@ section[id]{scroll-margin-top:78px}
   height:8px;
   pointer-events:none;
 }
+
 .player-scrub-line{
   position:absolute;
   top:50%;
   left:var(--prog);
   right:0;
   height:1px;
-  transform:translateY(-.5px);
+  transform:translateY(-4.5px);
   background:rgba(212,160,74,.32);
 }
+  
 .player-scrub-wave{
   position:absolute;
-  top:0;
+  top:-4px;
   left:0;
   width:var(--prog);
   height:100%;
@@ -1024,6 +1026,8 @@ section[id]{scroll-margin-top:78px}
   background-size:calc(100% * 100 / var(--prog-num,100)) 100%;
   background-position:left center;
 }
+
+  
 /* Input por cima, transparente, só pra capturar toque e mover a bolinha */
 .player-scrub input[type="range"]{
   position:relative;
@@ -1041,6 +1045,7 @@ section[id]{scroll-margin-top:78px}
   background:transparent;
   border:none;
 }
+
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
@@ -1050,8 +1055,9 @@ section[id]{scroll-margin-top:78px}
   background:var(--al);
   border:none;
   box-shadow:none;
-  margin-top:10px;
+  margin-top:6px;
 }
+  
 .player-scrub input[type="range"]::-moz-range-track{
   height:28px;
   background:transparent;
