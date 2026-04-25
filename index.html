@@ -1033,7 +1033,7 @@ section[id]{scroll-margin-top:78px}
   left:var(--prog);
   right:0;
   height:1px;
-  transform:translateY(-4.5px);
+  transform:translateY(-50%);
   background:rgba(184,176,164,.45);
 }
   
@@ -1057,13 +1057,19 @@ section[id]{scroll-margin-top:78px}
   position:relative;
   flex:1;
   margin:0;
+  padding:0;
   height:28px;
   appearance:none;
   -webkit-appearance:none;
   background:transparent;
+  border:none;
+  outline:none;
   cursor:pointer;
   z-index:2;
 }
+.player-scrub input[type="range"]:focus{outline:none;border:none}
+.player-scrub input[type="range"]::-ms-track{background:transparent;border:none;color:transparent}
+  
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
   height:28px;
   background:transparent;
