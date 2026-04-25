@@ -2015,9 +2015,20 @@ color:var(--a);
   color:var(--im);
 }
 
-/* ── PROGRAMAÇÃO — cards-título fininhos ── */
+/* ── PROGRAMAÇÃO — caixa-mãe + cards-título fininhos ── */
 .prog-dias-wrap{
-  margin:0 0 20px;
+  margin:0 0 24px;
+}
+.prog-dias-panel{
+  background:rgba(255,255,255,.50);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:18px;
+  padding:14px 12px 14px;
+  box-shadow:
+    0 14px 34px rgba(15,23,32,.08),
+    inset 0 1px 0 rgba(255,255,255,.55);
 }
 .prog-dias-grid{
   display:grid;
@@ -2027,14 +2038,12 @@ color:var(--a);
 .prog-dia-card{
   position:relative;
   border-radius:10px;
-  background:rgba(255,255,255,.55);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.6);
+  background:rgba(255,255,255,.85);
+  border:1.5px solid rgba(212,160,74,.42);
   padding:10px 8px;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:background .22s ease, box-shadow .22s ease, border-color .22s ease;
+  transition:background .22s ease, box-shadow .22s ease, border-color .22s ease, transform .22s ease;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -2044,16 +2053,20 @@ color:var(--a);
   font-size:.95rem;
   color:var(--i);
   letter-spacing:.01em;
-  box-shadow:0 4px 12px rgba(15,23,32,.05);
+  box-shadow:0 4px 12px rgba(15,23,32,.06);
 }
 .prog-dia-card:hover{
-  background:rgba(255,255,255,.7);
+  background:#fff;
+  border-color:var(--a);
+  transform:translateY(-1px);
 }
 .prog-dia-card.on{
-  background:rgba(212,160,74,.12);
+  background:var(--i);
   border-color:var(--a);
-  box-shadow:0 0 0 1px var(--a), 0 6px 16px rgba(212,160,74,.22);
+  color:var(--s);
+  box-shadow:0 0 0 1px var(--a), 0 8px 20px rgba(15,23,32,.25);
 }
+.prog-dia-card.on .dow{color:var(--a)}
 .prog-dia-card .dow{
   font-size:.6rem;
   font-weight:700;
@@ -2061,20 +2074,21 @@ color:var(--a);
   text-transform:uppercase;
   color:var(--a);
   font-family:var(--fs);
+  transition:color .22s ease;
 }
 .prog-dia-card .num{
   font-size:1.05rem;
   font-weight:500;
 }
 .prog-dias-panels{
-  margin-top:0;
   display:grid;
   grid-template-rows:0fr;
-  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1);
+  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1), margin-top .3s ease;
+  margin-top:0;
 }
 .prog-dias-panels.has-open{
   grid-template-rows:1fr;
-  margin-top:10px;
+  margin-top:12px;
 }
 .prog-dias-panels-inner{
   overflow:hidden;
@@ -2101,6 +2115,14 @@ color:var(--a);
   color:var(--im);
   margin:0;
 }
+.prog-dias-nota{
+  margin-top:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.45);
+  border-radius:var(--rs);
+  border-left:3px solid var(--ap);
+}
+.prog-dias-nota p{font-size:.72rem;color:var(--im);line-height:1.6;margin:0}
 
 /* ── Chamada "só resta day use" ── */
 .prog-cta-dayuse{
@@ -2725,24 +2747,27 @@ color:var(--a);
   <p class="txt" id="fds_texto_1"></p>
   <p class="txt" id="fds_texto_2"></p>
 
-<!-- PROGRAMAÇÃO — cards-título fininhos -->
+
+<!-- PROGRAMAÇÃO — caixa-mãe + cards-título -->
   <div class="prog-dias-wrap">
-    <div class="prog-dias-grid">
-      <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
-        <span class="dow">Sex</span><span class="num">23</span>
+    <div class="prog-dias-panel">
+      <div class="prog-dias-grid">
+        <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
+          <span class="dow">Sex</span><span class="num">23</span>
+        </div>
+        <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
+          <span class="dow">Sáb</span><span class="num">24</span>
+        </div>
+        <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
+          <span class="dow">Dom</span><span class="num">25</span>
+        </div>
       </div>
-      <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
-        <span class="dow">Sáb</span><span class="num">24</span>
-      </div>
-      <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
-        <span class="dow">Dom</span><span class="num">25</span>
-      </div>
-    </div>
-    <div class="prog-dias-panels" id="progDiasPanels">
-      <div class="prog-dias-panels-inner">
-        <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
-        <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
-        <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
+      <div class="prog-dias-panels" id="progDiasPanels">
+        <div class="prog-dias-panels-inner">
+          <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
+          <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
+          <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
+        </div>
       </div>
     </div>
   </div>
