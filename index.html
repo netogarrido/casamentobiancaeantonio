@@ -159,27 +159,51 @@ section[id]{scroll-margin-top:78px}
 .popup-nome-erro.vis{
   display:block;
 }
-.popup-nome-preview{
-  font-family:var(--fh);
-  font-style:italic;
-  font-weight:300;
-  font-size:1.45rem;
-  color:var(--al);
-  text-align:center;
+
+/* linha nome + texto popup */
+.popup-nome-linha{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:0 .35em;
   min-height:0;
   max-height:0;
   overflow:hidden;
   opacity:0;
-  transition:max-height .35s ease, opacity .3s ease, margin .3s ease;
+  transition:max-height .5s ease, opacity .4s ease, margin .4s ease;
   margin-top:0;
-  letter-spacing:.01em;
-  text-shadow:0 1px 10px rgba(0,0,0,.3);
 }
-.popup-nome-preview.vis{
-  max-height:48px;
+.popup-nome-linha.vis{
+  max-height:80px;
   opacity:1;
-  margin-top:8px;
+  margin-top:10px;
 }
+
+
+  .popup-nome-preview{
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:1.25rem;
+  color:var(--al);
+  letter-spacing:.02em;
+  text-shadow:0 1px 10px rgba(0,0,0,.35);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+#popup_texto{
+  font-family:var(--fb);
+  font-size:.82rem;
+  font-weight:300;
+  color:rgba(255,255,255,.78);
+  letter-spacing:.01em;
+  line-height:1.5;
+  margin-bottom:0 !important;
+  display:inline;
+}
+
+  
 @keyframes shake{
   0%,100%{transform:translateX(0)}
   25%{transform:translateX(-6px)}
@@ -2526,8 +2550,11 @@ color:var(--a);
  <div class="popup-c popup-c--um" id="popupStageUm" style="display:none">
    <h2 id="popup_titulo"></h2>
    <p id="popup_aviso_player"></p>
-   <div class="popup-nome-preview" id="popupNomePreviewUm"></div>
-   <p id="popup_texto"></p>
+
+<div class="popup-nome-linha" id="popupNomeLinha">
+     <span class="popup-nome-preview" id="popupNomePreviewUm"></span><span id="popup_texto"></span>
+   </div>
+   
    <div class="popup-btns">
      <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
      <button class="btn btn-a" id="popup_botao_primario" onclick="handleStart()"></button>
@@ -3792,18 +3819,20 @@ function goToHeroStart(){
   });
 }
 
-  function atualizarPreviewNome(val){
+function atualizarPreviewNome(val){
   var preview=document.getElementById('popupNomePreview');
-  if(!preview)return;
+  var linha=document.getElementById('popupNomeLinha');
+  if(!preview||!linha)return;
   var nome=(val||'').trim();
   if(nome){
     preview.textContent=nome+',';
-    preview.classList.add('vis');
+    linha.classList.add('vis');
   }else{
     preview.textContent='';
-    preview.classList.remove('vis');
+    linha.classList.remove('vis');
   }
 }
+ 
   
 /* ── Validação do nome no popup ── */
 function getNomePopup(){
@@ -3840,16 +3869,16 @@ function avancarParaStageUm(){
   var u=document.getElementById('popupStageUm');
   if(z)z.style.display='none';
   if(u)u.style.display='';
-  /* Mostra o nome como aposto acima do popup_texto no stage 1 */
   var nome=getNomePopup()||getNomeSalvo();
   var alvo=document.getElementById('popupNomePreviewUm');
+  var linha=document.getElementById('popupNomeLinha');
   if(alvo){
     if(nome){
-      alvo.textContent=nome+',';
-      alvo.classList.add('vis');
+      alvo.textContent=nome+', ';
+      if(linha)linha.classList.add('vis');
     }else{
       alvo.textContent='';
-      alvo.classList.remove('vis');
+      if(linha)linha.classList.remove('vis');
     }
   }
 }
