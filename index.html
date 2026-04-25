@@ -2769,17 +2769,20 @@ color:var(--a);
 <!-- PROGRAMAÇÃO — caixa-mãe + cards-título -->
   <div class="prog-dias-wrap">
     <div class="prog-dias-panel">
-      <div class="prog-dias-grid">
+      
+<div class="prog-dias-grid">
         <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
-          <span class="dow">Sex</span><span class="num">23</span>
+          <span class="dow" id="sexta_titulo"></span><span class="num">23</span>
         </div>
         <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
-          <span class="dow">Sáb</span><span class="num">24</span>
+          <span class="dow" id="sabado_titulo"></span><span class="num">24</span>
         </div>
         <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
-          <span class="dow">Dom</span><span class="num">25</span>
+          <span class="dow" id="domingo_titulo"></span><span class="num">25</span>
         </div>
       </div>
+
+      
       <div class="prog-dias-panels" id="progDiasPanels">
         <div class="prog-dias-panels-inner">
           <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
