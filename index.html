@@ -1010,7 +1010,7 @@ section[id]{scroll-margin-top:78px}
   right:0;
   height:1px;
   transform:translateY(-4.5px);
-  background:rgba(212,160,74,.32);
+  background:rgba(184,176,164,.45);
 }
   
 .player-scrub-wave{
@@ -1020,7 +1020,7 @@ section[id]{scroll-margin-top:78px}
   width:var(--prog);
   height:100%;
   overflow:hidden;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q2.5 1.2 5 4 T10 4 T15 4 T20 4 T25 4 T30 4 T35 4 T40 4 T45 4 T50 4 T55 4 T60 4 T65 4 T70 4 T75 4 T80 4 T85 4 T90 4 T95 4 T100 4 T105 4 T110 4 T115 4 T120 4' stroke='%23B8B0A4' stroke-opacity='0.75' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'><path d='M0 5 Q2.5 0.5 5 5 T10 5 T15 5 T20 5 T25 5 T30 5 T35 5 T40 5 T45 5 T50 5 T55 5 T60 5 T65 5 T70 5 T75 5 T80 5 T85 5 T90 5 T95 5 T100 5 T105 5 T110 5 T115 5 T120 5' stroke='%23D4A04A' stroke-opacity='0.95' stroke-width='1.4' fill='none' stroke-linecap='round'/></svg>");
   background-repeat:no-repeat;
   /* onda renderizada em 100% da largura TOTAL da track, clipada pela largura desta div */
   background-size:calc(100% * 100 / var(--prog-num,100)) 100%;
@@ -1049,13 +1049,13 @@ section[id]{scroll-margin-top:78px}
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:var(--al);
+  width:2px;
+  height:14px;
+  border-radius:1px;
+  background:var(--a);
   border:none;
-  box-shadow:none;
-  margin-top:6px;
+  box-shadow:0 0 4px rgba(212,160,74,.4);
+  margin-top:3px;
 }
   
 .player-scrub input[type="range"]::-moz-range-track{
@@ -1063,13 +1063,15 @@ section[id]{scroll-margin-top:78px}
   background:transparent;
   border:none;
 }
-.player-scrub input[type="range"]::-moz-range-thumb{
-  width:8px;
-  height:8px;
+
+
+  .player-scrub input[type="range"]::-moz-range-thumb{
+  width:2px;
+  height:14px;
   border:none;
-  border-radius:50%;
-  background:var(--al);
-  box-shadow:none;
+  border-radius:1px;
+  background:var(--a);
+  box-shadow:0 0 4px rgba(212,160,74,.4);
 }
   
 
