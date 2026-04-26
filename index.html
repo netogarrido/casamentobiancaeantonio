@@ -1655,8 +1655,8 @@ color:var(--a);
 
 .pres-hero-badge{
   position:absolute;
-  bottom:56%;
-  left:clamp(40px,8vw,60px);
+  bottom:54%;
+  left:15%;
   background:linear-gradient(135deg,var(--a),var(--al));
   color:var(--n);
   font-size:.62rem;
@@ -2043,8 +2043,8 @@ color:var(--a);
   
 .prog-hero-badge{
   position:absolute;
-  bottom:12%;
-  left:clamp(40px,8vw,60px);
+  bottom:10%;
+  left:15%;
   background:linear-gradient(135deg,var(--a),var(--al));
   color:var(--n);
   font-size:.62rem;
@@ -2156,7 +2156,9 @@ color:var(--a);
 /* ── PROGRAMAÇÃO — caixa-mãe + cards-título fininhos ── */
 
 .prog-dias-wrap{
-  margin:0 0 24px;
+  margin:-80px 0 24px; /* ← topo: mais negativo = sobe mais sobre a hero */
+  position:relative;
+  z-index:5;
 }
 
   
