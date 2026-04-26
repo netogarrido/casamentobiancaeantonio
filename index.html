@@ -322,57 +322,34 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     saturate(.92);
 }
 
-/* progressão narrativa: do mais denso para o mais claro — agora todas mais claras */
-.popup-bg img.popup-stage-1{
-  filter:
-    brightness(.92)
-    contrast(.94)
-    saturate(.98);
-}
-
-.popup-bg img.popup-stage-2{
-  filter:
-    brightness(.95)
-    contrast(.96)
-    saturate(1);
-}
-
-.popup-bg img.popup-stage-3{
-  filter:
-    brightness(.98)
-    contrast(.98)
-    saturate(1.02);
-}
-
+/* Filtros suaves — fotos quase no natural, vinheta vai por cima de cada uma */
+.popup-bg img.popup-stage-1,
+.popup-bg img.popup-stage-2,
+.popup-bg img.popup-stage-3,
 .popup-bg img.popup-stage-4{
-  filter:
-    brightness(1)
-    contrast(1)
-    saturate(1.04);
+  filter:contrast(.96) saturate(.95);
 }
 
-/* camada global — apenas vinheta sutil nas bordas, centro respira */
-.popup-bg::after{
-  content:'';
+/* Wrapper de cada foto: cria a vinheta topo+base individual ("rolo de filme") */
+.popup-track{
   position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background:
-    radial-gradient(ellipse at center,
-      rgba(15,23,32,0) 0%,
-      rgba(15,23,32,.04) 50%,
-      rgba(15,23,32,.18) 100%),
-    linear-gradient(180deg,
-      rgba(15,23,32,.45) 0%,
-      rgba(15,23,32,.10) 18%,
-      rgba(15,23,32,0) 38%,
-      rgba(15,23,32,0) 62%,
-      rgba(15,23,32,.10) 82%,
-      rgba(15,23,32,.45) 100%);
+  top:0;left:0;width:100%;
+  display:flex;flex-direction:column;
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
+.popup-bg img{
+  position:relative;
+  z-index:0;
+}
+/* Vinheta por foto — usa box-shadow inset pra pintar topo e base de cada uma */
+.popup-bg img{
+  box-shadow:
+    inset 0 90px 110px -30px rgba(15,23,32,.85),
+    inset 0 -90px 110px -30px rgba(15,23,32,.92);
 }
 
-/* camada central — sombra leve atrás da caixa para legibilidade */
+/* camada central — escurecimento atrás da caixa para legibilidade do texto */
 .popup-bg::before{
   content:'';
   position:absolute;
@@ -380,29 +357,34 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:1;
   pointer-events:none;
   background:
-    linear-gradient(180deg,
-      rgba(0,0,0,0) 0%,
-      rgba(15,23,32,.05) 30%,
-      rgba(15,23,32,.14) 48%,
-      rgba(15,23,32,.14) 52%,
-      rgba(15,23,32,.05) 70%,
-      rgba(0,0,0,0) 100%);
+    radial-gradient(ellipse 70% 45% at center,
+      rgba(15,23,32,.55) 0%,
+      rgba(15,23,32,.42) 40%,
+      rgba(15,23,32,.20) 70%,
+      rgba(15,23,32,0) 100%);
+}
+
+/* sem segunda camada global — a vinheta agora é por foto */
+.popup-bg::after{
+  content:none;
 }
 
 @media (max-width:520px){
   .popup-track{
     animation-duration:50s;
   }
-
+  .popup-bg img{
+    box-shadow:
+      inset 0 75px 90px -28px rgba(15,23,32,.88),
+      inset 0 -75px 90px -28px rgba(15,23,32,.94);
+  }
   .popup-bg::before{
     background:
-      linear-gradient(180deg,
-        rgba(0,0,0,0) 0%,
-        rgba(15,23,32,.06) 28%,
-        rgba(15,23,32,.18) 47%,
-        rgba(15,23,32,.18) 53%,
-        rgba(15,23,32,.06) 72%,
-        rgba(0,0,0,0) 100%);
+      radial-gradient(ellipse 85% 50% at center,
+        rgba(15,23,32,.62) 0%,
+        rgba(15,23,32,.48) 40%,
+        rgba(15,23,32,.22) 72%,
+        rgba(15,23,32,0) 100%);
   }
 }
 
@@ -413,12 +395,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding:32px 28px 24px;
   max-width:340px;
   width:calc(100% - 48px);
-  background:rgba(255,255,255,0.38);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,0.26);
+  background:rgba(15,23,32,0.42);
+  backdrop-filter:blur(22px) saturate(1.1);
+  -webkit-backdrop-filter:blur(22px) saturate(1.1);
+  border:1px solid rgba(255,255,255,0.18);
   border-radius:24px;
-  box-shadow:0 8px 40px rgba(0,0,0,0.35);
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.10);
 }
 
 .popup-c h2{
