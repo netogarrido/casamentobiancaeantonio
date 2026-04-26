@@ -4932,6 +4932,33 @@ function lboxPreload(src){
   LBOX._cache[src]=im;
 }
 
+/* Aplica decoding=async em TODAS as <img> do site (estáticas e dinâmicas).
+   Roda 1x no load + observa o DOM pra pegar imagens criadas depois (categorias, álbuns). */
+function ativarDecodingAsync(){
+  var aplicar=function(img){
+    if(!img||img.tagName!=='IMG')return;
+    if(!img.hasAttribute('decoding'))img.setAttribute('decoding','async');
+  };
+  document.querySelectorAll('img').forEach(aplicar);
+  if(window.MutationObserver){
+    var mo=new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes.forEach(function(n){
+          if(n.nodeType!==1)return;
+          if(n.tagName==='IMG')aplicar(n);
+          else if(n.querySelectorAll)n.querySelectorAll('img').forEach(aplicar);
+        });
+      });
+    });
+    mo.observe(document.body,{childList:true,subtree:true});
+  }
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',ativarDecodingAsync);
+}else{
+  ativarDecodingAsync();
+}
+
 function lboxRender(){
   var imgs=LBOX.albums[LBOX.cur.album];
   var idx=LBOX.cur.idx;
