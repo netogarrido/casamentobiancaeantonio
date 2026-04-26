@@ -1393,39 +1393,21 @@ section[id]{scroll-margin-top:78px}
   border-color:var(--a);
   transform:scale(1.08);
 }
-/* Botão fechar no rodapé da letra */
-.lyr-fechar-rodape{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
+
+/* Variante "fechar" — mesmo botão do pergaminho, posicionado no rodapé da letra */
+.pergaminho-abrir--fechar{
+  position:relative;
+  inset:auto;
+  width:100%;
   margin-top:28px;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
+  padding:14px 20px 4px;
 }
-.lyr-fechar-rodape-linha{
-  flex:1;
-  height:1px;
-  background:rgba(212,160,74,.28);
+
+/* Seta apontando para cima (ao recolher) — mesma animação fofa */
+.pergaminho-abrir-seta--up{
+  /* herda tudo de .pergaminho-abrir-seta, só inverte direção do bounce visual */
 }
-.lyr-fechar-rodape button{
-  background:none;
-  border:none;
-  padding:0;
-  font-family:var(--fb);
-  font-size:.6rem;
-  font-weight:700;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--a);
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  opacity:.75;
-  transition:opacity .2s ease;
-}
-.lyr-fechar-rodape:hover button{
-  opacity:1;
-}
+  
 .lyr-text{
   position:relative;
   z-index:1;
@@ -3135,11 +3117,14 @@ color:var(--a);
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">✕</button>
       <div class="lyr-text" id="musica_letra"></div>
       <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
-      <div class="lyr-fechar-rodape" onclick="tL()" aria-label="Fechar letra">
-        <span class="lyr-fechar-rodape-linha"></span>
-        <button id="musica_btn_letra_fecha">recolher a letra ↑</button>
-        <span class="lyr-fechar-rodape-linha"></span>
-      </div>
+
+<button class="pergaminho-abrir pergaminho-abrir--fechar" onclick="tL()" aria-label="Recolher letra">
+        <span class="pergaminho-abrir-linha"></span>
+        <span class="pergaminho-abrir-txt" id="musica_btn_letra_fecha">recolher a letra</span>
+        <span class="pergaminho-abrir-seta pergaminho-abrir-seta--up">↑</span>
+        <span class="pergaminho-abrir-linha"></span>
+      </button>
+      
     </div>
   </div>
 
