@@ -7,9 +7,17 @@
 <meta property="og:title" content="Bianca & Antonio — 23 a 25 de Outubro de 2026">
 <meta property="og:description" content="Estamos muito felizes em celebrar esse momento tão especial com vocês.">
 <title id="pg-title">Bianca & Antonio — Casamento</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://docs.google.com" crossorigin>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="dns-prefetch" href="https://api.cloudinary.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Nunito+Sans:wght@400;600&display=swap"></noscript>
+  
 <style>
 :root{
   --a:#D4A04A;--al:#E8C57A;--ap:#F5E2BE;--ag:rgba(212,160,74,.10);
@@ -3183,10 +3191,10 @@ color:var(--a);
 <div class="popup" id="popup">
   <div class="popup-bg">
   <div class="popup-track" id="popupTrack">
-    <img src="" data-midia="popup_bg_1" alt="">
-    <img src="" data-midia="popup_bg_2" alt="">
-    <img src="" data-midia="popup_bg_3" alt="">
-    <img src="" data-midia="popup_bg_4" alt="">
+    <img data-midia-lazy="popup_bg_1" alt="">
+    <img data-midia-lazy="popup_bg_2" alt="">
+    <img data-midia-lazy="popup_bg_3" alt="">
+    <img data-midia-lazy="popup_bg_4" alt="">
   </div>
 </div>
 
@@ -3607,19 +3615,19 @@ color:var(--a);
         <p class="prog-lazer-ttl" id="reserva_dayuse_lazer_titulo"></p>
         <div class="prog-lazer-grid" id="progLazerGrid">
           <div class="prog-lazer-card" data-lz="1" onclick="toggleLazer(1)">
-            <img data-midia="foto_hotel_lazer_1" alt="">
+            <img data-midia="foto_hotel_lazer_1" alt="" loading="lazy">
             <span id="reserva_dayuse_lazer_card_1"></span>
           </div>
           <div class="prog-lazer-card" data-lz="2" onclick="toggleLazer(2)">
-            <img data-midia="foto_hotel_lazer_2" alt="">
+           <img data-midia="foto_hotel_lazer_2" alt="" loading="lazy">
             <span id="reserva_dayuse_lazer_card_2"></span>
           </div>
           <div class="prog-lazer-card" data-lz="3" onclick="toggleLazer(3)">
-            <img data-midia="foto_hotel_lazer_3" alt="">
+            <img data-midia="foto_hotel_lazer_3" alt="" loading="lazy">
             <span id="reserva_dayuse_lazer_card_3"></span>
           </div>
           <div class="prog-lazer-card" data-lz="4" onclick="toggleLazer(4)">
-            <img data-midia="foto_hotel_lazer_4" alt="">
+           <img data-midia="foto_hotel_lazer_4" alt="" loading="lazy">
             <span id="reserva_dayuse_lazer_card_4"></span>
           </div>
         </div>
@@ -4022,20 +4030,32 @@ var _secoesVistas=[];
 var _audioSegTocando=0;
 var _audioUltimoPlay=null;
 
-window.addEventListener('scroll',function(){
-  var total=document.body.scrollHeight-window.innerHeight;
-  if(total>0){
-    var pct=Math.round((window.scrollY/total)*100);
-    if(pct>_scrollMax)_scrollMax=pct;
-  }
-  document.querySelectorAll('section[id]').forEach(function(el){
-    var id=el.id;
-    if(_secoesVistas.indexOf(id)>=0)return;
-    if(el.getBoundingClientRect().top<window.innerHeight*0.8){
-      _secoesVistas.push(id);
-    }
-  });
-},{passive:true});
+(function(){
+  var ticking=false;
+  var secoesCache=null;
+  window.addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){
+      var total=document.body.scrollHeight-window.innerHeight;
+      if(total>0){
+        var pct=Math.round((window.scrollY/total)*100);
+        if(pct>_scrollMax)_scrollMax=pct;
+      }
+      if(!secoesCache)secoesCache=document.querySelectorAll('section[id]');
+      var vh=window.innerHeight*0.8;
+      for(var i=0;i<secoesCache.length;i++){
+        var el=secoesCache[i];
+        var id=el.id;
+        if(_secoesVistas.indexOf(id)>=0)continue;
+        if(el.getBoundingClientRect().top<vh){
+          _secoesVistas.push(id);
+        }
+      }
+      ticking=false;
+    });
+  },{passive:true});
+})();
 
 /* ══════════════════════════════════════════
    REGISTRAR ENTRADA (analytics)
@@ -5288,17 +5308,30 @@ document.querySelectorAll('.nav-lk a').forEach(function(a){
   });
 });
 
-window.addEventListener('scroll',function(){
-  document.getElementById('nav').classList.toggle('sc',window.scrollY>50);
+(function(){
+  var ticking=false;
+  var navEl=null;
+  var linksEl=null;
   var secs=['presentes','rsvp','hosp','faq'];
-  var links=document.querySelectorAll('.nav-lk a');
-  for(var s=0;s<secs.length;s++){
-    var el=document.getElementById(secs[s]);
-    if(el&&el.getBoundingClientRect().top<200){
-      links.forEach(function(lk){lk.classList.toggle('on',lk.getAttribute('href')==='#'+secs[s]);});
-    }
-  }
-},{passive:true});
+  window.addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){
+      if(!navEl)navEl=document.getElementById('nav');
+      if(navEl)navEl.classList.toggle('sc',window.scrollY>50);
+      if(!linksEl)linksEl=document.querySelectorAll('.nav-lk a');
+      for(var s=0;s<secs.length;s++){
+        var el=document.getElementById(secs[s]);
+        if(el&&el.getBoundingClientRect().top<200){
+          for(var k=0;k<linksEl.length;k++){
+            linksEl[k].classList.toggle('on',linksEl[k].getAttribute('href')==='#'+secs[s]);
+          }
+        }
+      }
+      ticking=false;
+    });
+  },{passive:true});
+})();
 
 /* ══════════════════════════════════════════
    UTILS
