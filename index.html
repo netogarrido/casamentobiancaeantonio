@@ -1430,19 +1430,9 @@ section[id]{scroll-margin-top:78px}
   font-style:italic;
   font-size:1rem;
   color:var(--im);
-  margin:32px auto 18px;
+  margin:24px auto 8px;
   max-width:380px;
   position:relative;
-}
-
-#musica_cta::before{
-  content:'';
-  display:block;
-  width:40px;
-  height:1px;
-  background:var(--a);
-  opacity:.4;
-  margin:0 auto 22px;
 }
 
 /* ── Caixinhas do noivo artista ── */
@@ -1475,12 +1465,13 @@ section[id]{scroll-margin-top:78px}
   }
 
   /* Coluna direita — quote + pergaminho empilhados */
-  .vestido .inn > .vestido-quote{
-    grid-column:2;
+.vestido .inn > .vestido-quote{
+    grid-column:1;
     grid-row:2;
     align-self:start;
-    margin-top:0;
-    font-size:1.36rem;
+    margin-top:78px;
+    margin-bottom:0;
+    font-size:1.24rem;
     max-width:none;
     padding:0 4px;
   }
@@ -1497,11 +1488,8 @@ section[id]{scroll-margin-top:78px}
     grid-column:1/-1;
     grid-row:3;
   }
-  .vestido .inn > #musica_cta{
-    grid-column:1/-1;
-    grid-row:4;
-  }
-  .vestido .inn > .cx-cards#cxVestido{
+  
+.vestido .inn > .cx-cards#cxVestido{
     grid-column:1/-1;
     grid-row:4;
   }
@@ -3073,7 +3061,13 @@ color:var(--a);
       </div>
       
     </div>
-  </div>
+</div>
+
+  <!-- Texto de abertura -->
+<div class="vestido-quote" id="historia_texto_abertura_wrap">
+  <span id="historia_texto_abertura"></span><span class="vestido-quote-close">&#x201D;</span>
+  <cite id="musica_artista"></cite>
+</div>
 
   <!-- Fotos polaroid — principal + 2 sobrepostas; demais só no carrossel -->
 <div class="vestido-photos" id="vestidoPhotos">
@@ -3087,11 +3081,7 @@ color:var(--a);
   <img src="" alt="" id="vestidoSlot4" class="vestido-polaroid">
 </div>
 
-  <!-- Texto de abertura -->
-<div class="vestido-quote" id="historia_texto_abertura_wrap">
-  <span id="historia_texto_abertura"></span><span class="vestido-quote-close">&#x201D;</span>
-  <cite id="musica_artista"></cite>
-</div>
+
   
 <!-- Pergaminho: trecho da letra com fade e convite a abrir -->
 <div class="pergaminho-wrap" id="pergaminhoWrap">
@@ -3112,24 +3102,22 @@ color:var(--a);
   </div>
 
   <!-- Letra completa (expansível) -->
-  <div class="lyr-box" id="lB">
+<div class="lyr-box" id="lB">
     <div class="lyr-stage">
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">✕</button>
       <div class="lyr-text" id="musica_letra"></div>
       <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
-
-<button class="pergaminho-abrir pergaminho-abrir--fechar" onclick="tL()" aria-label="Recolher letra">
+      <p id="musica_cta"></p>
+      <button class="pergaminho-abrir pergaminho-abrir--fechar" onclick="tL()" aria-label="Recolher letra">
         <span class="pergaminho-abrir-linha"></span>
         <span class="pergaminho-abrir-txt" id="musica_btn_letra_fecha">recolher a letra</span>
         <span class="pergaminho-abrir-seta pergaminho-abrir-seta--up">↑</span>
         <span class="pergaminho-abrir-linha"></span>
       </button>
-      
     </div>
   </div>
 
-  <p id="musica_cta"></p>
-<div class="cx-cards" id="cxVestido"></div>
+  <div class="cx-cards" id="cxVestido"></div>
 
 <div class="vestido-seta-presentes-wrap" id="vestidoSetaPresentesWrap">
   <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')"><span id="vestido_seta_presentes_txt"></span></a>
