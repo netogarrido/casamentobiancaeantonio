@@ -2036,17 +2036,7 @@ color:var(--a);
 /* ── PROGRAMAÇÃO — caixa-mãe + cards-título fininhos ── */
 
 .prog-dias-wrap{
-  position:relative;
-  z-index:5;
-  max-width:920px;
-  margin:-44px auto 0;
-  padding:0 16px;
-}
-@media (max-width:640px){
-  .prog-dias-wrap{
-    margin-top:-28px;
-    padding:0 12px;
-  }
+  margin:0 0 24px;
 }
 
   
@@ -2100,13 +2090,17 @@ color:var(--a);
 .prog-dia-card.on .dow{color:var(--a)}
 
 .prog-dia-card .dow{
-  font-size:.78rem;
+  font-size:.6rem;
   font-weight:700;
   letter-spacing:.22em;
   text-transform:uppercase;
   color:var(--a);
   font-family:var(--fs);
   transition:color .22s ease;
+}
+.prog-dia-card .num{
+  font-size:1.05rem;
+  font-weight:500;
 }
   
 .prog-dias-panels{
@@ -2891,29 +2885,7 @@ color:var(--a);
   
 
 
-<!-- FAIXA 3 DIAS — sobreposta ao final do hero -->
-<div class="prog-dias-wrap" id="diasFaixa">
-  <div class="prog-dias-panel">
-    <div class="prog-dias-grid">
-      <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
-        <span class="dow" id="sexta_titulo"></span>
-      </div>
-      <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
-        <span class="dow" id="sabado_titulo"></span>
-      </div>
-      <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
-        <span class="dow" id="domingo_titulo"></span>
-      </div>
-    </div>
-    <div class="prog-dias-panels" id="progDiasPanels">
-      <div class="prog-dias-panels-inner">
-        <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
-        <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
-        <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
 <section class="prog" id="prog">
@@ -2931,8 +2903,36 @@ color:var(--a);
 
   <div class="inn">
 
+<!-- PROGRAMAÇÃO — caixa-mãe + cards-título -->
+  <div class="prog-dias-wrap">
+    <div class="prog-dias-panel">
+      
+<div class="prog-dias-grid">
+        <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
+          <span class="dow" id="sexta_titulo"></span><span class="num">23</span>
+        </div>
+        <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
+          <span class="dow" id="sabado_titulo"></span><span class="num">24</span>
+        </div>
+        <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
+          <span class="dow" id="domingo_titulo"></span><span class="num">25</span>
+        </div>
+      </div>
+
+      
+      <div class="prog-dias-panels" id="progDiasPanels">
+        <div class="prog-dias-panels-inner">
+          <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
+          <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
+          <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <!-- Intro -->
     <p class="txt" id="fds_texto_1"></p>
+    
 
     <!-- CAIXINHA 3×1 — vias de participação -->
     <div class="prog-via-wrap">
