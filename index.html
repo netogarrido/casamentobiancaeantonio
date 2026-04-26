@@ -1882,9 +1882,34 @@ color:var(--a);
 }
 
 .cat-card.on{
-  background:rgba(255,255,255,.85);
-  box-shadow:0 0 0 2px var(--a), 0 6px 20px rgba(212,160,74,.25);
-  border-color:var(--a);
+  background:rgba(255,255,255,.92);
+  box-shadow:
+    0 0 0 2px var(--a),
+    0 0 22px rgba(212,160,74,.45),
+    0 8px 24px rgba(212,160,74,.28);
+  border-color:var(--al);
+}
+.cat-card.on img{
+  filter:saturate(1.35) brightness(1.08) contrast(1.05);
+  transform:scale(1.04);
+}
+.cat-card.on .cat-lbl{
+  background:rgba(255,251,242,.92);
+}
+.cat-card.on .cat-nm{
+  color:var(--n);
+}
+.cat-card.on .cat-rng{
+  color:var(--a);
+}
+
+/* Demais cards do grid ficam discretos quando alguma está ativa */
+.cat-grid.has-open .cat-card:not(.on){
+  opacity:.62;
+  filter:saturate(.7);
+}
+.cat-grid.has-open .cat-card:not(.on) img{
+  filter:saturate(.75) brightness(.92);
 }
 
 .cat-card:active{
@@ -1897,13 +1922,16 @@ color:var(--a);
     transform:translateY(-2px);
     box-shadow:0 8px 24px rgba(15,23,32,.14), inset 0 1px 0 rgba(255,255,255,.9);
   }
+  .cat-grid.has-open .cat-card:not(.on):hover{
+    opacity:.85;
+  }
 }
 
 .cat-card img{
   width:100%;
   height:100%;
   object-fit:cover;
-  transition:transform .4s ease;
+  transition:transform .4s ease, filter .4s ease;
   filter:saturate(.9) brightness(.95);
   position:absolute;
   inset:0;
@@ -1921,6 +1949,7 @@ color:var(--a);
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
   pointer-events:none;
+  transition:background .3s ease;
 }
 
 .cat-nm{
@@ -1940,8 +1969,37 @@ color:var(--a);
   letter-spacing:.04em;
 }
 
-.sub-panel{display:none;margin-bottom:10px}
-.sub-panel.on{display:block}
+/* ── Expansão das subcategorias dentro da caixa-mãe ── */
+.cat-panels-wrap{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1), margin-top .3s ease;
+  margin-top:0;
+}
+.cat-panels-wrap.has-open{
+  grid-template-rows:1fr;
+  margin-top:14px;
+}
+.cat-panels-inner{
+  overflow:hidden;
+  min-height:0;
+}
+.sub-panel{
+  display:none;
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .3s ease, transform .3s ease;
+}
+.sub-panel.on{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+.sub-panel .g-card{
+  background:rgba(255,255,255,.92);
+}
+
+  
 
 /* Conteúdo após as categorias */
 .pres-body{
@@ -3153,22 +3211,27 @@ color:var(--a);
 <!-- Grid de categorias -->
   <div class="pres-cats-wrap">
     <div class="pres-cats-panel">
-<div class="pres-grid-header">
-  <p id="presentes_subtitulo"></p>
-</div>
+      <div class="pres-grid-header">
+        <p id="presentes_subtitulo"></p>
+      </div>
       <div class="cat-grid" id="cG"></div>
+
+      <!-- Painéis das subcategorias — expandem dentro da MESMA caixa -->
+      <div class="cat-panels-wrap" id="catPanelsWrap">
+        <div class="cat-panels-inner">
+          <div id="sP"></div>
+        </div>
+      </div>
     </div>
   </div>
- 
-  
-  <!-- Painéis de presentes por categoria -->
+
+  <!-- Conteúdo após a caixa de categorias -->
   <div class="pres-body">
     <p class="txt" style="display:none" id="presentes_categorias_titulo"></p>
-    <div id="sP"></div>
-<div class="livre">
+    <div class="livre">
       <p id="livre_nome" style="font-family:var(--fh);font-size:1rem;font-weight:500;color:var(--i);margin-bottom:10px"></p>
 
-<div class="g-card" onclick="openLivre()" style="justify-content:center;border-style:dashed;margin:0">
+      <div class="g-card" onclick="openLivre()" style="justify-content:center;border-style:dashed;margin:0">
         <div class="g-ico" id="livre_ico">🎁</div>
         <div class="g-inf">
           <div class="g-desc" id="livre_desc"></div>
@@ -4129,21 +4192,6 @@ function renderCats(){
 }
 
 function toggleCat(id){
-  activeCat=activeCat===id?null:id;
-  document.querySelectorAll('.cat-card').forEach(function(c){c.classList.toggle('on',c.dataset.c===activeCat);});
-  document.querySelectorAll('.sub-panel').forEach(function(p){p.classList.toggle('on',p.id==='sp-'+activeCat);});
-
-  if(!activeCat)return;
-
-  setTimeout(function(){
-    var anchor=document.querySelector('.pres-cats-wrap');
-    if(!anchor)return;
-    var nav=document.getElementById('nav');
-    var navH=nav?nav.getBoundingClientRect().height:70;
-    var y=anchor.getBoundingClientRect().top+window.scrollY-navH-12;
-    window.scrollTo({top:y,behavior:'smooth'});
-  },120);
-}
 
 /* ══════════════════════════════════════════
    RENDER CAIXINHAS
