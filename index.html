@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0F1720">
-<meta property="og:title" content="Bianca & Antonio — 23 a 25 de Outubro de 2026">
-<meta property="og:description" content="Estamos muito felizes em celebrar esse momento tão especial com vocês.">
-<title id="pg-title">Bianca & Antonio — Casamento</title>
+<meta id="title_link" property="og:title" content="Bianca & Antonio — 23 a 25 de Outubro de 2026">
+<meta id="description_link" property="og:description" content="Estamos muito felizes em celebrar esse momento tão especial com vocês.">
+<title id="pg_title_link">Bianca & Antonio — Casamento</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://docs.google.com" crossorigin>
@@ -4356,6 +4356,24 @@ function applyConteudo(rows){
     var cleaned=(val===null||val===undefined)?'':String(val).replace(/\\n/g,'\n');
     CONTEUDO[key]=cleaned;
     var ativo=String(r.ativo||'sim').toLowerCase().trim();
+
+    if(key==='title_link'||key==='description_link'){
+      var metaEl=document.getElementById(key);
+      if(!metaEl)return;
+      if(ativo==='nao'||cleaned==='')return;
+      metaEl.setAttribute('content',cleaned);
+      return;
+    }
+
+    if(key==='pg_title_link'){
+      var titleEl=document.getElementById('pg_title_link');
+      if(!titleEl)return;
+      if(ativo==='nao'||cleaned==='')return;
+      titleEl.textContent=cleaned;
+      document.title=cleaned;
+      return;
+    }
+
     var phMap={
       'rsvp_campo_restricoes_placeholder':'rsvp_restricoes_ta',
       'rsvp_campo_sugestao_placeholder':'rsvp_sug_input',
@@ -4369,6 +4387,7 @@ function applyConteudo(rows){
       else{phEl.placeholder=cleaned;}
       return;
     }
+
     var el=document.getElementById(key);
     if(!el)return;
     el.classList.add('sheet-preserve-case');
@@ -4381,7 +4400,7 @@ function applyConteudo(rows){
     else if(tag==='OPTION'){el.textContent=cleaned;}
     else if(key==='nav_logo'){el.innerHTML=cleaned.replace(/\n/g,'<br>');}
     else{el.innerHTML=cleaned.replace(/\n/g,'<br>');}
-});
+  });
 
   var pt=document.getElementById('presentes_titulo');
   var ps=document.getElementById('vestido_seta_presentes_txt');
