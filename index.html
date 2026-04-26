@@ -1187,6 +1187,28 @@ section[id]{scroll-margin-top:78px}
   padding:24px 26px 64px;
 }
 
+.pergaminho-titulo{
+  font-family:var(--fh);
+  font-size:.62rem;
+  font-weight:600;
+  font-style:normal;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--a);
+  text-align:center;
+  margin-bottom:18px;
+  position:relative;
+}
+.pergaminho-titulo::after{
+  content:'';
+  display:block;
+  width:32px;
+  height:1px;
+  background:var(--a);
+  opacity:.45;
+  margin:10px auto 0;
+}
+
 .pergaminho-trecho{
   font-family:var(--fh);
   font-size:1.18rem;
@@ -3090,10 +3112,11 @@ color:var(--a);
 </div>
   
 <!-- Pergaminho: trecho da letra com fade e convite a abrir -->
-  <div class="pergaminho-wrap" id="pergaminhoWrap">
+<div class="pergaminho-wrap" id="pergaminhoWrap">
     <div class="pergaminho" id="pergaminho">
       <div class="pergaminho-borda-topo"></div>
       <div class="pergaminho-corpo">
+        <div class="pergaminho-titulo" id="pergaminhoTitulo"></div>
         <div class="pergaminho-trecho" id="pergaminhoTrecho"></div>
         <div class="pergaminho-fade"></div>
       </div>
@@ -3999,12 +4022,15 @@ function aplicarFlagsUI(){
 /* ══════════════════════════════════════════
    APPLY CONTEUDO
 ══════════════════════════════════════════ */
+var CONTEUDO={};
 function applyConteudo(rows){
+  CONTEUDO={};
   rows.forEach(function(r){
     var key=r.chave;
     var val=r.descricao;
     if(!key)return;
     var cleaned=(val===null||val===undefined)?'':String(val).replace(/\\n/g,'\n');
+    CONTEUDO[key]=cleaned;
     var ativo=String(r.ativo||'sim').toLowerCase().trim();
     var phMap={
       'rsvp_campo_restricoes_placeholder':'rsvp_restricoes_ta',
@@ -4592,19 +4618,32 @@ function tL(){
   },850);
 }
 
-/* Popula o pergaminho com as 4 primeiras linhas da letra completa */
+/* Popula o pergaminho a partir das chaves musica_titulo + musica_trecho */
 function popularPergaminho(){
-  var letraEl=document.getElementById('musica_letra');
+  var wrap=document.getElementById('pergaminhoWrap');
+  var tituloEl=document.getElementById('pergaminhoTitulo');
   var trechoEl=document.getElementById('pergaminhoTrecho');
-  if(!letraEl||!trechoEl)return;
-  var bruto=(letraEl.textContent||'').trim();
-  if(!bruto){
-    var wrap=document.getElementById('pergaminhoWrap');
-    if(wrap)wrap.style.display='none';
+  if(!wrap||!trechoEl)return;
+
+  var trechoBruto=(CONTEUDO['musica_trecho']||'').trim();
+  if(!trechoBruto){
+    wrap.style.display='none';
     return;
   }
-  var linhas=bruto.split(/\r?\n/).filter(function(l){return l.trim().length>0;});
-  trechoEl.textContent=linhas.slice(0,4).join('\n');
+  wrap.style.display='';
+
+  /* preserva quebras de linha originais da célula do Sheets */
+  trechoEl.textContent=trechoBruto;
+
+  var titulo=(CONTEUDO['musica_titulo']||'').trim();
+  if(tituloEl){
+    if(titulo){
+      tituloEl.textContent=titulo;
+      tituloEl.style.display='';
+    }else{
+      tituloEl.style.display='none';
+    }
+  }
 }
 
 /* ══════════════════════════════════════════
