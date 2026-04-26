@@ -1201,6 +1201,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .pergaminho{
   position:relative;
+  display:block;
+  width:100%;
+  text-align:inherit;
+  font:inherit;
+  color:inherit;
   background:
     linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 60%,#F1E7D2 100%);
   border:1px solid rgba(212,160,74,.28);
@@ -1212,6 +1217,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     inset 0 -2px 0 rgba(212,160,74,.08);
   animation:pergaminhoUnfurl .9s cubic-bezier(.22,.7,.28,1) both;
   overflow:hidden;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.pergaminho:active{
+  transform:scale(.992);
 }
 
 /* borda superior — bordinha de pergaminho rasgado/enrolado */
@@ -1310,7 +1320,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:2;
   transition:opacity .25s ease;
 }
-.pergaminho-abrir:hover{opacity:.78}
+.pergaminho:hover .pergaminho-abrir,
+.pergaminho-abrir:hover{
+  opacity:.78;
+}
 .pergaminho-abrir-linha{
   flex:1;
   height:1px;
@@ -3376,20 +3389,20 @@ color:var(--a);
   
 <!-- Pergaminho: trecho da letra com fade e convite a abrir -->
 <div class="pergaminho-wrap" id="pergaminhoWrap">
-    <div class="pergaminho" id="pergaminho">
+    <button class="pergaminho" id="pergaminho" type="button" onclick="tL()" aria-label="Abrir letra completa">
       <div class="pergaminho-borda-topo"></div>
       <div class="pergaminho-corpo">
         <div class="pergaminho-titulo" id="pergaminhoTitulo"></div>
         <div class="pergaminho-trecho" id="pergaminhoTrecho"></div>
         <div class="pergaminho-fade"></div>
       </div>
-      <button class="pergaminho-abrir" onclick="tL()" aria-label="Abrir letra completa">
+      <span class="pergaminho-abrir">
         <span class="pergaminho-abrir-linha"></span>
         <span class="pergaminho-abrir-txt" id="musica_btn_letra">abrir a letra</span>
         <span class="pergaminho-abrir-seta">↓</span>
         <span class="pergaminho-abrir-linha"></span>
-      </button>
-    </div>
+      </span>
+    </button>
   </div>
 
   <!-- Letra completa (expansível) -->
