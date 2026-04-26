@@ -1209,7 +1209,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font:inherit;
   color:inherit;
   background:
+    radial-gradient(circle at 18% 22%, rgba(212,160,74,.055) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 64%, rgba(84,73,60,.045) 0 1px, transparent 1.5px),
     linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 60%,#F1E7D2 100%);
+  background-size:
+    34px 34px,
+    46px 46px,
+    auto;
   border:1px solid rgba(212,160,74,.28);
   border-top:none;
   border-radius:0 0 14px 14px;
@@ -1222,11 +1228,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
+  
 .pergaminho:active{
   transform:scale(.992);
 }
 
-/* borda superior — bordinha de pergaminho rasgado/enrolado */
+/* borda superior — mesmo acabamento da letra aberta */
 .pergaminho-borda-topo{
   height:14px;
   background:
@@ -1237,18 +1244,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-bottom:1px solid rgba(212,160,74,.22);
   position:relative;
 }
-.pergaminho-borda-topo::before,
-.pergaminho-borda-topo::after{
-  content:'';
-  position:absolute;
-  top:-1px;
-  width:18px;
-  height:14px;
-  background:var(--p);
-  border-radius:0 0 50% 50%;
-}
-.pergaminho-borda-topo::before{left:14%}
-.pergaminho-borda-topo::after{right:14%}
 
 .pergaminho-corpo{
   position:relative;
@@ -1401,7 +1396,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-radius:0 0 14px 14px;
   overflow:hidden;
   background:
+    radial-gradient(circle at 18% 22%, rgba(212,160,74,.055) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 82% 64%, rgba(84,73,60,.045) 0 1px, transparent 1.5px),
     linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 60%,#F1E7D2 100%);
+  background-size:
+    34px 34px,
+    46px 46px,
+    auto;
   border:1px solid rgba(212,160,74,.28);
   border-top:none;
   box-shadow:
@@ -1428,17 +1429,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   content:'';
   position:absolute;
   pointer-events:none;
-  left:-40%;
-  bottom:-16%;
-  width:100%;
-  aspect-ratio:1/1;
-  background-image:url('');
-  background-repeat:no-repeat;
-  background-size:contain;
-  mix-blend-mode:multiply;
+  inset:14px 0 0;
   z-index:0;
-  opacity:.06;
-  animation:ventoFlutua2 16s ease-in-out infinite;
+  background:
+    radial-gradient(ellipse 90% 42% at 50% 10%, rgba(212,160,74,.07), transparent 62%),
+    radial-gradient(ellipse 70% 34% at 18% 88%, rgba(84,73,60,.045), transparent 70%),
+    radial-gradient(ellipse 76% 38% at 86% 72%, rgba(212,160,74,.05), transparent 68%);
+  mix-blend-mode:multiply;
+  opacity:.85;
 }
 
 .lyr-titulo{
