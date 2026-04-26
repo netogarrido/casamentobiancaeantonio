@@ -2293,7 +2293,8 @@ color:var(--a);
   box-shadow:0 6px 18px rgba(212,160,74,.5);
 }
 
-/* ── CAIXINHA 1 — LAZER (glassmorphism, interativo) ── */
+
+  /* ── CAIXINHA 1 — LAZER (clone visual das categorias de presentes) ── */
 .prog-lazer-wrap{
   margin:0 0 36px;
 }
@@ -2328,33 +2329,99 @@ color:var(--a);
   aspect-ratio:1;
   border-radius:12px;
   overflow:hidden;
-  background:var(--ag);
+  height:100%;
   cursor:pointer;
+  transition:all .28s ease;
   -webkit-tap-highlight-color:transparent;
-  transition:transform .25s ease, box-shadow .25s ease;
+  background:rgba(255,255,255,.38);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:
+    0 4px 16px rgba(15,23,32,.08),
+    inset 0 1px 0 rgba(255,255,255,.7);
+}
+.prog-lazer-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.0) 40%,
+    rgba(255,255,255,.55) 100%
+  );
+  pointer-events:none;
 }
 .prog-lazer-card img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
-  transition:transform .5s ease;
+  transition:transform .4s ease, filter .4s ease;
+  filter:saturate(.9) brightness(.95);
+  position:absolute;
+  inset:0;
+  z-index:0;
 }
 .prog-lazer-card span{
   position:absolute;
-  left:0;right:0;bottom:0;
-  padding:10px 12px;
-  background:linear-gradient(0deg,rgba(15,23,32,.82),rgba(15,23,32,.35) 60%,transparent);
-  color:var(--s);
-  font-size:.74rem;
-  font-weight:500;
-  letter-spacing:.01em;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:2;
+  padding:10px 12px 9px;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  pointer-events:none;
+  transition:background .3s ease, color .3s ease;
+  font-family:var(--fh);
+  font-size:.82rem;
+  font-weight:600;
+  letter-spacing:.06em;
+  color:var(--n);
+  line-height:1.2;
 }
-.prog-lazer-card:hover img{transform:scale(1.05)}
 .prog-lazer-card.on{
-  box-shadow:0 0 0 2px var(--a), 0 8px 22px rgba(212,160,74,.30);
+  background:rgba(255,255,255,.92);
+  box-shadow:
+    0 0 0 2px var(--a),
+    0 0 22px rgba(212,160,74,.45),
+    0 8px 24px rgba(212,160,74,.28);
+  border-color:var(--al);
 }
-.prog-lazer-card.on img{transform:scale(1.06)}
+.prog-lazer-card.on img{
+  filter:saturate(1.35) brightness(1.08) contrast(1.05);
+  transform:scale(1.04);
+}
+.prog-lazer-card.on span{
+  background:rgba(255,251,242,.92);
+  color:var(--n);
+}
+.prog-lazer-grid.has-open .prog-lazer-card:not(.on){
+  opacity:.62;
+  filter:saturate(.7);
+}
+.prog-lazer-grid.has-open .prog-lazer-card:not(.on) img{
+  filter:saturate(.75) brightness(.92);
+}
+.prog-lazer-card:active{
+  transform:scale(.97);
+}
+@media(hover:hover){
+  .prog-lazer-card:hover{
+    background:rgba(255,255,255,.82);
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(15,23,32,.14), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .prog-lazer-card:hover img{
+    transform:scale(1.05);
+    filter:saturate(1.05) brightness(1);
+  }
+  .prog-lazer-grid.has-open .prog-lazer-card:not(.on):hover{
+    opacity:.85;
+  }
+}
 
 .prog-lazer-panels{
   margin-top:0;
@@ -2378,6 +2445,8 @@ color:var(--a);
   line-height:1.6;
   color:var(--im);
 }
+
+  
 
 /* ── PROGRAMAÇÃO — caixa-mãe + cards-título fininhos ── */
 
@@ -5084,12 +5153,20 @@ function cpWA(){
 var _lazerAtivo=null;
 function toggleLazer(id){
   var novoId=(_lazerAtivo===id)?null:id;
+  var grid=document.getElementById('progLazerGrid');
+
   document.querySelectorAll('.prog-lazer-card').forEach(function(c){
     c.classList.toggle('on',String(c.dataset.lz)===String(novoId));
   });
+
   document.querySelectorAll('.prog-lazer-panel-txt').forEach(function(p){
     p.classList.toggle('on',p.id==='plPanel-'+novoId);
   });
+
+  if(grid){
+    grid.classList.toggle('has-open',!!novoId);
+  }
+
   _lazerAtivo=novoId;
   if(novoId){trackEvento('prog_lazer_abriu',String(novoId));}
 }
