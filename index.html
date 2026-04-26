@@ -2342,15 +2342,16 @@ color:var(--a);
   grid-template-columns:1fr 1fr 1fr;
   gap:8px;
 }
+
 .prog-dia-card{
   position:relative;
   border-radius:10px;
-  background:rgba(255,255,255,.85);
-  border:1.5px solid rgba(212,160,74,.42);
+  background:var(--i);
+  border:1.5px solid rgba(212,160,74,.55);
   padding:10px 8px;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:background .22s ease, box-shadow .22s ease, border-color .22s ease, transform .22s ease;
+  transition:background .22s ease, box-shadow .22s ease, border-color .22s ease, transform .22s ease, color .22s ease;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -2358,22 +2359,23 @@ color:var(--a);
   white-space:nowrap;
   font-family:var(--fh);
   font-size:.95rem;
-  color:var(--i);
+  color:var(--a);
   letter-spacing:.01em;
-  box-shadow:0 4px 12px rgba(15,23,32,.06);
+  box-shadow:0 4px 12px rgba(15,23,32,.18);
 }
 .prog-dia-card:hover{
-  background:#fff;
   border-color:var(--a);
   transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(15,23,32,.24);
 }
 .prog-dia-card.on{
-  background:var(--i);
+  background:var(--a);
   border-color:var(--a);
-  color:var(--s);
-  box-shadow:0 0 0 1px var(--a), 0 8px 20px rgba(15,23,32,.25);
+  color:var(--i);
+  box-shadow:0 0 0 1px rgba(15,23,32,.15), 0 10px 22px rgba(212,160,74,.38);
+  transform:translateY(-1px);
 }
-.prog-dia-card.on .dow{color:var(--a)}
+.prog-dia-card.on .dow{color:var(--i)}
 
 .prog-dia-card .dow{
   font-size:.6rem;
@@ -2384,6 +2386,8 @@ color:var(--a);
   font-family:var(--fs);
   transition:color .22s ease;
 }
+  
+
 .prog-dia-card .num{
   font-size:1.05rem;
   font-weight:500;
