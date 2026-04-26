@@ -2034,9 +2034,22 @@ color:var(--a);
 }
 
 /* ── PROGRAMAÇÃO — caixa-mãe + cards-título fininhos ── */
+
 .prog-dias-wrap{
-  margin:0 0 24px;
+  position:relative;
+  z-index:5;
+  max-width:920px;
+  margin:-44px auto 0;
+  padding:0 16px;
 }
+@media (max-width:640px){
+  .prog-dias-wrap{
+    margin-top:-28px;
+    padding:0 12px;
+  }
+}
+
+  
 .prog-dias-panel{
   background:rgba(255,255,255,.50);
   backdrop-filter:blur(14px);
@@ -2085,8 +2098,9 @@ color:var(--a);
   box-shadow:0 0 0 1px var(--a), 0 8px 20px rgba(15,23,32,.25);
 }
 .prog-dia-card.on .dow{color:var(--a)}
+
 .prog-dia-card .dow{
-  font-size:.6rem;
+  font-size:.78rem;
   font-weight:700;
   letter-spacing:.22em;
   text-transform:uppercase;
@@ -2094,10 +2108,7 @@ color:var(--a);
   font-family:var(--fs);
   transition:color .22s ease;
 }
-.prog-dia-card .num{
-  font-size:1.05rem;
-  font-weight:500;
-}
+  
 .prog-dias-panels{
   display:grid;
   grid-template-rows:0fr;
@@ -2348,6 +2359,135 @@ color:var(--a);
   margin:0;
 }
 
+  /* ── CAIXINHA 3×1 — vias de participação ── */
+.prog-via-wrap{
+  margin:18px 0 28px;
+}
+.prog-via-ttl{
+  text-align:center;
+  font-family:var(--fs);
+  font-size:.72rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--a);
+  margin:0 0 14px;
+}
+.prog-via-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+.prog-via-card{
+  position:relative;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,.85);
+  border:1.5px solid rgba(212,160,74,.42);
+  padding:14px 8px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .22s ease, box-shadow .22s ease, border-color .22s ease, transform .22s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-family:var(--fh);
+  color:var(--i);
+  box-shadow:0 4px 12px rgba(15,23,32,.06);
+  text-align:center;
+  line-height:1.25;
+}
+.prog-via-card:hover{
+  background:#fff;
+  border-color:var(--a);
+  transform:translateY(-1px);
+}
+.prog-via-card.on{
+  background:var(--i);
+  border-color:var(--a);
+  color:var(--s);
+  box-shadow:0 0 0 1px var(--a), 0 8px 20px rgba(15,23,32,.25);
+}
+.prog-via-card.on .prog-via-lb{color:var(--s)}
+.prog-via-ico{
+  font-size:1.35rem;
+  line-height:1;
+}
+.prog-via-lb{
+  font-size:.74rem;
+  font-weight:600;
+  letter-spacing:.01em;
+}
+@media (max-width:480px){
+  .prog-via-card{padding:12px 6px}
+  .prog-via-ico{font-size:1.2rem}
+  .prog-via-lb{font-size:.68rem}
+}
+
+.prog-via-panels{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1), margin-top .3s ease;
+  margin-top:0;
+}
+.prog-via-panels.has-open{
+  grid-template-rows:1fr;
+  margin-top:18px;
+}
+.prog-via-panels-inner{
+  overflow:hidden;
+  min-height:0;
+}
+.prog-via-panel{
+  display:none;
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .3s ease, transform .3s ease;
+}
+.prog-via-panel.on{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* link "veja a estrutura do hotel" */
+.prog-via-link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  margin:14px 0;
+  padding:12px 16px;
+  background:transparent;
+  border:1.5px dashed rgba(212,160,74,.55);
+  border-radius:12px;
+  color:var(--i);
+  font-family:var(--fh);
+  font-size:.82rem;
+  font-weight:500;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .22s ease, border-color .22s ease, transform .22s ease;
+}
+.prog-via-link:hover{
+  background:rgba(212,160,74,.08);
+  border-color:var(--a);
+  transform:translateY(-1px);
+}
+.prog-via-link span{font-size:1rem}
+
+/* destaque pulse no card 2×2 quando vier do link */
+@keyframes pulseOnce{
+  0%{box-shadow:0 0 0 0 rgba(212,160,74,.55)}
+  60%{box-shadow:0 0 0 14px rgba(212,160,74,0)}
+  100%{box-shadow:0 0 0 0 rgba(212,160,74,0)}
+}
+.prog-lazer-wrap.pulse-once .prog-lazer-panel{
+  animation:pulseOnce 1.4s ease-out;
+}
+  
 
 /* ──────────── RSVP ──────────── */
 .rsvp{background:var(--n);color:var(--s)}
@@ -2749,171 +2889,181 @@ color:var(--a);
   </div>
 </section>
   
+
+
+<!-- FAIXA 3 DIAS — sobreposta ao final do hero -->
+<div class="prog-dias-wrap" id="diasFaixa">
+  <div class="prog-dias-panel">
+    <div class="prog-dias-grid">
+      <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
+        <span class="dow" id="sexta_titulo"></span>
+      </div>
+      <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
+        <span class="dow" id="sabado_titulo"></span>
+      </div>
+      <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
+        <span class="dow" id="domingo_titulo"></span>
+      </div>
+    </div>
+    <div class="prog-dias-panels" id="progDiasPanels">
+      <div class="prog-dias-panels-inner">
+        <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
+        <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
+        <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
 <section class="prog" id="prog">
-
-
-<!-- Hero horizontal: foto hotel + título sobreposto + fade azul -->
-  <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
-    <div class="prog-hero-img-wrap">
-      <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
-    </div>
-    <div class="prog-hero-title">
-      <h2 id="programacao_label"></h2>
-    </div>
-    <div class="prog-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
-  </div>
-
   <div class="inn">
 
-<!-- PROGRAMAÇÃO — caixa-mãe + cards-título -->
-  <div class="prog-dias-wrap">
-    <div class="prog-dias-panel">
-      
-<div class="prog-dias-grid">
-        <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
-          <span class="dow" id="sexta_titulo"></span><span class="num">23</span>
-        </div>
-        <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
-          <span class="dow" id="sabado_titulo"></span><span class="num">24</span>
-        </div>
-        <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
-          <span class="dow" id="domingo_titulo"></span><span class="num">25</span>
-        </div>
+    <!-- Intro -->
+    <p class="txt" id="fds_texto_1"></p>
+
+    <!-- CAIXINHA 3×1 — vias de participação -->
+    <div class="prog-via-wrap">
+      <p class="prog-via-ttl" id="fds_texto_2"></p>
+
+      <div class="prog-via-grid">
+        <button type="button" class="prog-via-card" data-via="hosp" onclick="toggleVia('hosp')" aria-pressed="false">
+          <span class="prog-via-ico">🏨</span>
+          <span class="prog-via-lb" id="fds_hospedagem"></span>
+        </button>
+        <button type="button" class="prog-via-card" data-via="day" onclick="toggleVia('day')" aria-pressed="false">
+          <span class="prog-via-ico">🍹</span>
+          <span class="prog-via-lb" id="fds_day"></span>
+        </button>
+        <button type="button" class="prog-via-card" data-via="festa" onclick="toggleVia('festa')" aria-pressed="false">
+          <span class="prog-via-ico">🎉</span>
+          <span class="prog-via-lb" id="fds_festa"></span>
+        </button>
       </div>
 
-      
-      <div class="prog-dias-panels" id="progDiasPanels">
-        <div class="prog-dias-panels-inner">
-          <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
-          <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
-          <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
+      <div class="prog-via-panels" id="progViaPanels">
+        <div class="prog-via-panels-inner">
+
+          <!-- HOSPEDAGEM -->
+          <div class="prog-via-panel" id="vPanel-hosp">
+            <div class="prog-divider">
+              <span class="prog-divider-line"></span>
+              <span class="prog-divider-txt" id="reserva_santanna_tag"></span>
+              <span class="prog-divider-line"></span>
+            </div>
+            <div class="prog-alt-wrap">
+              <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
+              <div class="prog-alt-grid">
+                <div class="prog-alt-hc">
+                  <h4 id="hotel_prado_nome"></h4>
+                  <p>~20 min</p>
+                  <span id="hotel_prado_contato"></span>
+                </div>
+                <div class="prog-alt-hc">
+                  <h4 id="hotel_ancona_nome"></h4>
+                  <p>~20 min</p>
+                  <span id="hotel_ancona_contato"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DAY USE -->
+          <div class="prog-via-panel" id="vPanel-day">
+            <div class="prog-cta-dayuse">
+              <span class="prog-cta-line"></span>
+              <span class="prog-cta-txt" id="reserva_dayuse_tag"></span>
+              <span class="prog-cta-line"></span>
+            </div>
+            <div class="prog-dayuse">
+              <h3 class="prog-dayuse-ttl" id="reserva_dayuse_chamada"></h3>
+              <p class="prog-dayuse-txt" id="reserva_dayuse_convite"></p>
+              <div class="prog-dayuse-info">
+                <div class="pdu-i"><span>💰</span><span id="dayuse_valores"></span></div>
+                <div class="pdu-i"><span>🍽️</span><span id="dayuse_refeicoes"></span></div>
+                <div class="pdu-i"><span>⏰</span><span id="dayuse_horario"></span></div>
+                <div class="pdu-i"><span>👕</span><span id="dayuse_orientacao"></span></div>
+                <div class="pdu-i"><span>📋</span><span id="dayuse_vagas"></span></div>
+                <div class="pdu-i"><span>📌</span><span id="dayuse_reserva"></span></div>
+              </div>
+
+              <button type="button" class="prog-via-link" onclick="scrollToLazer()">
+                <span>👇</span> Veja a estrutura do hotel
+              </button>
+
+              <div class="prog-marcela">
+                <h4 id="reserva_titulo"></h4>
+                <p class="prog-marcela-lead">Diretamente com <strong id="reserva_marcela_nome"></strong>:</p>
+                <div class="prog-marcela-ct">
+                  <div class="prog-marcela-it" onclick="cpEmail()">
+                    <span class="prog-marcela-ico">📧</span>
+                    <div class="prog-marcela-inf"><div class="prog-marcela-lb">E-mail</div><div class="prog-marcela-vl" id="reserva_marcela_email"></div></div>
+                    <span class="prog-marcela-cp">Copiar</span>
+                  </div>
+                  <div class="prog-marcela-it" onclick="cpWA()">
+                    <span class="prog-marcela-ico">💬</span>
+                    <div class="prog-marcela-inf"><div class="prog-marcela-lb">WhatsApp</div><div class="prog-marcela-vl" id="reserva_marcela_whatsapp"></div></div>
+                    <span class="prog-marcela-cp">Copiar</span>
+                  </div>
+                </div>
+                <div class="prog-marcela-hrs" id="reserva_marcela_horarios"></div>
+                <p class="prog-marcela-aviso" id="reserva_marcela_aviso"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SÓ FESTA -->
+          <div class="prog-via-panel" id="vPanel-festa">
+            <div class="prog-divider">
+              <span class="prog-divider-line"></span>
+              <span class="prog-divider-txt" id="reserva_sofesta_tag"></span>
+              <span class="prog-divider-line"></span>
+            </div>
+            <div class="prog-sofesta">
+              <h4 id="reserva_sofesta_titulo"></h4>
+              <p id="reserva_sofesta_texto"></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2×2 LAZER — sempre visível, âncora -->
+    <div class="prog-lazer-wrap" id="progLazerAnchor">
+      <div class="prog-lazer-panel">
+        <p class="prog-lazer-ttl" id="reserva_dayuse_lazer_titulo"></p>
+        <div class="prog-lazer-grid" id="progLazerGrid">
+          <div class="prog-lazer-card" data-lz="1" onclick="toggleLazer(1)">
+            <img data-midia="foto_hotel_lazer_1" alt="">
+            <span id="reserva_dayuse_lazer_card_1"></span>
+          </div>
+          <div class="prog-lazer-card" data-lz="2" onclick="toggleLazer(2)">
+            <img data-midia="foto_hotel_lazer_2" alt="">
+            <span id="reserva_dayuse_lazer_card_2"></span>
+          </div>
+          <div class="prog-lazer-card" data-lz="3" onclick="toggleLazer(3)">
+            <img data-midia="foto_hotel_lazer_3" alt="">
+            <span id="reserva_dayuse_lazer_card_3"></span>
+          </div>
+          <div class="prog-lazer-card" data-lz="4" onclick="toggleLazer(4)">
+            <img data-midia="foto_hotel_lazer_4" alt="">
+            <span id="reserva_dayuse_lazer_card_4"></span>
+          </div>
+        </div>
+        <div class="prog-lazer-panels">
+          <div class="prog-lazer-panel-txt" id="plPanel-1"><p id="programacao_lazer_1"></p></div>
+          <div class="prog-lazer-panel-txt" id="plPanel-2"><p id="programacao_lazer_2"></p></div>
+          <div class="prog-lazer-panel-txt" id="plPanel-3"><p id="programacao_lazer_3"></p></div>
+          <div class="prog-lazer-panel-txt" id="plPanel-4"><p id="programacao_lazer_4"></p></div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Intro -->
-  <h2 class="ttl" id="fds_titulo" style="display:none"></h2>
-  <p class="txt" id="fds_texto_1"></p>
-  <p class="txt" id="fds_texto_2"></p>
-    
-  <!-- CAIXINHA 1 — LAZER 2×2 (glassmorphism, interativo) -->
-  <div class="prog-lazer-wrap">
-    <div class="prog-lazer-panel">
-      <p class="prog-lazer-ttl" id="reserva_dayuse_lazer_titulo"></p>
-      <div class="prog-lazer-grid" id="progLazerGrid">
-        <div class="prog-lazer-card" data-lz="1" onclick="toggleLazer(1)">
-          <img data-midia="foto_hotel_lazer_1" alt="">
-          <span id="reserva_dayuse_lazer_card_1"></span>
-        </div>
-        <div class="prog-lazer-card" data-lz="2" onclick="toggleLazer(2)">
-          <img data-midia="foto_hotel_lazer_2" alt="">
-          <span id="reserva_dayuse_lazer_card_2"></span>
-        </div>
-        <div class="prog-lazer-card" data-lz="3" onclick="toggleLazer(3)">
-          <img data-midia="foto_hotel_lazer_3" alt="">
-          <span id="reserva_dayuse_lazer_card_3"></span>
-        </div>
-        <div class="prog-lazer-card" data-lz="4" onclick="toggleLazer(4)">
-          <img data-midia="foto_hotel_lazer_4" alt="">
-          <span id="reserva_dayuse_lazer_card_4"></span>
-        </div>
-      </div>
-      <!-- Painel de texto que abre -->
-      <div class="prog-lazer-panels">
-        <div class="prog-lazer-panel-txt" id="plPanel-1"><p id="programacao_lazer_1"></p></div>
-        <div class="prog-lazer-panel-txt" id="plPanel-2"><p id="programacao_lazer_2"></p></div>
-        <div class="prog-lazer-panel-txt" id="plPanel-3"><p id="programacao_lazer_3"></p></div>
-        <div class="prog-lazer-panel-txt" id="plPanel-4"><p id="programacao_lazer_4"></p></div>
-      </div>
-    </div>
-  </div>
-
-
-    
-  <!-- Chamada: só resta day use -->
-  <div class="prog-cta-dayuse">
-    <span class="prog-cta-line"></span>
-    <span class="prog-cta-txt" id="reserva_dayuse_tag"></span>
-    <span class="prog-cta-line"></span>
-  </div>
-
-  <!-- CARD DAY USE (sólido branco — protagonista) -->
-  <div class="prog-dayuse">
-    <h3 class="prog-dayuse-ttl" id="reserva_dayuse_chamada"></h3>
-    <p class="prog-dayuse-txt" id="reserva_dayuse_convite"></p>
-
-    <div class="prog-dayuse-info">
-      <div class="pdu-i"><span>💰</span><span id="dayuse_valores"></span></div>
-      <div class="pdu-i"><span>🍽️</span><span id="dayuse_refeicoes"></span></div>
-      <div class="pdu-i"><span>⏰</span><span id="dayuse_horario"></span></div>
-      <div class="pdu-i"><span>👕</span><span id="dayuse_orientacao"></span></div>
-      <div class="pdu-i"><span>📋</span><span id="dayuse_vagas"></span></div>
-      <div class="pdu-i"><span>📌</span><span id="dayuse_reserva"></span></div>
-    </div>
-
-    <!-- Reserva com Marcela -->
-    <div class="prog-marcela">
-      <h4 id="reserva_titulo"></h4>
-      <p class="prog-marcela-lead">Diretamente com <strong id="reserva_marcela_nome"></strong>:</p>
-      <div class="prog-marcela-ct">
-        <div class="prog-marcela-it" onclick="cpEmail()">
-          <span class="prog-marcela-ico">📧</span>
-          <div class="prog-marcela-inf"><div class="prog-marcela-lb">E-mail</div><div class="prog-marcela-vl" id="reserva_marcela_email"></div></div>
-          <span class="prog-marcela-cp">Copiar</span>
-        </div>
-        <div class="prog-marcela-it" onclick="cpWA()">
-          <span class="prog-marcela-ico">💬</span>
-          <div class="prog-marcela-inf"><div class="prog-marcela-lb">WhatsApp</div><div class="prog-marcela-vl" id="reserva_marcela_whatsapp"></div></div>
-          <span class="prog-marcela-cp">Copiar</span>
-        </div>
-      </div>
-      <div class="prog-marcela-hrs" id="reserva_marcela_horarios"></div>
-      <p class="prog-marcela-aviso" id="reserva_marcela_aviso"></p>
-    </div>
-  </div>
-
-  <!-- Divisor: "ou, se preferir fora" -->
-  <div class="prog-divider">
-    <span class="prog-divider-line"></span>
-    <span class="prog-divider-txt" id="reserva_alternativas_titulo"></span>
-    <span class="prog-divider-line"></span>
-  </div>
-
-  <!-- Alternativas (tipográfico, sem card) -->
-  <div class="prog-alt-wrap">
-    <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
-    <div class="prog-alt-grid">
-      <div class="prog-alt-hc">
-        <h4 id="hotel_prado_nome"></h4>
-        <p>~20 min</p>
-        <span id="hotel_prado_contato"></span>
-      </div>
-      <div class="prog-alt-hc">
-        <h4 id="hotel_ancona_nome"></h4>
-        <p>~20 min</p>
-        <span id="hotel_ancona_contato"></span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Divisor: "se vier só pra festa" -->
-  <div class="prog-divider">
-    <span class="prog-divider-line"></span>
-    <span class="prog-divider-txt" id="reserva_sofesta_tag"></span>
-    <span class="prog-divider-line"></span>
-  </div>
-
-  <!-- Só festa (card sólido menor) -->
-  <div class="prog-sofesta">
-    <h4 id="reserva_sofesta_titulo"></h4>
-    <p id="reserva_sofesta_texto"></p>
-  </div>
 
   </div>
 </section>
 
+  
 <!-- CONFIRME SUA PRESENÇA (RSVP) -->
 <section class="rsvp" id="rsvp"><div class="inn">
   <div class="lbl">Confirmação</div>
@@ -4486,6 +4636,32 @@ function toggleDia(d){
   if(novo){trackEvento('prog_dia_abriu',novo);}
 }
 
+var _viaAtiva=null;
+function toggleVia(v){
+  var nova=(_viaAtiva===v)?null:v;
+  var wrap=document.getElementById('progViaPanels');
+  document.querySelectorAll('.prog-via-card').forEach(function(c){
+    var on=c.dataset.via===nova;
+    c.classList.toggle('on',on);
+    c.setAttribute('aria-pressed',on?'true':'false');
+  });
+  document.querySelectorAll('.prog-via-panel').forEach(function(p){
+    p.classList.toggle('on',p.id==='vPanel-'+nova);
+  });
+  if(wrap){wrap.classList.toggle('has-open',!!nova);}
+  _viaAtiva=nova;
+  if(nova){trackEvento('prog_via_abriu',nova);}
+}
+
+function scrollToLazer(){
+  var el=document.getElementById('progLazerAnchor');
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.classList.add('pulse-once');
+  setTimeout(function(){el.classList.remove('pulse-once');},1600);
+  trackEvento('prog_link_lazer','dayuse');
+}
+  
 /* ══════════════════════════════════════════
    VALOR LIVRE
 ══════════════════════════════════════════ */
