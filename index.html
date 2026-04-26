@@ -324,6 +324,43 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     saturate(.92);
 }
 
+/* Desktop: foto enquadrada como card cinematográfico no centro,
+   laterais com vinheta navy forte simulando letterbox */
+@media(min-width:900px){
+  .popup-bg img{
+    object-position:center 30%;
+    transform:scale(1);
+  }
+  .popup-bg::after{
+    background:
+      /* topo */
+      linear-gradient(180deg,
+        rgba(15,23,32,1) 0%,
+        rgba(15,23,32,1) 10%,
+        rgba(15,23,32,.85) 18%,
+        rgba(15,23,32,.45) 25%,
+        rgba(15,23,32,.15) 32%,
+        rgba(15,23,32,0) 40%),
+      /* base */
+      linear-gradient(0deg,
+        rgba(15,23,32,.55) 0%,
+        rgba(15,23,32,.20) 8%,
+        rgba(15,23,32,0) 16%),
+      /* lateral esquerda — letterbox */
+      linear-gradient(90deg,
+        rgba(15,23,32,1) 0%,
+        rgba(15,23,32,.85) 10%,
+        rgba(15,23,32,.40) 18%,
+        rgba(15,23,32,0) 26%),
+      /* lateral direita — letterbox */
+      linear-gradient(270deg,
+        rgba(15,23,32,1) 0%,
+        rgba(15,23,32,.85) 10%,
+        rgba(15,23,32,.40) 18%,
+        rgba(15,23,32,0) 26%);
+  }
+}
+
 /* Filtros suaves — fotos quase no natural, vinheta vai por cima de cada uma */
 .popup-bg img.popup-stage-1,
 .popup-bg img.popup-stage-2,
