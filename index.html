@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0F1720">
-<meta id="title_link" property="og:title" content="Bianca & Antonio — 23 a 25 de Outubro de 2026">
-<meta id="description_link" property="og:description" content="Estamos muito felizes em celebrar esse momento tão especial com vocês.">
+<meta id="title_link" property="og:title" content="Convite para o casamento de Bianca & Antonio">
+<meta id="description_link" property="og:description" content="23 a 25 de Outubro de 2026 - Estamos muito felizes em celebrar esse momento com vocês.">
 <title id="pg_title_link">Bianca & Antonio — Casamento</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -503,29 +503,40 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   flex:0 0 auto;
   width:100%;
 }
-@media(min-width:520px){
+@media(min-width:768px){
   .hero{
     align-items:center;
-    padding:62px 20px 12px;
+    padding:80px 56px 32px;
   }
   .hero-inner{
     flex-direction:row;
     text-align:left;
     align-items:center;
-    gap:40px;
+    justify-content:center;
+    gap:64px;
     height:auto;
+    max-width:1180px;
   }
   .hero-vid-wrap{
     flex:0 0 auto;
-    width:min(100%, 280px);
+    width:min(38vw, 440px);
     max-width:none;
     min-height:0;
   }
   .hero-text{
-    flex:1;
+    flex:0 1 560px;
     width:auto;
   }
 }
+@media(min-width:1200px){
+  .hero{
+    padding:96px 80px 40px;
+  }
+  .hero-inner{
+    gap:88px;
+  }
+}
+  
 .hero-vid-wrap video{
   width:100%;
   height:100%;
