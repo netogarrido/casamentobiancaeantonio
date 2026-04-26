@@ -115,6 +115,12 @@ section[id]{scroll-margin-top:78px}
   margin-bottom:8px;
   text-align:center;
 }
+.popup-c--zero h2{
+  margin-bottom:22px;
+}
+.popup-c--zero .popup-nome-wrap{
+  margin-bottom:26px;
+}
 .popup-nome-label{
   display:block;
   font-size:.6rem;
@@ -2681,7 +2687,7 @@ color:var(--a);
  <div class="popup-c popup-c--zero" id="popupStageZero">
    <h2 id="popup_nome_titulo"></h2>
    <div class="popup-nome-wrap">
-     <input
+    <input
        class="popup-nome-input"
        id="popup_nome"
        type="text"
@@ -2689,10 +2695,9 @@ color:var(--a);
        autocorrect="off"
        spellcheck="false"
        placeholder="Seu nome completo"
-       oninput="atualizarPreviewNome(this.value)"
      >
-     <div class="popup-nome-preview" id="popupNomePreview"></div>
-     <div class="popup-nome-erro" id="popupNomeErro">Por favor, escreva seu nome antes de continuar</div>
+     <div class="popup-nome-erro" id="popup_nome_erro"></div>
+     
    </div>
    <div class="popup-btns">
      <button class="btn btn-a" id="popup_botao_zero" onclick="handleZero()"></button>
@@ -4028,7 +4033,7 @@ function getNomePopup(){
 
 function validarNomePopup(){
  var input=document.getElementById('popup_nome');
-  var erro=document.getElementById('popupNomeErro');
+  var erro=document.getElementById('popup_nome_erro');
   var nome=getNomePopup();
   if(!nome){
     input.classList.add('erro');
