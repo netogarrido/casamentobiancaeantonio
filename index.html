@@ -5473,8 +5473,15 @@ function startSlideshow(){
     var src=img.getAttribute('src');
     return src&&src.trim()!=='';
   });
-  if(!validImgs.length)return;
+  /* Fallback: se nenhuma popup_bg carregou, usa hero_poster nas 4 */
+  if(!validImgs.length){
+    var fb=(window.MIDIAS&&MIDIAS.hero_poster)||'';
+    if(!fb)return;
+    originals.forEach(function(img){img.src=fb;});
+    validImgs=originals;
+  }
   if(track.dataset.ready==='1')return;
+  
   track.innerHTML='';
   validImgs.forEach(function(img,idx){
     img.classList.remove('popup-stage-1','popup-stage-2','popup-stage-3','popup-stage-4');
