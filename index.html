@@ -342,12 +342,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   position:relative;
   z-index:0;
 }
-/* Vinheta por foto — usa box-shadow inset pra pintar topo e base de cada uma */
+/* Vinheta por foto — TOPO forte (cobre base preta da foto anterior) + BASE leve */
 .popup-bg img{
-  box-shadow:
-    inset 0 90px 110px -30px rgba(15,23,32,.85),
-    inset 0 -90px 110px -30px rgba(15,23,32,.92);
-}
+    box-shadow:
+      inset 0 150px 120px -38px rgba(15,23,32,.98),
+      inset 0 -42px 70px -28px rgba(15,23,32,.45);
+  }
 
 /* camada central — escurecimento atrás da caixa para legibilidade do texto */
 .popup-bg::before{
