@@ -898,76 +898,76 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* Slot D — centro, sempre por cima */
 #vestidoSlot4{ bottom:-2%; right:-1%; }
 
-/* ── Quote de abertura — caixinha estática, delicada como pergaminho ── */
+/* ── Quote de abertura — caixinha estática, compacta e translúcida ── */
 .vestido-quote{
+  display:block;
+  width:fit-content;
+  max-width:min(100%,390px);
   font-family:var(--fh);
-  font-size:1.18rem;
+  font-size:1.08rem;
   font-style:italic;
   font-weight:300;
-  color:rgba(30,24,16,.78);
-  line-height:1.78;
+  color:rgba(30,24,16,.76);
+  line-height:1.62;
   text-align:center;
-  margin:4px auto 30px;
-  padding:22px 24px 20px;
-  max-width:420px;
+  margin:6px auto 24px;
+  padding:14px 16px 12px;
   position:relative;
-  background:
-    linear-gradient(180deg,rgba(254,251,245,.86) 0%,rgba(250,244,232,.78) 62%,rgba(241,231,210,.72) 100%);
-  border:1px solid rgba(212,160,74,.24);
-  border-radius:16px;
+  background:rgba(254,251,245,.42);
+  border:1px solid rgba(212,160,74,.18);
+  border-radius:14px;
   box-shadow:
-    0 14px 34px rgba(84,73,60,.11),
-    inset 0 1px 0 rgba(255,255,255,.58),
-    inset 0 -1px 0 rgba(212,160,74,.07);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+    0 8px 22px rgba(84,73,60,.08),
+    inset 0 1px 0 rgba(255,255,255,.34);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
   text-shadow:none;
 }
 
 .vestido-quote::before{
   font-family:var(--fh);
-  font-size:2.1rem;
+  font-size:1.55rem;
   color:var(--a);
-  opacity:.22;
+  opacity:.24;
   line-height:0;
   position:relative;
   font-style:normal;
   content:'\201C';
-  margin-right:4px;
-  top:12px;
+  margin-right:2px;
+  top:7px;
 }
 
 .vestido-quote-close{
   font-family:var(--fh);
-  font-size:2.1rem;
+  font-size:1.55rem;
   color:var(--a);
-  opacity:.22;
+  opacity:.24;
   line-height:0;
   position:relative;
   font-style:normal;
-  margin-left:3px;
-  top:16px;
+  margin-left:1px;
+  top:10px;
   display:inline;
 }
 
 .vestido-quote cite{
   display:block;
-  font-size:1.08rem;
-  letter-spacing:.015em;
+  font-size:.96rem;
+  letter-spacing:.01em;
   text-transform:none;
-  color:rgba(212,160,74,.82);
+  color:rgba(212,160,74,.8);
   font-style:italic;
   text-align:right;
-  margin-top:16px;
+  margin-top:10px;
   font-family:var(--fh);
   font-weight:400;
 }
 .vestido-quote cite:not(:empty)::before{
   content:'— ';
   font-style:normal;
-  opacity:.45;
+  opacity:.42;
 }
-
+  
 /* ── Player — pílula delicada abaixo do título ── */
 .player{
   display:flex;
@@ -1493,9 +1493,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     align-self:start;
     margin-top:78px;
     margin-bottom:0;
-    font-size:1.16rem;
-    max-width:430px;
-    padding:24px 28px 22px;
+    font-size:1.04rem;
+    max-width:360px;
+    padding:14px 16px 12px;
   }
   .vestido .inn > .pergaminho-wrap{
     grid-column:2;
@@ -1538,7 +1538,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* ajustes mobile pequeno mantidos */
 @media(max-width:380px){
   .vestido-foto-principal-wrap{width:74%;}
-  .vestido-quote{font-size:1.06rem;padding:20px 18px 18px}
+  .vestido-quote{font-size:1rem;padding:12px 14px 10px;max-width:min(100%,340px)}
   .lyr-text{font-size:1.14rem;line-height:1.82}
   .lyr-stage{padding:26px 16px 24px}
   .pergaminho-trecho{font-size:1.06rem;line-height:1.78}
@@ -1548,7 +1548,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* mobile pequeno: fotos não saem da tela */
 @media(max-width:380px){
   .vestido-foto-principal-wrap{width:74%;}
-  .vestido-quote{font-size:1.06rem;padding:20px 18px 18px}
+  .vestido-quote{font-size:1rem;padding:12px 14px 10px;max-width:min(100%,340px)}
   .lyr-invite-verso{font-size:1.02rem}
   .lyr-text{font-size:1.14rem;line-height:1.82}
   .lyr-stage{padding:26px 16px 24px}
