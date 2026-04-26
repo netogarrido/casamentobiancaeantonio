@@ -330,7 +330,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   filter:contrast(.96) saturate(.95);
 }
 
-/* Wrapper de cada foto: cria a vinheta topo+base individual ("rolo de filme") */
 .popup-track{
   position:absolute;
   top:0;left:0;width:100%;
@@ -339,34 +338,32 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   transform:translate3d(0,0,0);
 }
 .popup-bg img{
-  position:relative;
-  z-index:0;
-}
-/* Vinheta por foto — gradiente sobreposto: topo opaco → some aos 30% */
-.popup-bg img{
   box-shadow:none;
-  -webkit-mask-image:none;
-}
-.popup-bg .popup-track > img{
-  position:relative;
-}
-.popup-bg .popup-track > img::after{
-  /* pseudo não funciona em <img>; usamos background gradient via wrapper */
 }
 
-/* Aplicado direto no <img> via mask-composite não dá; usamos um background sobreposto via outline trick.
-   Solução real: gradient overlay aplicado por filtro/CSS que funciona em <img> = mix-blend não serve.
-   Vamos pelo caminho simples e robusto: linear-gradient via box-shadow inset com camadas múltiplas,
-   simulando uma curva mais agressiva no topo e mais suave na base. */
-.popup-bg img{
-  box-shadow:
-    /* topo: 4 camadas empilhadas pra simular curva exponencial */
-    inset 0 60px 0 -0px rgba(15,23,32,1),
-    inset 0 120px 60px -30px rgba(15,23,32,.92),
-    inset 0 200px 120px -60px rgba(15,23,32,.55),
-    inset 0 280px 160px -120px rgba(15,23,32,.20),
-    /* base: fade leve */
-    inset 0 -50px 80px -30px rgba(15,23,32,.45);
+/* OVERLAY FIXO da viewport: vinheta topo forte + base leve.
+   As fotos passam por trás, sempre se vê só o "pedaço limpo" do meio.
+   Isso elimina a costura entre fotos. */
+.popup-bg::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    /* topo: navy 100% nos primeiros ~30% da viewport, indo a 0% */
+    linear-gradient(180deg,
+      rgba(15,23,32,1) 0%,
+      rgba(15,23,32,1) 12%,
+      rgba(15,23,32,.92) 20%,
+      rgba(15,23,32,.55) 27%,
+      rgba(15,23,32,.20) 32%,
+      rgba(15,23,32,0) 38%),
+    /* base: navy leve nos últimos ~10% */
+    linear-gradient(0deg,
+      rgba(15,23,32,.55) 0%,
+      rgba(15,23,32,.20) 6%,
+      rgba(15,23,32,0) 12%);
 }
 
 /* camada central — escurecimento atrás da caixa para legibilidade do texto */
@@ -384,22 +381,23 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       rgba(15,23,32,0) 100%);
 }
 
-/* sem segunda camada global — a vinheta agora é por foto */
-.popup-bg::after{
-  content:none;
-}
-
 @media (max-width:520px){
   .popup-track{
     animation-duration:50s;
   }
-.popup-bg img{
-    box-shadow:
-      inset 0 50px 0 -0px rgba(15,23,32,1),
-      inset 0 100px 50px -25px rgba(15,23,32,.92),
-      inset 0 170px 100px -55px rgba(15,23,32,.55),
-      inset 0 240px 140px -110px rgba(15,23,32,.20),
-      inset 0 -42px 70px -28px rgba(15,23,32,.45);
+  .popup-bg::after{
+    background:
+      linear-gradient(180deg,
+        rgba(15,23,32,1) 0%,
+        rgba(15,23,32,1) 14%,
+        rgba(15,23,32,.92) 22%,
+        rgba(15,23,32,.55) 29%,
+        rgba(15,23,32,.20) 34%,
+        rgba(15,23,32,0) 40%),
+      linear-gradient(0deg,
+        rgba(15,23,32,.62) 0%,
+        rgba(15,23,32,.22) 7%,
+        rgba(15,23,32,0) 13%);
   }
   .popup-bg::before{
     background:
