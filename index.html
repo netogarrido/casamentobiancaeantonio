@@ -898,64 +898,74 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* Slot D — centro, sempre por cima */
 #vestidoSlot4{ bottom:-2%; right:-1%; }
 
-/* ── Quote de abertura — solta, editorial ── */
+/* ── Quote de abertura — caixinha estática, delicada como pergaminho ── */
 .vestido-quote{
   font-family:var(--fh);
-  font-size:1.34rem;
+  font-size:1.18rem;
   font-style:italic;
-  font-weight:400;
-  color:var(--i);
-  line-height:1.62;
+  font-weight:300;
+  color:rgba(30,24,16,.78);
+  line-height:1.78;
   text-align:center;
-  margin:0 auto 28px;
-  padding:0 8px;
+  margin:4px auto 30px;
+  padding:22px 24px 20px;
   max-width:420px;
   position:relative;
-  text-shadow:0 1px 2px rgba(250,244,232,.35);
+  background:
+    linear-gradient(180deg,rgba(254,251,245,.86) 0%,rgba(250,244,232,.78) 62%,rgba(241,231,210,.72) 100%);
+  border:1px solid rgba(212,160,74,.24);
+  border-radius:16px;
+  box-shadow:
+    0 14px 34px rgba(84,73,60,.11),
+    inset 0 1px 0 rgba(255,255,255,.58),
+    inset 0 -1px 0 rgba(212,160,74,.07);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  text-shadow:none;
 }
 
 .vestido-quote::before{
   font-family:var(--fh);
-  font-size:2.4rem;
+  font-size:2.1rem;
   color:var(--a);
-  opacity:.32;
+  opacity:.22;
   line-height:0;
   position:relative;
   font-style:normal;
   content:'\201C';
   margin-right:4px;
-  top:14px;
+  top:12px;
 }
 
 .vestido-quote-close{
   font-family:var(--fh);
-  font-size:2.4rem;
+  font-size:2.1rem;
   color:var(--a);
-  opacity:.32;
+  opacity:.22;
   line-height:0;
   position:relative;
   font-style:normal;
   margin-left:3px;
-  top:18px;
+  top:16px;
   display:inline;
 }
 
 .vestido-quote cite{
   display:block;
-  font-size:1.25rem;
-  letter-spacing:.04em;
+  font-size:1.08rem;
+  letter-spacing:.015em;
   text-transform:none;
-  color:var(--a);
+  color:rgba(212,160,74,.82);
   font-style:italic;
   text-align:right;
-  margin-top:18px;
+  margin-top:16px;
   font-family:var(--fh);
-  font-weight:500;
+  font-weight:400;
 }
 .vestido-quote cite:not(:empty)::before{
   content:'— ';
   font-style:normal;
-  opacity:.55;
+  opacity:.45;
 }
 
 /* ── Player — pílula delicada abaixo do título ── */
@@ -1483,9 +1493,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     align-self:start;
     margin-top:78px;
     margin-bottom:0;
-    font-size:1.24rem;
-    max-width:none;
-    padding:0 4px;
+    font-size:1.16rem;
+    max-width:430px;
+    padding:24px 28px 22px;
   }
   .vestido .inn > .pergaminho-wrap{
     grid-column:2;
@@ -1528,7 +1538,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* ajustes mobile pequeno mantidos */
 @media(max-width:380px){
   .vestido-foto-principal-wrap{width:74%;}
-  .vestido-quote{font-size:1.08rem}
+  .vestido-quote{font-size:1.06rem;padding:20px 18px 18px}
   .lyr-text{font-size:1.14rem;line-height:1.82}
   .lyr-stage{padding:26px 16px 24px}
   .pergaminho-trecho{font-size:1.06rem;line-height:1.78}
@@ -1538,11 +1548,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* mobile pequeno: fotos não saem da tela */
 @media(max-width:380px){
   .vestido-foto-principal-wrap{width:74%;}
-  .vestido-quote{font-size:1.08rem}
+  .vestido-quote{font-size:1.06rem;padding:20px 18px 18px}
   .lyr-invite-verso{font-size:1.02rem}
   .lyr-text{font-size:1.14rem;line-height:1.82}
   .lyr-stage{padding:26px 16px 24px}
 }
+  
 /* ── Caixinhas dentro da letra ── */
 .cx-noivo-dentro{
   border-top:1px solid rgba(212,160,74,.22);
