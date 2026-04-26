@@ -3048,30 +3048,33 @@ color:var(--a);
 }
   
 
-/* ──────────── RSVP ──────────── */
-.rsvp{background:var(--n);color:var(--s)}
-.rsvp .ttl{color:var(--s)}.rsvp .txt{color:rgba(250,244,232,.55)}.rsvp .lbl{color:var(--al)}
+/* ──────────── RSVP (CREME) ──────────── */
+.rsvp{background:var(--p)}
+.rsvp .ttl{color:var(--i)}.rsvp .txt{color:var(--im)}.rsvp .lbl{color:var(--a)}
 
 .fg{margin-bottom:16px}
-.fl{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--al);margin-bottom:6px;display:block}
-.fi{width:100%;padding:14px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);font-size:1rem;color:var(--s);transition:border-color .2s;min-height:48px}
-.fi::placeholder{color:rgba(250,244,232,.35)}.fi:focus{border-color:var(--a);outline:none}
+.fl{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--a);margin-bottom:6px;display:block}
+.fi{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:1rem;color:var(--i);transition:border-color .2s;min-height:48px}
+.fi::placeholder{color:rgba(30,24,16,.35)}.fi:focus{border-color:var(--a);outline:none}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.fsel{width:100%;padding:14px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);font-size:1rem;color:var(--s);min-height:48px}
-.fsel option{background:var(--n);color:var(--s)}
-.fta{width:100%;min-height:72px;padding:14px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);font-size:1rem;color:var(--s);resize:none;line-height:1.5}
-.fta::placeholder{color:rgba(250,244,232,.35)}.fta:focus{border-color:var(--a);outline:none}
-.rsvp-note{font-size:.78rem;color:rgba(250,244,232,.45);margin-top:8px;line-height:1.55}
+.fsel{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:1rem;color:var(--i);min-height:48px}
+.fsel option{background:#fff;color:var(--i)}
+.fta{width:100%;min-height:72px;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:1rem;color:var(--i);resize:none;line-height:1.5}
+.fta::placeholder{color:rgba(30,24,16,.35)}.fta:focus{border-color:var(--a);outline:none}
+.rsvp-note{font-size:.78rem;color:var(--is);margin-top:8px;line-height:1.55}
   
 .rsvp-ok{display:none;text-align:center;padding:28px 0}.rsvp-ok.on{display:block}
+.rsvp-ok h3{color:var(--i) !important}
+.rsvp-ok p{color:var(--im) !important}
 
-/* ──────────── TRAJE ──────────── */
-.traje{background:var(--p)}
+/* ──────────── TRAJE (PRETO) ──────────── */
+.traje{background:var(--n);color:var(--s)}
+.traje .ttl{color:var(--s)}.traje .txt{color:rgba(250,244,232,.55)}.traje .lbl{color:var(--al)}
 .traje-grid{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.traje-card{display:flex;gap:12px;padding:14px 16px;background:#fff;border-radius:var(--r);border:1px solid var(--st)}
+.traje-card{display:flex;gap:12px;padding:14px 16px;background:rgba(255,255,255,.04);border-radius:var(--r);border:1px solid rgba(255,255,255,.08)}
 .traje-ico{font-size:1.2rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:9px;flex-shrink:0}
-.traje-info h4{font-size:.96rem;font-weight:600;margin-bottom:3px}
-.traje-info p{font-size:.86rem;color:var(--is);line-height:1.55}
+.traje-info h4{font-size:.96rem;font-weight:600;margin-bottom:3px;color:var(--s)}
+.traje-info p{font-size:.86rem;color:rgba(250,244,232,.6);line-height:1.55}
 
   
 /* ──────────── FAQ ──────────── */
@@ -3685,7 +3688,7 @@ color:var(--a);
     <option value="dayuse" id="rsvp_opcao_dayuse"></option>
     <option value="festa" id="rsvp_opcao_festa"></option>
   </select>
-  <p style="font-size:.66rem;color:rgba(250,244,232,.3);margin-top:4px" id="rsvp_dayuse_aviso"></p>
+  <p style="font-size:.66rem;color:var(--is);margin-top:4px" id="rsvp_dayuse_aviso"></p>
 </div>
 
 <div class="fg" id="rsvp_nome_hotel_wrap" style="display:none">
