@@ -338,34 +338,39 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   display:flex;flex-direction:column;
   will-change:transform;
   transform:translate3d(0,0,0);
-}
-.popup-bg img{
-  box-shadow:none;
+  background:#0F1720; /* navy: o que aparece "atrás" entre as máscaras */
 }
 
-/* OVERLAY FIXO da viewport: vinheta topo forte + base leve.
-   As fotos passam por trás, sempre se vê só o "pedaço limpo" do meio.
-   Isso elimina a costura entre fotos. */
-.popup-bg::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background:
-    /* topo: navy 100% nos primeiros ~30% da viewport, indo a 0% */
-    linear-gradient(180deg,
-      rgba(15,23,32,1) 0%,
-      rgba(15,23,32,1) 12%,
-      rgba(15,23,32,.92) 20%,
-      rgba(15,23,32,.55) 27%,
-      rgba(15,23,32,.20) 32%,
-      rgba(15,23,32,0) 38%),
-    /* base: navy leve nos últimos ~10% */
-    linear-gradient(0deg,
-      rgba(15,23,32,.55) 0%,
-      rgba(15,23,32,.20) 6%,
-      rgba(15,23,32,0) 12%);
+/* Cada foto: máscara que apaga topo e base para transparente,
+   revelando o navy do popup-track por trás. As bordas SOMEM em vez de virar preto sólido. */
+.popup-bg img{
+  box-shadow:none;
+  display:block;
+  width:100%;
+  margin-top:-12vh; /* sobreposição: topo desta foto entra na base da anterior */
+  -webkit-mask-image:linear-gradient(180deg,
+    transparent 0%,
+    rgba(0,0,0,.10) 8%,
+    rgba(0,0,0,.55) 18%,
+    rgba(0,0,0,.92) 26%,
+    #000 34%,
+    #000 88%,
+    rgba(0,0,0,.70) 95%,
+    rgba(0,0,0,.30) 99%,
+    transparent 100%);
+  mask-image:linear-gradient(180deg,
+    transparent 0%,
+    rgba(0,0,0,.10) 8%,
+    rgba(0,0,0,.55) 18%,
+    rgba(0,0,0,.92) 26%,
+    #000 34%,
+    #000 88%,
+    rgba(0,0,0,.70) 95%,
+    rgba(0,0,0,.30) 99%,
+    transparent 100%);
+}
+.popup-bg img:first-child{
+  margin-top:0;
 }
 
 /* camada central — escurecimento atrás da caixa para legibilidade do texto */
@@ -382,24 +387,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       rgba(15,23,32,.20) 70%,
       rgba(15,23,32,0) 100%);
 }
+.popup-bg::after{content:none;}
 
 @media (max-width:520px){
   .popup-track{
     animation-duration:50s;
   }
-  .popup-bg::after{
-    background:
-      linear-gradient(180deg,
-        rgba(15,23,32,1) 0%,
-        rgba(15,23,32,1) 14%,
-        rgba(15,23,32,.92) 22%,
-        rgba(15,23,32,.55) 29%,
-        rgba(15,23,32,.20) 34%,
-        rgba(15,23,32,0) 40%),
-      linear-gradient(0deg,
-        rgba(15,23,32,.62) 0%,
-        rgba(15,23,32,.22) 7%,
-        rgba(15,23,32,0) 13%);
+  .popup-bg img{
+    margin-top:-10vh;
   }
   .popup-bg::before{
     background:
