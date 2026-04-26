@@ -1078,16 +1078,11 @@ section[id]{scroll-margin-top:78px}
   z-index:2;
   pointer-events:none;
 }
-.player-scrub input[type="range"]:focus{outline:none;border:none}
-.player-scrub input[type="range"]::-ms-track{background:transparent;border:none;color:transparent}
-  
 .player-scrub input[type="range"]::-webkit-slider-runnable-track{
   height:28px;
   background:transparent;
   border:none;
-  pointer-events:none;
 }
-
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
@@ -1098,19 +1093,12 @@ section[id]{scroll-margin-top:78px}
   border:none;
   box-shadow:0 0 4px rgba(212,160,74,.4);
   margin-top:3px;
-  pointer-events:auto;
-  cursor:grab;
-  position:relative;
 }
-  
 .player-scrub input[type="range"]::-moz-range-track{
   height:28px;
   background:transparent;
   border:none;
-  pointer-events:none;
 }
-
-
 .player-scrub input[type="range"]::-moz-range-thumb{
   width:2px;
   height:14px;
@@ -1118,9 +1106,21 @@ section[id]{scroll-margin-top:78px}
   border-radius:1px;
   background:var(--a);
   box-shadow:0 0 4px rgba(212,160,74,.4);
-  pointer-events:auto;
-  cursor:grab;
 }
+
+/* Hitbox invisível ao redor da barrinha — só ativa em arrasto deliberado */
+.player-scrub-grab{
+  position:absolute;
+  top:50%;
+  left:calc(var(--prog) - 14px);
+  width:28px;
+  height:28px;
+  transform:translateY(-50%);
+  z-index:3;
+  cursor:grab;
+  touch-action:none;
+}
+.player-scrub-grab.dragging{cursor:grabbing}
   
 
   
@@ -2801,12 +2801,13 @@ color:var(--a);
         <div class="player-title" id="musica_titulo"></div>
       </div>
       
-    <div class="player-scrub">
+<div class="player-scrub">
         <div class="player-scrub-bg">
           <div class="player-scrub-line"></div>
           <div class="player-scrub-wave"></div>
         </div>
         <input type="range" id="audioSeek" min="0" max="100" value="0" step="0.1" aria-label="Posição da música">
+        <div class="player-scrub-grab" id="audioSeekGrab"></div>
       </div>
       
     </div>
@@ -4170,8 +4171,8 @@ function syncPlayerUI(){
 var audioSeekEl=document.getElementById('audioSeek');
 var audioSeekDragging=false;
 if(audioSeekEl){
-
-var scrubWrap=audioSeekEl.closest('.player-scrub');
+  var scrubWrap=audioSeekEl.closest('.player-scrub');
+  var grabEl=document.getElementById('audioSeekGrab');
   function setScrubProg(p){
     if(scrubWrap){
       scrubWrap.style.setProperty('--prog',p+'%');
@@ -4186,16 +4187,54 @@ var scrubWrap=audioSeekEl.closest('.player-scrub');
       setScrubProg(p);
     }
   });
-  audioSeekEl.addEventListener('input',function(){
-    audioSeekDragging=true;
-    setScrubProg(audioSeekEl.value);
-    if(au.duration){au.currentTime=(audioSeekEl.value/100)*au.duration;}
-  });
-  
-  audioSeekEl.addEventListener('change',function(){
-    audioSeekDragging=false;
-    trackEvento('audio_scrubber_usado',Math.round(audioSeekEl.value)+'%');
-  });
+
+  /* Drag deliberado via hitbox invisível.
+     Tap simples NÃO move — só arrasto a partir da barrinha. */
+  if(grabEl){
+    var dragActive=false;
+    var startX=0;
+    var startPct=0;
+    function pctFromClientX(clientX){
+      var rect=scrubWrap.getBoundingClientRect();
+      var x=clientX-rect.left;
+      var pct=(x/rect.width)*100;
+      if(pct<0)pct=0;
+      if(pct>100)pct=100;
+      return pct;
+    }
+    function onStart(e){
+      dragActive=true;
+      audioSeekDragging=true;
+      grabEl.classList.add('dragging');
+      var t=e.touches?e.touches[0]:e;
+      startX=t.clientX;
+      startPct=parseFloat(audioSeekEl.value)||0;
+      e.preventDefault();
+    }
+    function onMove(e){
+      if(!dragActive)return;
+      var t=e.touches?e.touches[0]:e;
+      var pct=pctFromClientX(t.clientX);
+      audioSeekEl.value=pct;
+      setScrubProg(pct);
+      if(au.duration){au.currentTime=(pct/100)*au.duration;}
+      e.preventDefault();
+    }
+    function onEnd(){
+      if(!dragActive)return;
+      dragActive=false;
+      audioSeekDragging=false;
+      grabEl.classList.remove('dragging');
+      trackEvento('audio_scrubber_usado',Math.round(audioSeekEl.value)+'%');
+    }
+    grabEl.addEventListener('mousedown',onStart);
+    grabEl.addEventListener('touchstart',onStart,{passive:false});
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('touchmove',onMove,{passive:false});
+    document.addEventListener('mouseup',onEnd);
+    document.addEventListener('touchend',onEnd);
+    document.addEventListener('touchcancel',onEnd);
+  }
 }
 
 /* Scrubber de vídeo hero */
