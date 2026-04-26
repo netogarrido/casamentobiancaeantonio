@@ -202,6 +202,26 @@ section[id]{scroll-margin-top:78px}
   margin-bottom:0 !important;
   display:inline;
 }
+.popup-editar-nome{
+  display:block;
+  margin:10px auto 0;
+  background:none;
+  border:none;
+  font-family:var(--fb);
+  font-size:.58rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.32);
+  cursor:pointer;
+  padding:4px 8px;
+  border-radius:4px;
+  transition:color .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.popup-editar-nome:hover{
+  color:rgba(255,255,255,.65);
+}
 
   
 @keyframes shake{
@@ -2681,6 +2701,7 @@ color:var(--a);
      <span class="popup-nome-preview" id="popupNomePreviewUm"></span><span id="popup_texto"></span>
    </div>
    
+<button class="popup-editar-nome" onclick="voltarParaStageZero()" aria-label="Editar nome">✎ editar nome</button>
    <div class="popup-btns">
      <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
      <button class="btn btn-a" id="popup_botao_primario" onclick="handleStart()"></button>
@@ -4040,6 +4061,15 @@ function avancarParaStageUm(){
       if(linha)linha.classList.remove('vis');
     }
   }
+}
+
+function voltarParaStageZero(){
+  var z=document.getElementById('popupStageZero');
+  var u=document.getElementById('popupStageUm');
+  if(z)z.style.display='';
+  if(u)u.style.display='none';
+  var inp=document.getElementById('popup_nome');
+  if(inp){inp.focus();inp.select();}
 }
 
 function pularParaStageUmSeNomeSalvo(){
