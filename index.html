@@ -1257,16 +1257,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .pergaminho-titulo{
   font-family:var(--fh);
-  font-size:.62rem;
+  font-size:.72rem;
   font-weight:600;
   font-style:normal;
-  letter-spacing:.32em;
-  
+  letter-spacing:.12em;
+  text-transform:none;
   color:var(--a);
   text-align:center;
   margin-bottom:18px;
   position:relative;
 }
+  
 .pergaminho-titulo::after{
   content:'';
   display:block;
@@ -1376,7 +1377,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   animation:fadeInRise .6s ease both;
 }
 
-/* ── Letra aberta — mantém identidade do pergaminho fechado ── */
+/* ── Letra aberta — mesmo pergaminho, só expandido ── */
 .lyr-box{
   max-height:0;
   overflow:hidden;
@@ -1396,46 +1397,46 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .lyr-stage{
   position:relative;
-  padding:34px 26px 32px;
-  border-radius:0 0 16px 16px;
+  padding:0;
+  border-radius:0 0 14px 14px;
   overflow:hidden;
   background:
-    linear-gradient(180deg,#F3E4C8 0%,#EAD8B7 58%,#DDC59B 100%);
-  border:1px solid rgba(174,117,37,.34);
-  border-top:1px solid rgba(174,117,37,.22);
+    linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 60%,#F1E7D2 100%);
+  border:1px solid rgba(212,160,74,.28);
+  border-top:none;
   box-shadow:
     0 14px 36px rgba(84,73,60,.14),
-    inset 0 1px 0 rgba(255,255,255,.42),
-    inset 0 -2px 0 rgba(174,117,37,.10);
+    inset 0 1px 0 rgba(255,255,255,.65),
+    inset 0 -2px 0 rgba(212,160,74,.08);
 }
 
-.lyr-stage::before,
+.lyr-stage::before{
+  content:'';
+  display:block;
+  height:14px;
+  background:
+    linear-gradient(180deg,
+      rgba(212,160,74,.18) 0%,
+      rgba(212,160,74,.06) 60%,
+      transparent 100%);
+  border-bottom:1px solid rgba(212,160,74,.22);
+  position:relative;
+  z-index:1;
+}
+
 .lyr-stage::after{
   content:'';
   position:absolute;
   pointer-events:none;
+  left:-40%;
+  bottom:-16%;
+  width:100%;
+  aspect-ratio:1/1;
   background-image:url('');
   background-repeat:no-repeat;
   background-size:contain;
   mix-blend-mode:multiply;
   z-index:0;
-  will-change:transform;
-}
-
-.lyr-stage::before{
-  top:-12%;
-  right:-38%;
-  width:95%;
-  aspect-ratio:1/1;
-  opacity:.07;
-  animation:ventoFlutua 13s ease-in-out infinite;
-}
-
-.lyr-stage::after{
-  bottom:-16%;
-  left:-40%;
-  width:100%;
-  aspect-ratio:1/1;
   opacity:.06;
   animation:ventoFlutua2 16s ease-in-out infinite;
 }
@@ -1444,53 +1445,53 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   position:relative;
   z-index:1;
   font-family:var(--fh);
-  font-size:.76rem;
+  font-size:.72rem;
   font-weight:600;
   font-style:normal;
-  letter-spacing:.34em;
-  
-  color:#B47A27;
+  letter-spacing:.12em;
+  text-transform:none;
+  color:var(--a);
   text-align:center;
-  margin:0 auto 22px;
+  margin:24px auto 18px;
 }
 
 .lyr-titulo::after{
   content:'';
   display:block;
-  width:42px;
+  width:32px;
   height:1px;
-  background:#B47A27;
-  opacity:.62;
-  margin:12px auto 0;
+  background:var(--a);
+  opacity:.45;
+  margin:10px auto 0;
 }
 
-/* X flutuante pra fechar — sempre visível enquanto a letra está aberta */
+/* X dentro da mesma caixa do pergaminho aberto */
 .lyr-fechar-x{
   position:absolute;
-  top:14px;
+  top:22px;
   right:14px;
   z-index:3;
-  width:36px;
-  height:36px;
+  width:34px;
+  height:34px;
   border-radius:50%;
-  background:rgba(250,244,232,.82);
-  border:1px solid rgba(174,117,37,.34);
+  background:rgba(254,251,245,.72);
+  border:1px solid rgba(212,160,74,.28);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:1rem;
-  color:#B47A27;
+  font-size:.95rem;
+  color:var(--a);
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   transition:all .25s ease;
-  box-shadow:0 4px 12px rgba(84,73,60,.10);
+  box-shadow:0 4px 12px rgba(84,73,60,.08);
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
 }
 
 .lyr-fechar-x:hover{
   background:#FEFBF5;
-  border-color:#B47A27;
+  border-color:var(--a);
   transform:scale(1.08);
 }
 
@@ -1503,9 +1504,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding:14px 20px 4px;
 }
 
-/* Seta apontando para cima (ao recolher) — mesma animação fofa */
+/* Seta apontando para cima */
 .pergaminho-abrir-seta--up{
-  /* herda tudo de .pergaminho-abrir-seta, só inverte direção do bounce visual */
+  /* herda tudo de .pergaminho-abrir-seta */
 }
   
 .lyr-text{
@@ -1519,7 +1520,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   line-height:1.85;
   text-align:center;
   white-space:pre-line;
-  padding:0;
+  padding:0 26px;
   letter-spacing:.005em;
 }
 
