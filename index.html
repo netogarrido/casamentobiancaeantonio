@@ -4192,6 +4192,26 @@ function renderCats(){
 }
 
 function toggleCat(id){
+  activeCat=activeCat===id?null:id;
+  document.querySelectorAll('.cat-card').forEach(function(c){c.classList.toggle('on',c.dataset.c===activeCat);});
+  document.querySelectorAll('.sub-panel').forEach(function(p){p.classList.toggle('on',p.id==='sp-'+activeCat);});
+
+  var grid=document.getElementById('cG');
+  var wrap=document.getElementById('catPanelsWrap');
+  if(grid)grid.classList.toggle('has-open',!!activeCat);
+  if(wrap)wrap.classList.toggle('has-open',!!activeCat);
+
+  if(!activeCat)return;
+
+  setTimeout(function(){
+    var anchor=document.querySelector('.pres-cats-wrap');
+    if(!anchor)return;
+    var nav=document.getElementById('nav');
+    var navH=nav?nav.getBoundingClientRect().height:70;
+    var y=anchor.getBoundingClientRect().top+window.scrollY-navH-12;
+    window.scrollTo({top:y,behavior:'smooth'});
+  },120);
+}
 
 /* ══════════════════════════════════════════
    RENDER CAIXINHAS
