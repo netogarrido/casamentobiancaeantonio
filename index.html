@@ -3137,7 +3137,7 @@ color:var(--a);
       <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
       <div class="lyr-fechar-rodape" onclick="tL()" aria-label="Fechar letra">
         <span class="lyr-fechar-rodape-linha"></span>
-        <button>recolher a letra ↑</button>
+        <button id="musica_btn_letra_fecha">recolher a letra ↑</button>
         <span class="lyr-fechar-rodape-linha"></span>
       </div>
     </div>
@@ -4560,7 +4560,6 @@ function tL(){
   var sec=document.getElementById('vestido');
   if(!b)return;
   var willOpen=!b.classList.contains('open');
-  var btn=document.getElementById('musica_btn_letra');
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
 
@@ -4570,7 +4569,6 @@ function tL(){
       sec.classList.add('lyr-aberta');
       sec.classList.add('letra-foi-aberta');
     }
-    if(btn)btn.textContent='recolher a letra';
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
@@ -4582,23 +4580,16 @@ function tL(){
     return;
   }
 
-  /* FECHANDO — passos:
-     1) desliga scroll-behavior:smooth global pra não disputar
-     2) remove a classe .lyr-aberta (pergaminho reaparece, layout muda)
-     3) MEDE a posição do pergaminho DEPOIS do reflow
-     4) faz scrollTo instantâneo — usuário fica ancorado no pergaminho
-     5) restaura o scroll-behavior */
+  /* FECHANDO */
   var htmlEl=document.documentElement;
   var prevBehavior=htmlEl.style.scrollBehavior;
   htmlEl.style.scrollBehavior='auto';
 
   b.classList.remove('open');
   if(sec)sec.classList.remove('lyr-aberta');
-  if(btn)btn.textContent='abrir a letra';
   if(cDentro)cDentro.style.display='none';
   if(cFora)cFora.style.display='';
 
-  /* força reflow antes de medir */
   void document.body.offsetHeight;
 
   var perg=document.getElementById('pergaminhoWrap');
@@ -4606,7 +4597,6 @@ function tL(){
   if(perg){
     var rect=perg.getBoundingClientRect();
     var yPerg=rect.top+window.scrollY;
-    /* posiciona o pergaminho a ~30% do topo da viewport */
     yDestino=yPerg-(window.innerHeight*0.30);
   }
   window.scrollTo(0,Math.max(0,yDestino));
