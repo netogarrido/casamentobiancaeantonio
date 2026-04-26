@@ -1127,72 +1127,160 @@ section[id]{scroll-margin-top:78px}
   
   
   
-/* Botão abrir versos — pílula dourada, abaixo do player */
-.lyr-invite-ext{
+/* ──────────── PERGAMINHO — letra entreaberta ──────────── */
+@keyframes pergaminhoUnfurl{
+  0%{opacity:0;transform:translateY(-12px) scaleY(.92);transform-origin:top center}
+  100%{opacity:1;transform:translateY(0) scaleY(1);transform-origin:top center}
+}
+@keyframes pergaminhoSetaPulsa{
+  0%,100%{transform:translateY(0);opacity:.75}
+  50%{transform:translateY(3px);opacity:1}
+}
+
+.pergaminho-wrap{
+  margin:6px auto 28px;
+  max-width:480px;
+  padding:0 4px;
+}
+
+.pergaminho{
+  position:relative;
+  background:
+    linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 60%,#F1E7D2 100%);
+  border:1px solid rgba(212,160,74,.28);
+  border-top:none;
+  border-radius:0 0 14px 14px;
+  box-shadow:
+    0 14px 36px rgba(84,73,60,.14),
+    inset 0 1px 0 rgba(255,255,255,.65),
+    inset 0 -2px 0 rgba(212,160,74,.08);
+  animation:pergaminhoUnfurl .9s cubic-bezier(.22,.7,.28,1) both;
+  overflow:hidden;
+}
+
+/* borda superior — bordinha de pergaminho rasgado/enrolado */
+.pergaminho-borda-topo{
+  height:14px;
+  background:
+    linear-gradient(180deg,
+      rgba(212,160,74,.18) 0%,
+      rgba(212,160,74,.06) 60%,
+      transparent 100%);
+  border-bottom:1px solid rgba(212,160,74,.22);
+  position:relative;
+}
+.pergaminho-borda-topo::before,
+.pergaminho-borda-topo::after{
+  content:'';
+  position:absolute;
+  top:-1px;
+  width:18px;
+  height:14px;
+  background:var(--p);
+  border-radius:0 0 50% 50%;
+}
+.pergaminho-borda-topo::before{left:14%}
+.pergaminho-borda-topo::after{right:14%}
+
+.pergaminho-corpo{
+  position:relative;
+  padding:24px 26px 64px;
+}
+
+.pergaminho-trecho{
+  font-family:var(--fh);
+  font-size:1.18rem;
+  font-style:italic;
+  font-weight:300;
+  color:var(--i);
+  line-height:1.85;
+  text-align:center;
+  white-space:pre-line;
+  letter-spacing:.005em;
+}
+
+/* fade que esmaece o final do trecho */
+.pergaminho-fade{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:90px;
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(254,251,245,0) 0%,
+    rgba(254,251,245,.55) 35%,
+    rgba(250,244,232,.92) 70%,
+    #F1E7D2 100%);
+}
+
+/* convite a abrir — discreto, dentro do pergaminho */
+.pergaminho-abrir{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
   display:flex;
   align-items:center;
   justify-content:center;
-  margin:0 auto 24px;
-  padding:0 4px;
+  gap:10px;
+  padding:14px 20px 18px;
+  background:transparent;
+  border:none;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
+  z-index:2;
+  transition:opacity .25s ease;
 }
-
-.lyr-invite-ext-line{display:none}
-
-.lyr-invite-ext-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:12px;
-  padding:11px 20px 11px 24px;
-  background:linear-gradient(135deg,var(--a),var(--al));
-  border:1px solid var(--a);
-  border-radius:999px;
-  color:var(--n);
+.pergaminho-abrir:hover{opacity:.78}
+.pergaminho-abrir-linha{
+  flex:1;
+  height:1px;
+  max-width:60px;
+  background:linear-gradient(90deg,transparent,rgba(212,160,74,.45));
+}
+.pergaminho-abrir-linha:last-child{
+  background:linear-gradient(270deg,transparent,rgba(212,160,74,.45));
+}
+.pergaminho-abrir-txt{
   font-family:var(--fh);
   font-style:italic;
   font-weight:500;
-  font-size:.98rem;
+  font-size:1.02rem;
   letter-spacing:.02em;
-  text-transform:none;
-  line-height:1;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  box-shadow:0 6px 18px rgba(212,160,74,.35);
-  animation:setaBounce 1.6s ease-in-out infinite;
-  transition:transform .25s ease, box-shadow .25s ease;
+  color:var(--a);
+  white-space:nowrap;
 }
-
-.lyr-invite-ext-btn:hover{
-  transform:scale(1.04);
-  box-shadow:0 8px 22px rgba(212,160,74,.5);
-}
-
-.lyr-invite-ext-seta{
+.pergaminho-abrir-seta{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  font-size:1.15rem;
-  font-weight:500;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--a);
+  color:var(--p);
+  font-size:.78rem;
+  font-weight:700;
   line-height:1;
-  color:var(--n);
-  background:none;
-  width:auto;
-  height:auto;
-  transition:transform .3s ease;
+  animation:pergaminhoSetaPulsa 1.8s ease-in-out infinite;
 }
 
-/* Quando letra está aberta: remove animação e gira seta em X */
-.vestido.lyr-aberta .lyr-invite-ext-btn{
-  animation:none;
+/* Quando letra abre: pergaminho some */
+.vestido.lyr-aberta .pergaminho-wrap{
+  display:none;
 }
 
-.vestido.lyr-aberta .lyr-invite-ext-seta{
-  transform:rotate(45deg);
+/* ── Wrapper da seta "nossa lista ↓" — começa oculto ── */
+.vestido-seta-presentes-wrap{
+  display:none;
+  justify-content:center;
+  padding:56px 0 24px;
 }
-
-.vestido.lyr-aberta .lyr-invite-ext-btn span:first-child{
-  opacity:.85;
+/* Só aparece quando a letra foi aberta ao menos uma vez */
+.vestido.letra-foi-aberta .vestido-seta-presentes-wrap{
+  display:flex;
+  animation:fadeInRise .6s ease both;
 }
 
 /* ── Letra aberta — palco editorial, textura suave, leitura confortável ── */
@@ -1356,15 +1444,76 @@ section[id]{scroll-margin-top:78px}
 /* ── Caixinhas do noivo artista ── */
 .cx-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 
-@media(min-width:520px){
-  .vestido .inn{max-width:520px}
-  .vestido-quote{font-size:1.28rem;max-width:440px}
-  .vestido-photos{padding:24px 0 32px}
-  .vestido-foto-principal-wrap{width:64%;}
-  .lyr-invite-verso{font-size:1.22rem}
-  .lyr-text{font-size:1.32rem;line-height:1.95}
-  .vestido::before{width:min(70%,640px);right:-12%;opacity:.12}
-  .vestido::after{width:min(80%,680px);left:-16%;opacity:.10}
+@media(min-width:860px){
+  .vestido .inn{
+    max-width:1080px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "titulo titulo"
+      "esquerda direita"
+      "letra   letra"
+      "cta     cta"
+      "rodape  rodape";
+    column-gap:56px;
+    row-gap:0;
+    align-items:start;
+  }
+  .vestido-titulo{grid-area:titulo}
+
+  /* coluna esquerda: player + fotos */
+  .player.player--story{grid-area:esquerda;align-self:start;margin-bottom:22px}
+  .vestido-photos{grid-area:esquerda;align-self:start;margin:0 0 0;padding:8px 0 24px}
+
+  /* coluna direita: quote + pergaminho */
+  .vestido-quote{grid-area:direita;align-self:start;margin-top:0;font-size:1.36rem;max-width:none;padding:0 4px}
+  .pergaminho-wrap{grid-area:direita;align-self:start;margin:18px 0 0;max-width:none}
+
+  /* letra completa, CTA, seta presentes — full width abaixo */
+  .lyr-box{grid-area:letra}
+  #musica_cta{grid-area:cta}
+  .cx-cards#cxVestido{grid-area:cta}
+  .vestido-seta-presentes-wrap{grid-area:rodape}
+
+  .vestido-foto-principal-wrap{width:78%;}
+  .lyr-text{font-size:1.34rem;line-height:1.95}
+  .pergaminho-trecho{font-size:1.26rem;line-height:1.92}
+  .pergaminho-corpo{padding:30px 32px 70px}
+
+  .vestido::before{width:min(60%,580px);right:-10%;opacity:.10}
+  .vestido::after{width:min(70%,620px);left:-14%;opacity:.09}
+}
+
+/* Trick: fazer .player e .vestido-photos empilharem na MESMA célula da grid */
+@media(min-width:860px){
+  .vestido .inn > .player.player--story{
+    grid-row:2;
+    grid-column:1;
+  }
+  .vestido .inn > .vestido-photos{
+    grid-row:2;
+    grid-column:1;
+    margin-top:96px; /* abaixo do player */
+  }
+  .vestido .inn > .vestido-quote{
+    grid-row:2;
+    grid-column:2;
+  }
+  .vestido .inn > .pergaminho-wrap{
+    grid-row:2;
+    grid-column:2;
+    margin-top:140px; /* abaixo do quote */
+  }
+}
+
+/* ajustes mobile pequeno mantidos */
+@media(max-width:380px){
+  .vestido-foto-principal-wrap{width:74%;}
+  .vestido-quote{font-size:1.08rem}
+  .lyr-text{font-size:1.14rem;line-height:1.82}
+  .lyr-stage{padding:26px 16px 24px}
+  .pergaminho-trecho{font-size:1.06rem;line-height:1.78}
+  .pergaminho-corpo{padding:20px 18px 56px}
 }
 
 /* mobile pequeno: fotos não saem da tela */
@@ -2921,23 +3070,32 @@ color:var(--a);
   <cite id="musica_artista"></cite>
 </div>
   
-<!-- Botão abrir versos — abaixo do player, fora das fotos -->
-  <div class="lyr-invite-ext" onclick="tL()" id="lyrInviteExt">
-    <div class="lyr-invite-ext-line"></div>
-    <button class="lyr-invite-ext-btn" aria-label="Abrir letra da música">
-      <span id="musica_btn_letra">abrir os versos</span>
-      <span class="lyr-invite-ext-seta"></span>
-    </button>
-    <div class="lyr-invite-ext-line"></div>
-  </div>  
+<!-- Pergaminho: trecho da letra com fade e convite a abrir -->
+  <div class="pergaminho-wrap" id="pergaminhoWrap">
+    <div class="pergaminho" id="pergaminho">
+      <div class="pergaminho-borda-topo"></div>
+      <div class="pergaminho-corpo">
+        <div class="pergaminho-trecho" id="pergaminhoTrecho"></div>
+        <div class="pergaminho-fade"></div>
+      </div>
+      <button class="pergaminho-abrir" onclick="tL()" aria-label="Abrir letra completa">
+        <span class="pergaminho-abrir-linha"></span>
+        <span class="pergaminho-abrir-txt" id="musica_btn_letra">abrir a letra</span>
+        <span class="pergaminho-abrir-seta">↓</span>
+        <span class="pergaminho-abrir-linha"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Letra completa (expansível) -->
   <div class="lyr-box" id="lB">
     <div class="lyr-stage">
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">✕</button>
-     <div class="lyr-text" id="musica_letra"></div>
+      <div class="lyr-text" id="musica_letra"></div>
       <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
       <div class="lyr-fechar-rodape" onclick="tL()" aria-label="Fechar letra">
         <span class="lyr-fechar-rodape-linha"></span>
-        <button>recolher os versos ↑</button>
+        <button>recolher a letra ↑</button>
         <span class="lyr-fechar-rodape-linha"></span>
       </div>
     </div>
@@ -2946,7 +3104,7 @@ color:var(--a);
   <p id="musica_cta"></p>
 <div class="cx-cards" id="cxVestido"></div>
 
-<div style="display:flex;justify-content:center;padding:56px 0 24px">
+<div class="vestido-seta-presentes-wrap" id="vestidoSetaPresentesWrap">
   <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')"><span id="vestido_seta_presentes_txt"></span></a>
 </div>
 
@@ -3854,7 +4012,8 @@ function applyConteudo(rows){
     else if(key==='nav_logo'){el.innerHTML=cleaned.replace(/\n/g,'<br>');}
     else{el.innerHTML=cleaned.replace(/\n/g,'<br>');}
 });
-var pt=document.getElementById('presentes_titulo');
+
+  var pt=document.getElementById('presentes_titulo');
   var ps=document.getElementById('vestido_seta_presentes_txt');
   if(pt&&ps)ps.textContent=pt.textContent;
   var fv=document.getElementById('fotos_vestido');
@@ -3864,6 +4023,7 @@ var pt=document.getElementById('presentes_titulo');
   var fpm=document.getElementById('fotos_programacao_mirror');
   if(fp&&fpm)fpm.textContent=fp.textContent;
   else if(fpm && !fp && fvm)fpm.textContent=fvm.textContent;
+  popularPergaminho();
 }
     
 
@@ -4361,8 +4521,11 @@ function tL(){
 
   if(willOpen){
     b.classList.add('open');
-    if(sec)sec.classList.add('lyr-aberta');
-    if(btn)btn.textContent='recolher os versos';
+    if(sec){
+      sec.classList.add('lyr-aberta');
+      sec.classList.add('letra-foi-aberta'); /* libera a seta de presentes */
+    }
+    if(btn)btn.textContent='recolher a letra';
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
@@ -4373,14 +4536,13 @@ function tL(){
     },180);
     return;
   }
-// Fechando: o botão "abrir os versos" está ACIMA da letra no DOM,
-  // então sua posição não muda com o colapso. Ancora nele direto.
-  // Pausa o scroll-behavior:smooth do <html> durante a animação para evitar tremor.
-  var invite=document.getElementById('lyrInviteExt');
+
+  // Fechando — ancora no pergaminho que reaparece logo acima
+  var perg=document.getElementById('pergaminhoWrap');
   var yDestino=0;
-  if(invite){
-    var yInvite=invite.getBoundingClientRect().top+window.scrollY;
-    yDestino=yInvite-(window.innerHeight*0.65);
+  if(perg){
+    var yPerg=perg.getBoundingClientRect().top+window.scrollY;
+    yDestino=yPerg-(window.innerHeight*0.30);
   }
 
   var htmlEl=document.documentElement;
@@ -4391,7 +4553,7 @@ function tL(){
 
   b.classList.remove('open');
   if(sec)sec.classList.remove('lyr-aberta');
-  if(btn)btn.textContent='abrir os versos';
+  if(btn)btn.textContent='abrir a letra';
   if(cDentro)cDentro.style.display='none';
   if(cFora)cFora.style.display='';
   trackEvento('letra_fechou','');
@@ -4399,6 +4561,21 @@ function tL(){
   setTimeout(function(){
     htmlEl.style.scrollBehavior=prevBehavior||'';
   },850);
+}
+
+/* Popula o pergaminho com as 8 primeiras linhas da letra completa */
+function popularPergaminho(){
+  var letraEl=document.getElementById('musica_letra');
+  var trechoEl=document.getElementById('pergaminhoTrecho');
+  if(!letraEl||!trechoEl)return;
+  var bruto=(letraEl.textContent||'').trim();
+  if(!bruto){
+    var wrap=document.getElementById('pergaminhoWrap');
+    if(wrap)wrap.style.display='none';
+    return;
+  }
+  var linhas=bruto.split(/\r?\n/).filter(function(l){return l.trim().length>0;});
+  trechoEl.textContent=linhas.slice(0,8).join('\n');
 }
 
 /* ══════════════════════════════════════════
