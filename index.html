@@ -342,12 +342,32 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   position:relative;
   z-index:0;
 }
-/* Vinheta por foto — TOPO forte (cobre base preta da foto anterior) + BASE leve */
+/* Vinheta por foto — gradiente sobreposto: topo opaco → some aos 30% */
 .popup-bg img{
-    box-shadow:
-      inset 0 150px 120px -38px rgba(15,23,32,.98),
-      inset 0 -42px 70px -28px rgba(15,23,32,.45);
-  }
+  box-shadow:none;
+  -webkit-mask-image:none;
+}
+.popup-bg .popup-track > img{
+  position:relative;
+}
+.popup-bg .popup-track > img::after{
+  /* pseudo não funciona em <img>; usamos background gradient via wrapper */
+}
+
+/* Aplicado direto no <img> via mask-composite não dá; usamos um background sobreposto via outline trick.
+   Solução real: gradient overlay aplicado por filtro/CSS que funciona em <img> = mix-blend não serve.
+   Vamos pelo caminho simples e robusto: linear-gradient via box-shadow inset com camadas múltiplas,
+   simulando uma curva mais agressiva no topo e mais suave na base. */
+.popup-bg img{
+  box-shadow:
+    /* topo: 4 camadas empilhadas pra simular curva exponencial */
+    inset 0 60px 0 -0px rgba(15,23,32,1),
+    inset 0 120px 60px -30px rgba(15,23,32,.92),
+    inset 0 200px 120px -60px rgba(15,23,32,.55),
+    inset 0 280px 160px -120px rgba(15,23,32,.20),
+    /* base: fade leve */
+    inset 0 -50px 80px -30px rgba(15,23,32,.45);
+}
 
 /* camada central — escurecimento atrás da caixa para legibilidade do texto */
 .popup-bg::before{
@@ -373,10 +393,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .popup-track{
     animation-duration:50s;
   }
-  .popup-bg img{
+.popup-bg img{
     box-shadow:
-      inset 0 75px 90px -28px rgba(15,23,32,.88),
-      inset 0 -75px 90px -28px rgba(15,23,32,.94);
+      inset 0 50px 0 -0px rgba(15,23,32,1),
+      inset 0 100px 50px -25px rgba(15,23,32,.92),
+      inset 0 170px 100px -55px rgba(15,23,32,.55),
+      inset 0 240px 140px -110px rgba(15,23,32,.20),
+      inset 0 -42px 70px -28px rgba(15,23,32,.45);
   }
   .popup-bg::before{
     background:
