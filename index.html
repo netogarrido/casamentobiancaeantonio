@@ -956,6 +956,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
   text-shadow:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.vestido-quote:active{
+  transform:scale(.992);
 }
 
 .vestido-quote::before{
@@ -3368,7 +3373,7 @@ color:var(--a);
 </div>
 
   <!-- Texto de abertura -->
-<div class="vestido-quote" id="historia_texto_abertura_wrap">
+<div class="vestido-quote" id="historia_texto_abertura_wrap" role="button" tabindex="0" onclick="tL()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tL()}">
   <span id="historia_texto_abertura"></span><span class="vestido-quote-close">&#x201D;</span>
   <cite id="musica_artista"></cite>
 </div>
