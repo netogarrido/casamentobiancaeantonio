@@ -170,22 +170,20 @@ section[id]{scroll-margin-top:78px}
 
 /* linha nome + texto popup */
 .popup-nome-linha{
-  display:flex;
+  display:none;
+  flex-wrap:wrap;
   align-items:baseline;
   justify-content:center;
-  flex-wrap:wrap;
   gap:0 .35em;
-  min-height:0;
-  max-height:0;
-  overflow:hidden;
   opacity:0;
-  transition:max-height .5s ease, opacity .4s ease, margin .4s ease;
   margin-top:0;
+  transition:opacity .4s ease, margin .4s ease;
 }
 .popup-nome-linha.vis{
-  max-height:80px;
+  display:flex;
   opacity:1;
   margin-top:10px;
+  margin-bottom:14px;
 }
 
 
