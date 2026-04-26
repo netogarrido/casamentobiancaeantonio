@@ -2917,6 +2917,18 @@ color:var(--a);
 
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
 <section class="prog" id="prog">
+
+  <!-- Hero horizontal: foto hotel + título sobreposto + fade azul -->
+  <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
+    <div class="prog-hero-img-wrap">
+      <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
+    </div>
+    <div class="prog-hero-title">
+      <h2 id="programacao_label"></h2>
+    </div>
+    <div class="prog-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
+  </div>
+
   <div class="inn">
 
     <!-- Intro -->
