@@ -4991,6 +4991,13 @@ function tL(){
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
 
+  /* Trava de scroll: capturamos a posição do clique relativa ao viewport
+     e, depois do reflow do grid, restauramos para o usuário sentir que NADA mudou */
+  var anchor=document.getElementById('pergaminhoWrap');
+  var openAnchor=b.querySelector('.lyr-stage')||b;
+  var refEl=willOpen?anchor:openAnchor;
+  var topAntes=refEl?refEl.getBoundingClientRect().top:0;
+
   if(willOpen){
     b.classList.add('open');
     if(sec){
@@ -5000,40 +5007,45 @@ function tL(){
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
-    setTimeout(function(){
-      var stage=b.querySelector('.lyr-stage')||b;
-      var y=stage.getBoundingClientRect().top+window.scrollY-110;
-      window.scrollTo({top:y,behavior:'smooth'});
-    },180);
+
+    /* Após reflow: mantém o lyr-stage aparecendo no MESMO Y do pergaminho clicado */
+    requestAnimationFrame(function(){
+      var stage=b.querySelector('.lyr-stage');
+      if(!stage)return;
+      var topDepois=stage.getBoundingClientRect().top;
+      var delta=topDepois-topAntes;
+      if(Math.abs(delta)>1){
+        var htmlEl=document.documentElement;
+        var prev=htmlEl.style.scrollBehavior;
+        htmlEl.style.scrollBehavior='auto';
+        window.scrollBy(0,delta);
+        setTimeout(function(){htmlEl.style.scrollBehavior=prev||'';},50);
+      }
+    });
     return;
   }
 
   /* FECHANDO */
-  var htmlEl=document.documentElement;
-  var prevBehavior=htmlEl.style.scrollBehavior;
-  htmlEl.style.scrollBehavior='auto';
-
   b.classList.remove('open');
   if(sec)sec.classList.remove('lyr-aberta');
   if(cDentro)cDentro.style.display='none';
   if(cFora)cFora.style.display='';
-
-  void document.body.offsetHeight;
-
-  var perg=document.getElementById('pergaminhoWrap');
-  var yDestino=0;
-  if(perg){
-    var rect=perg.getBoundingClientRect();
-    var yPerg=rect.top+window.scrollY;
-    yDestino=yPerg-(window.innerHeight*0.30);
-  }
-  window.scrollTo(0,Math.max(0,yDestino));
-
   trackEvento('letra_fechou','');
 
-  setTimeout(function(){
-    htmlEl.style.scrollBehavior=prevBehavior||'';
-  },850);
+  /* Após reflow: mantém o pergaminho fechado no MESMO Y onde estava o lyr-stage */
+  requestAnimationFrame(function(){
+    var perg=document.getElementById('pergaminhoWrap');
+    if(!perg)return;
+    var topDepois=perg.getBoundingClientRect().top;
+    var delta=topDepois-topAntes;
+    if(Math.abs(delta)>1){
+      var htmlEl=document.documentElement;
+      var prev=htmlEl.style.scrollBehavior;
+      htmlEl.style.scrollBehavior='auto';
+      window.scrollBy(0,delta);
+      setTimeout(function(){htmlEl.style.scrollBehavior=prev||'';},50);
+    }
+  });
 }
 
 /* Popula o pergaminho a partir das chaves musica_titulo + musica_trecho */
