@@ -2951,11 +2951,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 .prog-alt-card--santanna{
-  justify-content:flex-end;
-  padding-top:30px;
-  border-color:rgba(188,42,42,.26);
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.96),rgba(254,251,245,.92));
+  justify-content:center;
+  padding-top:22px;
+  border-color:rgba(188,42,42,.24);
+  background:rgba(255,255,255,.92);
+  box-shadow:0 4px 12px rgba(15,23,32,.08);
 }
 
 .prog-alt-note{
@@ -3041,23 +3041,25 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   transform:scale(.97);
 }
 
-.prog-soldout-pill{
+.prog-soldout-ribbon{
   position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:5px 10px 4px;
-  border-radius:999px;
-  background:rgba(179,38,30,.10);
-  border:1px solid rgba(179,38,30,.28);
+  top:13px;
+  right:-31px;
+  width:104px;
+  padding:4px 0 3px;
+  background:rgba(255,255,255,.96);
+  border-top:1px solid rgba(179,38,30,.30);
+  border-bottom:1px solid rgba(179,38,30,.30);
   color:#B3261E;
   font-family:var(--fb);
-  font-size:.56rem;
+  font-size:.54rem;
   font-weight:900;
-  letter-spacing:.16em;
+  letter-spacing:.13em;
   line-height:1;
   text-align:center;
-  white-space:nowrap;
+  transform:rotate(34deg);
+  box-shadow:none;
+  z-index:2;
 }
 
 @media(max-width:380px){
@@ -3951,14 +3953,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <p class="prog-alt-title" id="hotel_opcoes"></p>
 
     <div class="prog-alt-grid">
-      <div class="prog-alt-card prog-alt-card--santanna">
-        <div class="prog-soldout-pill" id="hotel_santana_esgotado"></div>
-        <h4 id="hotel_santana_nome"></h4>
-        <p>Hotel do casamento</p>
-        <button type="button" class="prog-phone-btn" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)">
-          <span id="reserva_marcela_whatsapp"></span>
-        </button>
-      </div>
+<div class="prog-alt-card prog-alt-card--santanna">
+  <div class="prog-soldout-ribbon" id="hotel_santana_esgotado"></div>
+  <h4 id="hotel_santana_nome"></h4>
+  <p>Hotel do casamento</p>
+  <button type="button" class="prog-phone-btn" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)">
+    <span id="reserva_marcela_whatsapp"></span>
+  </button>
+</div>
 
       <div class="prog-alt-note">
         <p id="reserva_santanna_texto"></p>
