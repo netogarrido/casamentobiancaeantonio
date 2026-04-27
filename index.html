@@ -3249,11 +3249,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* ──────────── TRAJE (PRETO) ──────────── */
 .traje{background:var(--n);color:var(--s)}
 .traje .ttl{color:var(--s)}.traje .txt{color:rgba(250,244,232,.55)}.traje .lbl{color:var(--al)}
-.traje-grid{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.traje-gal{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.traje-look{position:relative;border-radius:var(--r);overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);aspect-ratio:3/4}
+.traje-look img{width:100%;height:100%;object-fit:cover;display:block}
+.traje-look figcaption{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;font-size:.78rem;font-weight:500;color:var(--s);background:linear-gradient(180deg,transparent,rgba(0,0,0,.78));letter-spacing:.04em;text-transform:uppercase;text-align:center}
+.traje-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 .traje-card{display:flex;gap:12px;padding:14px 16px;background:rgba(255,255,255,.04);border-radius:var(--r);border:1px solid rgba(255,255,255,.08)}
 .traje-ico{font-size:1.2rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:9px;flex-shrink:0}
 .traje-info h4{font-size:.96rem;font-weight:600;margin-bottom:3px;color:var(--s)}
 .traje-info p{font-size:.86rem;color:rgba(250,244,232,.6);line-height:1.55}
+@media (max-width:480px){.traje-look figcaption{font-size:.7rem;padding:8px 10px}}
 
   
 /* ──────────── FAQ ──────────── */
@@ -3898,14 +3903,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 <!-- TRAJE -->
 <section class="traje" id="traje"><div class="inn">
+  <div class="lbl">Traje</div>
   <h2 class="ttl" id="traje_titulo"></h2>
   <p class="txt" id="traje_subtitulo"></p>
+  <div class="traje-gal">
+    <figure class="traje-look"><img data-midia="traje_mulheres" alt="Inspiração feminina"><figcaption>Elas</figcaption></figure>
+    <figure class="traje-look"><img data-midia="traje_homens" alt="Inspiração masculina"><figcaption>Eles</figcaption></figure>
+  </div>
   <div class="traje-grid">
     <div class="traje-card"><div class="traje-ico">🎩</div><div class="traje-info"><h4>Tipo</h4><p id="traje_tipo"></p></div></div>
-    <div class="traje-card"><div class="traje-ico">👗</div><div class="traje-info"><h4>Mulheres</h4><p id="traje_mulheres"></p></div></div>
-    <div class="traje-card"><div class="traje-ico">👔</div><div class="traje-info"><h4>Homens</h4><p id="traje_homens"></p></div></div>
     <div class="traje-card"><div class="traje-ico">🚫</div><div class="traje-info"><h4>Evitar</h4><p id="traje_evitar"></p></div></div>
-    <div class="traje-card"><div class="traje-ico">💇</div><div class="traje-info"><h4>Cabelo e maquiagem</h4><p id="traje_cabelo"></p></div></div>
+    <div class="traje-card"><div class="traje-ico">✨</div><div class="traje-info"><h4>Sem stress</h4><p id="traje_cabelo"></p></div></div>
+  
   </div>
 </div></section>
 
