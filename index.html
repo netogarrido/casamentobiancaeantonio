@@ -2998,47 +2998,50 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   margin:0 0 10px;
 }
 
-.prog-phone-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  max-width:150px;
-  min-height:34px;
-  padding:8px 8px;
-  border-radius:999px;
-  background:rgba(212,160,74,.10);
-  border:1px solid rgba(212,160,74,.26);
-  color:var(--a);
-  font-family:var(--fb);
-  font-size:.72rem;
-  font-weight:800;
-  line-height:1.1;
-  transition:background .22s ease, transform .22s ease, color .22s ease;
+.prog-alt-card[role="button"]{
+  cursor:pointer;
   -webkit-tap-highlight-color:transparent;
+  transition:transform .22s ease, border-color .22s ease, background .22s ease;
 }
 
-.prog-phone-btn::after{
-  content:'copiar';
-  font-size:.56rem;
+.prog-alt-card[role="button"]:active{
+  transform:scale(.985);
+}
+
+.prog-alt-card[role="button"]:focus-visible{
+  outline:2px solid rgba(212,160,74,.55);
+  outline-offset:2px;
+}
+
+.prog-phone-number{
+  display:block;
+  margin-top:2px;
+  color:var(--a);
+  font-family:var(--fb);
+  font-size:.78rem;
+  font-weight:800;
+  line-height:1.15;
+}
+
+.prog-alt-card.copiado::after{
+  content:'telefone copiado';
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(15,23,32,.92);
+  color:var(--al);
+  font-family:var(--fb);
+  font-size:.62rem;
   font-weight:800;
   letter-spacing:.08em;
   text-transform:uppercase;
-  opacity:.65;
-  margin-left:7px;
-}
-
-.prog-phone-btn.copiado{
-  background:rgba(212,160,74,.22);
-  color:var(--n);
-}
-
-.prog-phone-btn.copiado::after{
-  content:'copiado';
-}
-
-.prog-phone-btn:active{
-  transform:scale(.97);
+  line-height:1;
+  text-align:center;
+  box-shadow:0 6px 18px rgba(15,23,32,.20);
+  z-index:4;
 }
 
 .prog-soldout-ribbon{
@@ -3082,13 +3085,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .prog-alt-card h4{
     font-size:.98rem;
   }
-  .prog-phone-btn{
-    font-size:.64rem;
-    padding:8px 5px;
+  .prog-phone-number{
+    font-size:.68rem;
   }
-  .prog-phone-btn::after{
-    font-size:.5rem;
-    margin-left:5px;
+  .prog-alt-card.copiado::after{
+    left:7px;
+    right:7px;
+    bottom:8px;
+    font-size:.55rem;
+    padding:7px 8px;
   }
 }
   
@@ -3953,37 +3958,33 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <p class="prog-alt-title" id="hotel_opcoes"></p>
 
     <div class="prog-alt-grid">
-<div class="prog-alt-card prog-alt-card--santanna">
-  <div class="prog-soldout-ribbon" id="hotel_santana_esgotado"></div>
-  <h4 id="hotel_santana_nome"></h4>
-  <p>Hotel do casamento</p>
-  <button type="button" class="prog-phone-btn" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)">
-    <span id="reserva_marcela_whatsapp"></span>
-  </button>
-</div>
+      <div class="prog-alt-card prog-alt-card--santanna" role="button" tabindex="0" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
+        <div class="prog-soldout-ribbon" id="hotel_santana_esgotado"></div>
+        <h4 id="hotel_santana_nome"></h4>
+        <p>Hotel do casamento</p>
+        <span class="prog-phone-number" id="reserva_marcela_whatsapp"></span>
+      </div>
 
       <div class="prog-alt-note">
         <p id="reserva_santanna_texto"></p>
       </div>
 
-      <div class="prog-alt-card">
+      <div class="prog-alt-card" role="button" tabindex="0" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
         <h4 id="hotel_ancona_nome"></h4>
         <p>~20 min do hotel</p>
-        <button type="button" class="prog-phone-btn" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)">
-          <span id="hotel_ancona_contato"></span>
-        </button>
+        <span class="prog-phone-number" id="hotel_ancona_contato"></span>
       </div>
 
-      <div class="prog-alt-card">
+      <div class="prog-alt-card" role="button" tabindex="0" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
         <h4 id="hotel_prado_nome"></h4>
         <p>~20 min do hotel</p>
-        <button type="button" class="prog-phone-btn" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)">
-          <span id="hotel_prado_contato"></span>
-        </button>
+        <span class="prog-phone-number" id="hotel_prado_contato"></span>
       </div>
     </div>
   </div>
 </div>
+
+          
           <!-- DAY USE -->
           <div class="prog-via-panel" id="vPanel-day">
             <div class="prog-cta-dayuse">
