@@ -2468,8 +2468,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .prog-dias-grid{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
   gap:10px;
+  max-width:78%;
+  margin:0 auto;
+}
+@media (max-width:380px){
+  .prog-dias-grid{max-width:92%}
 }
 
 .prog-dia-card{
@@ -2593,8 +2598,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* ── Texto introdutório (fds_texto_1) ── */
 .prog .txt{
   font-family:var(--fb);
-  font-size:1.0625rem; /* 17px */
-  line-height:1.7;
+  font-size:1rem;
+  line-height:1.72;
   color:#FAF4E8;
   margin:18px 0 22px;
 }
