@@ -2575,17 +2575,60 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   opacity:1;
   transform:translateY(0);
 }
-.prog-dia-panel-txt p{
+.prog-dia-panel-txt > p,
+.prog-dia-copy{
   background:rgba(255,255,255,.92);
   border:1px solid rgba(255,255,255,.62);
   border-radius:12px;
   padding:18px 18px;
+  margin:0;
+  box-shadow:0 6px 18px rgba(15,23,32,.12);
+}
+.prog-dia-panel-txt p{
   font-family:var(--fb);
-  font-size:1.0625rem; /* 17px */
+  font-size:1.0625rem;
   line-height:1.7;
   color:var(--n);
   margin:0;
-  box-shadow:0 6px 18px rgba(15,23,32,.12);
+}
+.prog-dia-copy{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.prog-dia-copy p{
+  margin:0;
+}
+.prog-dia-cta{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:4px;
+  padding:13px 16px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--a),var(--al));
+  color:var(--n);
+  font-family:var(--fh);
+  font-size:1rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  box-shadow:0 5px 18px rgba(212,160,74,.28);
+  transition:transform .22s ease, box-shadow .22s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.prog-dia-cta::after{
+  content:' ↓';
+  font-family:var(--fb);
+  font-size:.9rem;
+  font-weight:700;
+}
+.prog-dia-cta:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 24px rgba(212,160,74,.38);
+}
+.prog-dia-cta:active{
+  transform:scale(.98);
 }
 .prog-dias-nota{
   margin-top:12px;
@@ -3706,13 +3749,26 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       </div>
 
       
-      <div class="prog-dias-panels" id="progDiasPanels">
-        <div class="prog-dias-panels-inner">
-          <div class="prog-dia-panel-txt" id="pdPanel-sexta"><p id="sexta_texto"></p></div>
-          <div class="prog-dia-panel-txt" id="pdPanel-sabado"><p id="sabado_texto"></p></div>
-          <div class="prog-dia-panel-txt" id="pdPanel-domingo"><p id="domingo_texto"></p></div>
-        </div>
+<div class="prog-dias-panels" id="progDiasPanels">
+  <div class="prog-dias-panels-inner">
+    <div class="prog-dia-panel-txt" id="pdPanel-sexta">
+      <p id="sexta_texto"></p>
+    </div>
+
+    <div class="prog-dia-panel-txt prog-dia-panel-txt--sabado" id="pdPanel-sabado">
+      <div class="prog-dia-copy">
+        <p id="sabado_texto_1"></p>
+        <p id="sabado_texto_2"></p>
+        <p id="sabado_texto_3"></p>
+        <button type="button" class="prog-dia-cta" id="sabado_texto_4" onclick="abrirDayUseDaProgramacao()"></button>
       </div>
+    </div>
+
+    <div class="prog-dia-panel-txt" id="pdPanel-domingo">
+      <p id="domingo_texto"></p>
+    </div>
+  </div>
+</div>
     </div>
   </div>
 
@@ -5713,6 +5769,27 @@ function toggleVia(v){
 
   _viaAtiva=nova;
   if(nova){trackEvento('prog_via_abriu',nova);}
+}
+
+function abrirDayUseDaProgramacao(){
+  if(_viaAtiva!=='day'){
+    toggleVia('day');
+  }
+
+  setTimeout(function(){
+    var anchor=document.querySelector('.prog-via-wrap');
+    var card=document.querySelector('.prog-via-card[data-via="day"]');
+    if(!anchor)return;
+
+    anchor.scrollIntoView({behavior:'smooth',block:'start'});
+
+    if(card){
+      card.classList.add('pulse-once');
+      setTimeout(function(){card.classList.remove('pulse-once');},1600);
+    }
+
+    trackEvento('prog_sabado_dayuse','botao');
+  },80);
 }
 
 function scrollToLazer(){
