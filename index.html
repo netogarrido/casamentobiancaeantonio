@@ -2899,7 +2899,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-cta-txt{color:var(--al)}
 
 /* ══════════════════════════════════════════
-   ALTERNATIVAS — 3 hotéis
+   ALTERNATIVAS — 2x2 hospedagem
 ══════════════════════════════════════════ */
 .prog-alt-wrap{margin:0}
 
@@ -2913,31 +2913,46 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   margin:0 0 12px;
 }
 
-.prog-alt-intro{
-  font-family:var(--fb);
-  font-size:1rem;
-  color:var(--n);
-  line-height:1.65;
-  margin:0;
-  text-align:center;
-}
-
 .prog-alt-grid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:1fr 1fr;
   gap:8px;
 }
 
-.prog-alt-hc{
+.prog-alt-hc,
+.prog-alt-info{
   position:relative;
   min-width:0;
   overflow:hidden;
   background:rgba(255,255,255,.92);
   border:1px solid rgba(255,255,255,.62);
   border-radius:12px;
+  box-shadow:0 4px 12px rgba(15,23,32,.08);
+}
+
+.prog-alt-hc{
   padding:14px 8px 12px;
   text-align:center;
-  box-shadow:0 4px 12px rgba(15,23,32,.08);
+}
+
+.prog-alt-info{
+  padding:15px 12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.prog-alt-info .prog-divider{
+  margin:0 0 10px;
+}
+
+.prog-alt-intro{
+  font-family:var(--fb);
+  font-size:.86rem;
+  color:var(--n);
+  line-height:1.48;
+  margin:0;
+  text-align:center;
 }
 
 .prog-alt-ico{
@@ -2967,16 +2982,49 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-size:.72rem;
   color:var(--im);
   line-height:1.25;
-  margin:0 0 7px;
+  margin:0 0 8px;
 }
 
-.prog-alt-hc span:not(.prog-alt-ribbon){
-  font-family:var(--fb);
-  font-size:.76rem;
+.prog-phone-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:34px;
+  padding:8px 7px;
+  border-radius:999px;
+  background:rgba(212,160,74,.10);
+  border:1px solid rgba(212,160,74,.24);
   color:var(--a);
-  font-weight:700;
-  line-height:1.2;
-  word-break:keep-all;
+  font-family:var(--fb);
+  font-size:.72rem;
+  font-weight:800;
+  line-height:1.1;
+  transition:background .22s ease, transform .22s ease, color .22s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.prog-phone-btn::after{
+  content:' copiar';
+  font-size:.58rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.65;
+  margin-left:5px;
+}
+
+.prog-phone-btn.copiado{
+  background:rgba(212,160,74,.22);
+  color:var(--n);
+}
+
+.prog-phone-btn.copiado::after{
+  content:' copiado';
+}
+
+.prog-phone-btn:active{
+  transform:scale(.97);
 }
 
 .prog-alt-hc--soldout{
@@ -3003,30 +3051,26 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:2;
 }
 
-.prog-alt-msg{
-  margin-top:14px;
-  padding:16px 14px;
-  background:rgba(255,255,255,.72);
-  border:1px solid rgba(255,255,255,.58);
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(15,23,32,.08);
-}
-
-.prog-alt-msg .prog-divider{
-  margin-bottom:10px;
-}
-
 @media(max-width:380px){
   .prog-alt-grid{gap:6px}
   .prog-alt-hc{padding:13px 6px 11px}
+  .prog-alt-info{padding:13px 9px}
   .prog-alt-ico{
     width:31px;
     height:31px;
     font-size:.98rem;
   }
-  .prog-alt-hc span:not(.prog-alt-ribbon){font-size:.68rem}
+  .prog-phone-btn{
+    font-size:.64rem;
+    padding:8px 5px;
+  }
+  .prog-phone-btn::after{
+    font-size:.52rem;
+    margin-left:4px;
+  }
+  .prog-alt-intro{font-size:.78rem}
 }
-
+  
 /* ══════════════════════════════════════════
    SÓ FESTA
 ══════════════════════════════════════════ */
@@ -3882,7 +3926,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <div class="prog-via-panels" id="progViaPanels">
         <div class="prog-via-panels-inner">
 
-         <!-- HOSPEDAGEM -->
+        <!-- HOSPEDAGEM -->
 <div class="prog-via-panel" id="vPanel-hosp">
   <div class="prog-alt-wrap">
     <p class="prog-alt-title" id="hotel_opcoes"></p>
@@ -3893,31 +3937,37 @@ section[id]{scroll-margin-top:var(--nav-offset)}
         <div class="prog-alt-ico">🏨</div>
         <h4 id="hotel_santana_nome"></h4>
         <p>Hotel do casamento</p>
-        <span id="reserva_marcela_whatsapp"></span>
+        <button type="button" class="prog-phone-btn" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)">
+          <span id="reserva_marcela_whatsapp"></span>
+        </button>
+      </div>
+
+      <div class="prog-alt-info">
+        <div class="prog-divider">
+          <span class="prog-divider-line"></span>
+          <span class="prog-divider-txt" id="reserva_santanna_tag"></span>
+          <span class="prog-divider-line"></span>
+        </div>
+        <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
       </div>
 
       <div class="prog-alt-hc">
         <div class="prog-alt-ico">🏨</div>
         <h4 id="hotel_ancona_nome"></h4>
         <p>~20 min</p>
-        <span id="hotel_ancona_contato"></span>
+        <button type="button" class="prog-phone-btn" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)">
+          <span id="hotel_ancona_contato"></span>
+        </button>
       </div>
 
       <div class="prog-alt-hc">
         <div class="prog-alt-ico">🏨</div>
         <h4 id="hotel_prado_nome"></h4>
         <p>~20 min</p>
-        <span id="hotel_prado_contato"></span>
+        <button type="button" class="prog-phone-btn" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)">
+          <span id="hotel_prado_contato"></span>
+        </button>
       </div>
-    </div>
-
-    <div class="prog-alt-msg">
-      <div class="prog-divider">
-        <span class="prog-divider-line"></span>
-        <span class="prog-divider-txt" id="reserva_santanna_tag"></span>
-        <span class="prog-divider-line"></span>
-      </div>
-      <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
     </div>
   </div>
 </div>
@@ -5890,6 +5940,41 @@ function abrirDayUseDaProgramacao(){
 
     trackEvento('prog_sabado_dayuse','botao');
   },80);
+}
+
+function copiarTelefoneHotel(btn){
+  var id=btn&&btn.getAttribute('data-copy-id');
+  var el=id?document.getElementById(id):null;
+  var tel=el?(el.textContent||'').trim():'';
+  if(!tel)return;
+
+  function ok(){
+    btn.classList.add('copiado');
+    setTimeout(function(){btn.classList.remove('copiado');},1500);
+    trackEvento('hotel_copiar_telefone',id);
+  }
+
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(tel).then(ok).catch(function(){
+      copiarTelefoneFallback(tel);
+      ok();
+    });
+  }else{
+    copiarTelefoneFallback(tel);
+    ok();
+  }
+}
+
+function copiarTelefoneFallback(txt){
+  var ta=document.createElement('textarea');
+  ta.value=txt;
+  ta.setAttribute('readonly','');
+  ta.style.position='fixed';
+  ta.style.top='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
 }
 
 function scrollToLazer(){
