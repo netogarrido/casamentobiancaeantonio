@@ -2899,48 +2899,132 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-cta-txt{color:var(--al)}
 
 /* ══════════════════════════════════════════
-   ALTERNATIVAS — 2 hotéis
+   ALTERNATIVAS — 3 hotéis
 ══════════════════════════════════════════ */
 .prog-alt-wrap{margin:0}
+
+.prog-alt-title{
+  font-family:var(--fh);
+  font-size:1.18rem;
+  font-weight:600;
+  color:var(--n);
+  line-height:1.18;
+  text-align:center;
+  margin:0 0 12px;
+}
+
 .prog-alt-intro{
   font-family:var(--fb);
   font-size:1rem;
   color:var(--n);
   line-height:1.65;
-  margin:0 0 14px;
+  margin:0;
+  text-align:center;
 }
+
 .prog-alt-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
 }
+
 .prog-alt-hc{
+  position:relative;
+  min-width:0;
+  overflow:hidden;
   background:rgba(255,255,255,.92);
   border:1px solid rgba(255,255,255,.62);
   border-radius:12px;
-  padding:16px 12px;
+  padding:14px 8px 12px;
   text-align:center;
   box-shadow:0 4px 12px rgba(15,23,32,.08);
 }
+
+.prog-alt-ico{
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 8px;
+  border-radius:50%;
+  background:var(--ag);
+  border:1px solid rgba(212,160,74,.2);
+  font-size:1.05rem;
+}
+
 .prog-alt-hc h4{
   font-family:var(--fh);
-  font-size:1.1rem;
+  font-size:clamp(.92rem,3.8vw,1.08rem);
   font-weight:600;
-  margin-bottom:4px;
+  margin:0 0 4px;
   color:var(--n);
-  line-height:1.2;
+  line-height:1.12;
 }
+
 .prog-alt-hc p{
   font-family:var(--fb);
-  font-size:.86rem;
+  font-size:.72rem;
   color:var(--im);
-  margin-bottom:8px;
+  line-height:1.25;
+  margin:0 0 7px;
 }
-.prog-alt-hc span{
+
+.prog-alt-hc span:not(.prog-alt-ribbon){
   font-family:var(--fb);
-  font-size:.92rem;
+  font-size:.76rem;
   color:var(--a);
   font-weight:700;
+  line-height:1.2;
+  word-break:keep-all;
+}
+
+.prog-alt-hc--soldout{
+  border-color:rgba(188,42,42,.26);
+}
+
+.prog-alt-ribbon{
+  position:absolute;
+  top:10px;
+  right:-28px;
+  width:92px;
+  padding:3px 0;
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(188,42,42,.28);
+  color:#B3261E;
+  font-family:var(--fb);
+  font-size:.54rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  line-height:1;
+  text-align:center;
+  transform:rotate(34deg);
+  box-shadow:0 3px 10px rgba(15,23,32,.08);
+  z-index:2;
+}
+
+.prog-alt-msg{
+  margin-top:14px;
+  padding:16px 14px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(255,255,255,.58);
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(15,23,32,.08);
+}
+
+.prog-alt-msg .prog-divider{
+  margin-bottom:10px;
+}
+
+@media(max-width:380px){
+  .prog-alt-grid{gap:6px}
+  .prog-alt-hc{padding:13px 6px 11px}
+  .prog-alt-ico{
+    width:31px;
+    height:31px;
+    font-size:.98rem;
+  }
+  .prog-alt-hc span:not(.prog-alt-ribbon){font-size:.68rem}
 }
 
 /* ══════════════════════════════════════════
@@ -3798,29 +3882,45 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <div class="prog-via-panels" id="progViaPanels">
         <div class="prog-via-panels-inner">
 
-          <!-- HOSPEDAGEM -->
-          <div class="prog-via-panel" id="vPanel-hosp">
-            <div class="prog-divider">
-              <span class="prog-divider-line"></span>
-              <span class="prog-divider-txt" id="reserva_santanna_tag"></span>
-              <span class="prog-divider-line"></span>
-            </div>
-            <div class="prog-alt-wrap">
-              <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
-              <div class="prog-alt-grid">
-                <div class="prog-alt-hc">
-                  <h4 id="hotel_prado_nome"></h4>
-                  <p>~20 min</p>
-                  <span id="hotel_prado_contato"></span>
-                </div>
-                <div class="prog-alt-hc">
-                  <h4 id="hotel_ancona_nome"></h4>
-                  <p>~20 min</p>
-                  <span id="hotel_ancona_contato"></span>
-                </div>
-              </div>
-            </div>
-          </div>
+         <!-- HOSPEDAGEM -->
+<div class="prog-via-panel" id="vPanel-hosp">
+  <div class="prog-alt-wrap">
+    <p class="prog-alt-title" id="hotel_opcoes"></p>
+
+    <div class="prog-alt-grid">
+      <div class="prog-alt-hc prog-alt-hc--soldout">
+        <span class="prog-alt-ribbon" id="hotel_santana_esgotado"></span>
+        <div class="prog-alt-ico">🏨</div>
+        <h4 id="hotel_santana_nome"></h4>
+        <p>Hotel do casamento</p>
+        <span id="reserva_marcela_whatsapp"></span>
+      </div>
+
+      <div class="prog-alt-hc">
+        <div class="prog-alt-ico">🏨</div>
+        <h4 id="hotel_ancona_nome"></h4>
+        <p>~20 min</p>
+        <span id="hotel_ancona_contato"></span>
+      </div>
+
+      <div class="prog-alt-hc">
+        <div class="prog-alt-ico">🏨</div>
+        <h4 id="hotel_prado_nome"></h4>
+        <p>~20 min</p>
+        <span id="hotel_prado_contato"></span>
+      </div>
+    </div>
+
+    <div class="prog-alt-msg">
+      <div class="prog-divider">
+        <span class="prog-divider-line"></span>
+        <span class="prog-divider-txt" id="reserva_santanna_tag"></span>
+        <span class="prog-divider-line"></span>
+      </div>
+      <p class="prog-alt-intro" id="reserva_santanna_texto"></p>
+    </div>
+  </div>
+</div>
 
           <!-- DAY USE -->
           <div class="prog-via-panel" id="vPanel-day">
