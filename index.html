@@ -2929,16 +2929,31 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   align-items:stretch;
 }
 
-.prog-alt-card,
-.prog-alt-note{
-  position:relative;
-  min-width:0;
-  overflow:hidden;
-  border-radius:14px;
+.prog-alt-grid--hosp .prog-alt-card--santanna{
+  grid-column:1 / -1;
+  width:calc((100% - 8px) / 2);
+  justify-self:center;
+}
+
+.prog-alt-texto-solto{
+  grid-column:1 / -1;
+  font-family:var(--fh);
+  font-size:clamp(1rem,4vw,1.18rem);
+  font-weight:400;
+  font-style:italic;
+  color:var(--n);
+  line-height:1.34;
+  margin:4px auto 6px;
+  text-align:center;
+  max-width:360px;
 }
 
 .prog-alt-card{
+  position:relative;
+  min-width:0;
   min-height:128px;
+  overflow:hidden;
+  border-radius:14px;
   background:rgba(255,255,255,.92);
   border:1px solid rgba(255,255,255,.66);
   padding:18px 10px 12px;
@@ -2956,29 +2971,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-color:rgba(188,42,42,.24);
   background:rgba(255,255,255,.92);
   box-shadow:0 4px 12px rgba(15,23,32,.08);
-}
-
-.prog-alt-note{
-  min-height:128px;
-  padding:16px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
-  border:1px solid rgba(212,160,74,.28);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.20);
-}
-
-.prog-alt-note p{
-  font-family:var(--fh);
-  font-size:clamp(1rem,4vw,1.18rem);
-  font-weight:400;
-  font-style:italic;
-  color:var(--n);
-  line-height:1.34;
-  margin:0;
-  text-align:left;
 }
 
 .prog-alt-card h4{
@@ -3074,13 +3066,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .prog-alt-card--santanna{
     padding-top:29px;
   }
-  .prog-alt-note{
-    min-height:124px;
-    padding:14px 10px;
-  }
-  .prog-alt-note p{
+  .prog-alt-texto-solto{
     font-size:.96rem;
     line-height:1.3;
+    margin:3px auto 5px;
   }
   .prog-alt-card h4{
     font-size:.98rem;
@@ -3957,7 +3946,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <div class="prog-alt-wrap">
     <p class="prog-alt-title" id="hotel_opcoes"></p>
 
-    <div class="prog-alt-grid">
+    <div class="prog-alt-grid prog-alt-grid--hosp">
       <div class="prog-alt-card prog-alt-card--santanna" role="button" tabindex="0" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
         <div class="prog-soldout-ribbon" id="hotel_santana_esgotado"></div>
         <h4 id="hotel_santana_nome"></h4>
@@ -3965,9 +3954,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
         <span class="prog-phone-number" id="reserva_marcela_whatsapp"></span>
       </div>
 
-      <div class="prog-alt-note">
-        <p id="reserva_santanna_texto"></p>
-      </div>
+      <p class="prog-alt-texto-solto" id="reserva_santanna_texto"></p>
 
       <div class="prog-alt-card" role="button" tabindex="0" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
         <h4 id="hotel_ancona_nome"></h4>
