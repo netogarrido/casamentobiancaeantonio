@@ -1242,8 +1242,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   margin:6px auto 28px;
   max-width:480px;
   padding:0 4px;
-  perspective:1400px;
-  perspective-origin:50% 0%;
 }
 
 .pergaminho{
@@ -1272,49 +1270,33 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     radial-gradient(circle at 88% 18%, rgba(156,122,63,.06) 0%, transparent 11%),
     /* base creme */
     linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 55%,#F1E5C8 100%);
-border:1.5px solid rgba(156,122,63,.34);
+  border:1.5px solid rgba(156,122,63,.34);
   border-top:none;
   border-radius:0 0 14px 14px;
   box-shadow:
-    0 18px 30px -8px rgba(84,73,60,.22),
-    0 8px 16px rgba(84,73,60,.10),
+    0 14px 36px rgba(84,73,60,.16),
     inset 0 1px 0 rgba(255,255,255,.7),
     inset 0 -2px 0 rgba(156,122,63,.10);
   animation:pergaminhoUnfurl .9s cubic-bezier(.22,.7,.28,1) both;
   overflow:hidden;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transform:rotateX(2.5deg);
-  transform-origin:50% 0%;
-  transform-style:preserve-3d;
 }
   
 .pergaminho:active{
   transform:scale(.992);
 }
 
-/* borda superior — cilindro/rolinho do pergaminho, visível por causa da inclinação */
+/* borda superior — mesmo acabamento da letra aberta */
 .pergaminho-borda-topo{
-  height:22px;
+  height:16px;
   background:
-    /* brilho central no cilindro */
     linear-gradient(180deg,
-      rgba(120,90,50,.22) 0%,
-      rgba(156,122,63,.08) 22%,
-      rgba(255,250,235,.55) 48%,
-      rgba(156,122,63,.10) 78%,
-      rgba(120,90,50,.30) 100%),
-    /* base creme dourada */
-    linear-gradient(180deg,#E8D4A8 0%,#F1E5C8 50%,#D9C089 100%);
-  border-bottom:1px solid rgba(120,90,50,.38);
-  border-top:1px solid rgba(120,90,50,.30);
-  border-left:1px solid rgba(156,122,63,.30);
-  border-right:1px solid rgba(156,122,63,.30);
-  border-radius:14px 14px 0 0;
+      rgba(156,122,63,.26) 0%,
+      rgba(156,122,63,.10) 55%,
+      transparent 100%);
+  border-bottom:1px solid rgba(156,122,63,.30);
   position:relative;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.55),
-    inset 0 -1px 2px rgba(120,90,50,.18);
 }
 
 .pergaminho-corpo{
@@ -5004,23 +4986,21 @@ heroVideoSeek.addEventListener('input',function(){
 /* Trava visual: usa um elemento que NÃO se mexe (a seção .vestido) como
    âncora absoluta, e mantém o ponto clicado na MESMA posição do viewport
    durante toda a transição da letra (que dura ~0.8s). */
-function _travarScrollDurante(elFixo,elFoco,duracaoMs){
-  if(!elFixo||!elFoco)return;
+/* Trava o scroll mantendo a ÂNCORA (elemento que não some) na MESMA posição
+   do viewport durante a transição. Compensamos frame a frame qualquer
+   mudança de altura (transição CSS, reflow do grid, elementos surgindo). */
+function _travarScrollDurante(elAncora,duracaoMs){
+  if(!elAncora)return;
   var htmlEl=document.documentElement;
   var prev=htmlEl.style.scrollBehavior;
   htmlEl.style.scrollBehavior='auto';
 
-  /* Y do foco relativo ao elemento fixo (que não muda de posição) */
-  var rectFixo0=elFixo.getBoundingClientRect();
-  var rectFoco0=elFoco.getBoundingClientRect();
-  var deslocamentoNoFixo=rectFoco0.top-rectFixo0.top;
-  var topoFocoNoViewport=rectFoco0.top;
-
+  var topoAncoraInicial=elAncora.getBoundingClientRect().top;
   var inicio=performance.now();
+
   function loop(){
-    var rectFixoAgora=elFixo.getBoundingClientRect();
-    var topoFocoEsperado=rectFixoAgora.top+deslocamentoNoFixo;
-    var delta=topoFocoEsperado-topoFocoNoViewport;
+    var topoAncoraAgora=elAncora.getBoundingClientRect().top;
+    var delta=topoAncoraAgora-topoAncoraInicial;
     if(Math.abs(delta)>0.5){
       window.scrollBy(0,delta);
     }
@@ -5057,12 +5037,11 @@ function _toggleLetra(abrir){
   if(!b||!sec)return;
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
-  var perg=document.getElementById('pergaminhoWrap');
 
-  /* Foco visual: se vai ABRIR, ancoramos no pergaminho (que vai virar lyr-stage);
-     se vai FECHAR, ancoramos no lyr-stage (que vai virar pergaminho).
-     Em ambos os casos, o "foco" e o ".vestido" são medidos AGORA, antes do reflow. */
-  var elFoco=abrir?perg:(b.querySelector('.lyr-stage')||b);
+  /* Âncora = .vestido-titulo. Está SEMPRE no fluxo, SEMPRE visível,
+     SEMPRE acima do pergaminho/lyr-stage. Não some, não muda de tamanho.
+     É a única referência confiável durante a transição. */
+  var ancora=sec.querySelector('.vestido-titulo')||sec;
 
   if(abrir){
     b.classList.add('open');
@@ -5079,8 +5058,8 @@ function _toggleLetra(abrir){
     trackEvento('letra_fechou','');
   }
 
-  /* Trava o scroll durante a transição inteira (0.8s + folga) */
-  _travarScrollDurante(sec,elFoco,950);
+  /* Trava durante a transição (0.8s) + folga */
+  _travarScrollDurante(ancora,950);
 }
 
 /* Popula o pergaminho a partir das chaves musica_titulo + musica_trecho */
