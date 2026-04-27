@@ -2484,38 +2484,26 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   transition:all .28s ease;
-  background:rgba(255,255,255,.38);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.55);
+  background:var(--n);
+  border:1px solid rgba(212,160,74,.45);
   box-shadow:
-    0 4px 16px rgba(15,23,32,.08),
-    inset 0 1px 0 rgba(255,255,255,.7);
+    0 4px 16px rgba(15,23,32,.18),
+    inset 0 1px 0 rgba(255,255,255,.06);
   padding:16px 8px;
   display:flex;
   align-items:center;
   justify-content:center;
   white-space:nowrap;
 }
-.prog-dia-card::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.0) 40%,
-    rgba(255,255,255,.55) 100%
-  );
-  pointer-events:none;
-}
+.prog-dia-card::after{content:none}
 .prog-dia-card:active{transform:scale(.97)}
 .prog-dia-card.on{
   background:rgba(255,255,255,.92);
+  border-color:var(--al);
   box-shadow:
     0 0 0 2px var(--a),
     0 0 22px rgba(212,160,74,.45),
     0 8px 24px rgba(212,160,74,.28);
-  border-color:var(--al);
 }
 .prog-dia-card .dow{
   position:relative;
@@ -2524,22 +2512,22 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-size:1.05rem;
   font-weight:600;
   letter-spacing:.06em;
-  color:var(--n);
+  color:var(--al);
   transition:color .28s ease;
 }
 .prog-dia-card.on .dow{color:var(--n)}
 
 .prog-dias-grid.has-open .prog-dia-card:not(.on){
-  opacity:.62;
-  filter:saturate(.7);
+  opacity:.55;
 }
 @media(hover:hover){
   .prog-dia-card:hover{
-    background:rgba(255,255,255,.82);
+    border-color:var(--a);
     transform:translateY(-2px);
-    box-shadow:0 8px 24px rgba(15,23,32,.14), inset 0 1px 0 rgba(255,255,255,.9);
+    box-shadow:0 8px 22px rgba(15,23,32,.28);
   }
-  .prog-dias-grid.has-open .prog-dia-card:not(.on):hover{opacity:.85}
+  .prog-dia-card:hover .dow{color:var(--ap)}
+  .prog-dias-grid.has-open .prog-dia-card:not(.on):hover{opacity:.8}
 }
 
 /* painel de texto que abre abaixo dos dias */
