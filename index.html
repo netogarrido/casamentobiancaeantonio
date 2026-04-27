@@ -2442,248 +2442,87 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 
+/* ══════════════════════════════════════════
+   PROGRAMAÇÃO — "PAPEL SOBRE NOITE"
+   Cartões creme sólidos sobre fundo navy.
+   Corpo: Nunito 18px. Títulos: Cormorant.
+   Ouro = acento (linha, ícone, ativo). Nunca texto.
+══════════════════════════════════════════ */
 
-/* ── CAIXINHA 1 — LAZER (clone visual das categorias de presentes) ── */
-.prog-lazer-wrap{
-  margin:0 0 36px;
-}
-.prog-lazer-panel{
-  background:rgba(255,255,255,.50);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.62);
-  border-radius:18px;
-  padding:14px 12px 12px;
-  box-shadow:
-    0 14px 34px rgba(15,23,32,.08),
-    inset 0 1px 0 rgba(255,255,255,.55);
-}
-.prog-lazer-ttl{
-  font-size:.66rem;
-  font-weight:600;
-  letter-spacing:.14em;
-  
-  color:var(--a);
-  text-align:center;
-  margin:0 0 12px;
-  padding:4px 4px 0;
-}
-.prog-lazer-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-.prog-lazer-card{
-  position:relative;
-  aspect-ratio:1;
-  border-radius:12px;
-  overflow:hidden;
-  height:100%;
-  cursor:pointer;
-  transition:all .28s ease;
-  -webkit-tap-highlight-color:transparent;
-  background:rgba(255,255,255,.38);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.55);
-  box-shadow:
-    0 4px 16px rgba(15,23,32,.08),
-    inset 0 1px 0 rgba(255,255,255,.7);
-}
-.prog-lazer-card::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.0) 40%,
-    rgba(255,255,255,.55) 100%
-  );
-  pointer-events:none;
-}
-.prog-lazer-card img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  transition:transform .4s ease, filter .4s ease;
-  filter:saturate(.9) brightness(.95);
-  position:absolute;
-  inset:0;
-  z-index:0;
-}
-.prog-lazer-card span{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  z-index:2;
-  padding:10px 12px 9px;
-  background:rgba(255,255,255,.82);
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
-  pointer-events:none;
-  transition:background .3s ease, color .3s ease;
-  font-family:var(--fh);
-  font-size:.82rem;
-  font-weight:600;
-  letter-spacing:.06em;
-  color:var(--n);
-  line-height:1.2;
-}
-.prog-lazer-card.on{
-  background:rgba(255,255,255,.92);
-  box-shadow:
-    0 0 0 2px var(--a),
-    0 0 22px rgba(212,160,74,.45),
-    0 8px 24px rgba(212,160,74,.28);
-  border-color:var(--al);
-}
-.prog-lazer-card.on img{
-  filter:saturate(1.35) brightness(1.08) contrast(1.05);
-  transform:scale(1.04);
-}
-.prog-lazer-card.on span{
-  background:rgba(255,251,242,.92);
-  color:var(--n);
-}
-.prog-lazer-grid.has-open .prog-lazer-card:not(.on){
-  opacity:.62;
-  filter:saturate(.7);
-}
-.prog-lazer-grid.has-open .prog-lazer-card:not(.on) img{
-  filter:saturate(.75) brightness(.92);
-}
-.prog-lazer-card:active{
-  transform:scale(.97);
-}
-@media(hover:hover){
-  .prog-lazer-card:hover{
-    background:rgba(255,255,255,.82);
-    transform:translateY(-2px);
-    box-shadow:0 8px 24px rgba(15,23,32,.14), inset 0 1px 0 rgba(255,255,255,.9);
-  }
-  .prog-lazer-card:hover img{
-    transform:scale(1.05);
-    filter:saturate(1.05) brightness(1);
-  }
-  .prog-lazer-grid.has-open .prog-lazer-card:not(.on):hover{
-    opacity:.85;
-  }
+/* tokens locais da seção */
+.prog{
+  --paper:#FAF4E8;
+  --paper-2:#FFFFFF;
+  --ink:#0F1720;
+  --ink-2:#2A3A52;
+  --ink-soft:#54607A;
+  --line:#D8CFC0;
+  --gold:#D4A04A;
+  --gold-soft:#E8C57A;
 }
 
-.prog-lazer-panels{
-  display:grid;
-  grid-template-rows:0fr;
-  transition:grid-template-rows .42s cubic-bezier(.4,0,.2,1), margin-top .28s ease;
-  margin-top:0;
-}
-.prog-lazer-panels.has-open{
-  grid-template-rows:1fr;
-  margin-top:12px;
-}
-.prog-lazer-panel-txt{
-  min-height:0;
-  overflow:hidden;
-  display:none;
-  opacity:0;
-  transform:translateY(-4px);
-  transition:opacity .24s ease, transform .24s ease;
-}
-.prog-lazer-panel-txt.on{
-  display:block;
-  opacity:1;
-  transform:translateY(0);
-}
-.prog-lazer-panel-txt p{
-  background:rgba(255,255,255,.65);
-  border:1px solid rgba(255,255,255,.5);
-  border-radius:12px;
-  padding:14px 14px;
-  font-size:.82rem;
-  line-height:1.6;
-  color:var(--im);
-}
-  
-
-  
-
-/* ── PROGRAMAÇÃO — caixa-mãe + cards-título fininhos ── */
-
+/* ── Pílulas dos dias (Sexta/Sábado/Domingo) ── */
 .prog-dias-wrap{
-  margin:-50px 0 24px; /* ← topo: mais negativo = sobe mais sobre a hero */
-  position:relative;
-  z-index:5;
+  margin:8px 0 22px;
 }
-
-  
 .prog-dias-panel{
-  background:rgba(255,255,255,.50);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.62);
-  border-radius:18px;
-  padding:14px 12px 14px;
-  box-shadow:
-    0 14px 34px rgba(15,23,32,.08),
-    inset 0 1px 0 rgba(255,255,255,.55);
+  background:transparent;
+  border:none;
+  padding:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .prog-dias-grid{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
+  gap:10px;
 }
 
 .prog-dia-card{
   position:relative;
-  border-radius:10px;
-  background:var(--i);
-  border:1.5px solid rgba(212,160,74,.55);
-  padding:10px 8px;
+  border-radius:12px;
+  background:var(--paper);
+  border:1.5px solid var(--paper);
+  padding:16px 8px;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:background .22s ease, box-shadow .22s ease, border-color .22s ease, transform .22s ease, color .22s ease;
+  transition:background .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:6px;
   white-space:nowrap;
-  font-family:var(--fh);
-  font-size:.95rem;
-  color:var(--a);
-  letter-spacing:.01em;
-  box-shadow:0 4px 12px rgba(15,23,32,.18);
+  box-shadow:0 6px 18px rgba(0,0,0,.22);
 }
 .prog-dia-card:hover{
-  border-color:var(--a);
+  background:#FFFFFF;
   transform:translateY(-1px);
-  box-shadow:0 6px 16px rgba(15,23,32,.24);
+  box-shadow:0 8px 22px rgba(0,0,0,.28);
 }
 .prog-dia-card.on{
-  background:var(--a);
-  border-color:var(--a);
-  color:var(--i);
-  box-shadow:0 0 0 1px rgba(15,23,32,.15), 0 10px 22px rgba(212,160,74,.38);
+  background:var(--gold);
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px rgba(15,23,32,.10), 0 10px 22px rgba(212,160,74,.45);
   transform:translateY(-1px);
 }
-.prog-dia-card.on .dow{color:var(--i)}
-
 .prog-dia-card .dow{
-  font-size:.6rem;
+  font-family:var(--fb);
+  font-size:1rem;
   font-weight:700;
-  letter-spacing:.22em;
-  
-  color:var(--a);
-  font-family:var(--fs);
+  letter-spacing:.04em;
+  color:var(--ink);
   transition:color .22s ease;
 }
-  
-
+.prog-dia-card.on .dow{
+  color:var(--ink);
+}
 .prog-dia-card .num{
   font-size:1.05rem;
-  font-weight:500;
+  font-weight:700;
+  color:var(--ink);
 }
-  
+
+/* painel de texto que abre abaixo dos dias */
 .prog-dias-panels{
   display:grid;
   grid-template-rows:0fr;
@@ -2710,295 +2549,106 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   transform:translateY(0);
 }
 .prog-dia-panel-txt p{
-  background:rgba(255,255,255,.65);
-  border:1px solid rgba(255,255,255,.5);
+  background:var(--paper);
+  border:1px solid var(--line);
   border-radius:12px;
-  padding:14px 14px;
-  font-size:.82rem;
-  line-height:1.6;
-  color:var(--im);
+  padding:18px 18px;
+  font-family:var(--fb);
+  font-size:1.125rem; /* 18px */
+  line-height:1.7;
+  color:var(--ink);
   margin:0;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
 }
 .prog-dias-nota{
   margin-top:12px;
-  padding:12px 14px;
-  background:rgba(255,255,255,.45);
-  border-radius:var(--rs);
-  border-left:3px solid var(--ap);
+  padding:14px 16px;
+  background:var(--paper);
+  border-radius:12px;
+  border-left:3px solid var(--gold);
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
-.prog-dias-nota p{font-size:.72rem;color:var(--im);line-height:1.6;margin:0}
-
-/* ── Chamada "só resta day use" ── */
-.prog-cta-dayuse{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:28px 0 18px;
-}
-.prog-cta-line{
-  flex:1;
-  height:1px;
-  background:linear-gradient(90deg,transparent,var(--a),transparent);
-  opacity:.5;
-}
-.prog-cta-txt{
-  font-size:.62rem;
-  font-weight:700;
-  letter-spacing:.18em;
-  
-  color:var(--a);
-  white-space:nowrap;
-}
-
-/* ── Card DAY USE (sólido branco, protagonista) ── */
-.prog-dayuse{
-  background:#fff;
-  border:1px solid var(--st);
-  border-radius:var(--r);
-  padding:22px 20px 0;
-  margin:0 0 32px;
-  box-shadow:0 8px 28px rgba(15,23,32,.08);
-  overflow:hidden;
-}
-.prog-dayuse-ttl{
-  font-family:var(--fh);
-  font-size:1.3rem;
-  font-weight:500;
-  color:var(--i);
-  margin:0 0 10px;
-  line-height:1.25;
-}
-.prog-dayuse-txt{
-  font-size:.84rem;
-  color:var(--im);
-  line-height:1.6;
-  margin:0 0 18px;
-}
-.prog-dayuse-info{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding:0 0 20px;
-}
-.pdu-i{display:flex;gap:10px;align-items:baseline}
-.pdu-i span:first-child{font-size:.82rem;flex-shrink:0;width:22px}
-.pdu-i span:last-child{font-size:.82rem;color:var(--im);line-height:1.5}
-
-/* Reserva com Marcela dentro do card day use */
-.prog-marcela{
-  background:var(--ag);
-  border-top:1px solid var(--st);
-  margin:0 -20px;
-  padding:18px 20px 20px;
-}
-.prog-marcela h4{
-  font-family:var(--fh);
+.prog-dias-nota p{
+  font-family:var(--fb);
   font-size:1rem;
-  font-weight:500;
-  color:var(--i);
-  margin:0 0 4px;
-}
-.prog-marcela-lead{
-  font-size:.76rem;
-  color:var(--im);
-  margin:0 0 14px;
-}
-.prog-marcela-ct{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  margin-bottom:14px;
-}
-.prog-marcela-it{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 13px;
-  background:#fff;
-  border-radius:var(--rs);
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  border:1px solid var(--st);
-  transition:background .2s;
-}
-.prog-marcela-it:hover{background:var(--s)}
-.prog-marcela-ico{font-size:.95rem}
-.prog-marcela-inf{flex:1;text-align:left}
-.prog-marcela-lb{
-  font-size:.54rem;
-  color:var(--is);
-  
-  letter-spacing:.08em;
-  font-weight:600;
-}
-.prog-marcela-vl{font-size:.8rem;color:var(--i)}
-.prog-marcela-cp{
-  font-size:.54rem;
-  color:var(--a);
-  
-  letter-spacing:.08em;
-  font-weight:600;
-}
-.prog-marcela-hrs{
-  font-size:.68rem;
-  color:var(--is);
-  line-height:1.7;
-}
-.prog-marcela-hrs strong{color:var(--im);font-weight:600}
-.prog-marcela-aviso{
-  font-size:.7rem;
-  color:var(--is);
-  margin-top:8px;
-}
-
-/* ── Divisor tipográfico ── */
-.prog-divider{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:28px 0 18px;
-}
-.prog-divider-line{
-  flex:1;
-  height:1px;
-  background:var(--st);
-}
-.prog-divider-txt{
-  font-size:.58rem;
-  font-weight:600;
-  letter-spacing:.18em;
-  
-  color:var(--is);
-  white-space:nowrap;
-}
-
-/* ── Alternativas (tipográfico, sem card externo) ── */
-.prog-alt-wrap{
-  margin:0 0 24px;
-}
-.prog-alt-intro{
-  font-size:.8rem;
-  color:var(--im);
-  line-height:1.6;
-  margin:0 0 14px;
-}
-.prog-alt-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.prog-alt-hc{
-  background:#fff;
-  border:1px solid var(--st);
-  border-radius:var(--rs);
-  padding:14px 12px;
-  text-align:center;
-}
-.prog-alt-hc h4{
-  font-family:var(--fh);
-  font-size:.9rem;
-  font-weight:500;
-  margin-bottom:3px;
-  color:var(--i);
-}
-.prog-alt-hc p{
-  font-size:.68rem;
-  color:var(--is);
-  margin-bottom:6px;
-}
-.prog-alt-hc span{
-  font-size:.7rem;
-  color:var(--a);
-  font-weight:500;
-}
-
-/* ── Só festa (card menor) ── */
-.prog-sofesta{
-  background:#fff;
-  border:1px solid var(--st);
-  border-radius:var(--rs);
-  padding:16px 16px;
-  text-align:center;
-}
-.prog-sofesta h4{
-  font-family:var(--fh);
-  font-size:1rem;
-  font-weight:500;
-  color:var(--i);
-  margin:0 0 6px;
-}
-.prog-sofesta p{
-  font-size:.78rem;
-  color:var(--im);
-  line-height:1.55;
+  color:var(--ink);
+  line-height:1.65;
   margin:0;
 }
 
-  /* ── CAIXINHA 3×1 — vias de participação ── */
+/* ── Texto introdutório (fds_texto_1) ── */
+.prog .txt{
+  font-family:var(--fb);
+  font-size:1.125rem; /* 18px */
+  line-height:1.7;
+  color:#FAF4E8;
+  margin:18px 0 22px;
+}
+
+/* ══════════════════════════════════════════
+   CAIXA 3×1 — VIAS DE PARTICIPAÇÃO
+══════════════════════════════════════════ */
 .prog-via-wrap{
-  margin:18px 0 28px;
-  background:rgba(255,255,255,.50);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.62);
+  margin:6px 0 28px;
+  background:var(--paper);
+  border:1px solid var(--line);
   border-radius:18px;
-  padding:16px 14px 14px;
-  box-shadow:
-    0 14px 34px rgba(15,23,32,.08),
-    inset 0 1px 0 rgba(255,255,255,.55);
+  padding:20px 16px 18px;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .prog-via-ttl{
   text-align:center;
   font-family:var(--fh);
-  font-size:.72rem;
-  font-weight:600;
-  letter-spacing:.22em;
-  
-  color:var(--a);
-  margin:0 0 14px;
-  padding:2px 4px 0;
+  font-size:1.15rem;
+  font-style:italic;
+  font-weight:500;
+  letter-spacing:.01em;
+  color:var(--ink);
+  margin:0 0 16px;
+  padding:0;
+}
+.prog-via-ttl::after{
+  content:'';
+  display:block;
+  width:48px;
+  height:1px;
+  background:var(--gold);
+  margin:8px auto 0;
+  opacity:.7;
 }
 .prog-via-grid{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
+  gap:10px;
 }
 .prog-via-card{
   position:relative;
-  min-height:96px;
+  min-height:108px;
   border-radius:12px;
   overflow:hidden;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:all .28s ease;
-  background:rgba(255,255,255,.38);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.55);
-  box-shadow:
-    0 4px 16px rgba(15,23,32,.08),
-    inset 0 1px 0 rgba(255,255,255,.7);
+  transition:background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .2s ease;
+  background:var(--paper-2);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  border:1.5px solid var(--line);
+  box-shadow:0 3px 10px rgba(0,0,0,.10);
   padding:14px 8px 12px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:7px;
-  font-family:var(--fh);
-  color:var(--n);
+  gap:9px;
+  font-family:var(--fb);
+  color:var(--ink);
   text-align:center;
-  line-height:1.2;
+  line-height:1.25;
 }
 .prog-via-card::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,.0) 40%,
-    rgba(255,255,255,.55) 100%
-  );
-  pointer-events:none;
+  content:none;
 }
 .prog-via-ico,
 .prog-via-lb{
@@ -3006,89 +2656,78 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:2;
 }
 .prog-via-ico{
-  width:38px;
-  height:38px;
+  width:46px;
+  height:46px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:1.26rem;
+  font-size:1.4rem;
   line-height:1;
-  background:rgba(255,255,255,.72);
-  border:1px solid rgba(255,255,255,.65);
-  box-shadow:0 3px 10px rgba(15,23,32,.06);
-  transition:transform .3s ease, filter .3s ease, background .3s ease;
+  background:var(--ink);
+  border:1px solid var(--ink);
+  box-shadow:0 3px 8px rgba(0,0,0,.18);
+  transition:transform .3s ease, background .3s ease, border-color .3s ease;
+  color:#fff;
 }
 .prog-via-lb{
-  padding:7px 8px 6px;
-  margin:0 -2px -4px;
-  border-radius:999px;
-  background:rgba(255,255,255,.82);
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
-  font-size:.72rem;
-  font-weight:600;
-  letter-spacing:.04em;
-  color:var(--n);
-  transition:background .3s ease, color .3s ease;
+  padding:0;
+  margin:0;
+  border-radius:0;
+  background:transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  font-size:.95rem;
+  font-weight:700;
+  letter-spacing:.01em;
+  color:var(--ink);
+  transition:color .3s ease;
 }
 .prog-via-card.on{
-  background:rgba(255,255,255,.92);
-  box-shadow:
-    0 0 0 2px var(--a),
-    0 0 22px rgba(212,160,74,.45),
-    0 8px 24px rgba(212,160,74,.28);
-  border-color:var(--al);
+  background:var(--gold);
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px rgba(15,23,32,.12), 0 10px 22px rgba(212,160,74,.40);
+  transform:translateY(-1px);
 }
 .prog-via-card.on .prog-via-ico{
-  background:rgba(255,251,242,.92);
-  filter:saturate(1.35) brightness(1.08) contrast(1.05);
-  transform:scale(1.08);
+  background:var(--ink);
+  border-color:var(--ink);
+  transform:scale(1.06);
 }
 .prog-via-card.on .prog-via-lb{
-  background:rgba(255,251,242,.92);
-  color:var(--n);
+  color:var(--ink);
 }
 .prog-via-grid.has-open .prog-via-card:not(.on){
-  opacity:.62;
-  filter:saturate(.7);
-}
-.prog-via-grid.has-open .prog-via-card:not(.on) .prog-via-ico{
-  filter:saturate(.75) brightness(.92);
+  opacity:.55;
 }
 .prog-via-card:active{
   transform:scale(.97);
 }
 @media(hover:hover){
   .prog-via-card:hover{
-    background:rgba(255,255,255,.82);
     transform:translateY(-2px);
-    box-shadow:0 8px 24px rgba(15,23,32,.14), inset 0 1px 0 rgba(255,255,255,.9);
-  }
-  .prog-via-card:hover .prog-via-ico{
-    transform:scale(1.05);
-    filter:saturate(1.05) brightness(1);
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+    border-color:var(--gold-soft);
   }
   .prog-via-grid.has-open .prog-via-card:not(.on):hover{
-    opacity:.85;
+    opacity:.78;
   }
 }
 @media (max-width:480px){
   .prog-via-wrap{
-    padding:14px 12px 12px;
+    padding:18px 14px 14px;
   }
   .prog-via-card{
-    min-height:88px;
+    min-height:100px;
     padding:12px 6px 10px;
   }
   .prog-via-ico{
-    width:34px;
-    height:34px;
-    font-size:1.16rem;
+    width:42px;
+    height:42px;
+    font-size:1.3rem;
   }
-.prog-via-lb{
-    font-size:.76rem;
-    padding:6px 6px 5px;
+  .prog-via-lb{
+    font-size:.92rem;
   }
 }
 
@@ -3100,7 +2739,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .prog-via-panels.has-open{
   grid-template-rows:1fr;
-  margin-top:14px;
+  margin-top:16px;
 }
 .prog-via-panels-inner{
   overflow:hidden;
@@ -3111,11 +2750,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   opacity:0;
   transform:translateY(-4px);
   transition:opacity .3s ease, transform .3s ease;
-  background:rgba(255,255,255,.70);
-  border:1px solid rgba(255,255,255,.58);
-  border-radius:14px;
-  padding:14px 12px;
-  box-shadow:0 6px 18px rgba(15,23,32,.07);
+  background:transparent;
+  border:none;
+  border-radius:0;
+  padding:0;
+  box-shadow:none;
 }
 .prog-via-panel.on{
   display:block;
@@ -3130,25 +2769,436 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   justify-content:center;
   gap:8px;
   width:100%;
-  margin:14px 0;
-  padding:12px 16px;
+  margin:16px 0 6px;
+  padding:14px 16px;
   background:transparent;
-  border:1.5px dashed rgba(212,160,74,.55);
+  border:1.5px dashed var(--gold);
   border-radius:12px;
-  color:var(--i);
-  font-family:var(--fh);
-  font-size:.82rem;
-  font-weight:500;
+  color:var(--ink);
+  font-family:var(--fb);
+  font-size:1rem;
+  font-weight:600;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   transition:background .22s ease, border-color .22s ease, transform .22s ease;
 }
 .prog-via-link:hover{
-  background:rgba(212,160,74,.08);
-  border-color:var(--a);
+  background:rgba(212,160,74,.10);
+  border-color:var(--gold);
   transform:translateY(-1px);
 }
-.prog-via-link span{font-size:1rem}
+.prog-via-link span{font-size:1.05rem}
+
+/* ══════════════════════════════════════════
+   DIVISORES TIPOGRÁFICOS (vias internas)
+══════════════════════════════════════════ */
+.prog-divider,
+.prog-cta-dayuse{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:6px 0 14px;
+}
+.prog-divider-line,
+.prog-cta-line{
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+.prog-cta-line{
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:.6;
+}
+.prog-divider-txt,
+.prog-cta-txt{
+  font-family:var(--fb);
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.16em;
+  color:var(--ink-soft);
+  white-space:nowrap;
+}
+.prog-cta-txt{
+  color:var(--gold);
+}
+
+/* ══════════════════════════════════════════
+   ALTERNATIVAS (cards 2 hotéis)
+══════════════════════════════════════════ */
+.prog-alt-wrap{
+  margin:0;
+}
+.prog-alt-intro{
+  font-family:var(--fb);
+  font-size:1.0625rem; /* 17px */
+  color:var(--ink);
+  line-height:1.65;
+  margin:0 0 14px;
+}
+.prog-alt-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.prog-alt-hc{
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px 14px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+.prog-alt-hc h4{
+  font-family:var(--fh);
+  font-size:1.15rem;
+  font-weight:500;
+  margin-bottom:4px;
+  color:var(--ink);
+  line-height:1.2;
+}
+.prog-alt-hc p{
+  font-family:var(--fb);
+  font-size:.92rem;
+  color:var(--ink-soft);
+  margin-bottom:8px;
+}
+.prog-alt-hc span{
+  font-family:var(--fb);
+  font-size:.95rem;
+  color:var(--ink);
+  font-weight:600;
+}
+
+/* ══════════════════════════════════════════
+   SÓ FESTA
+══════════════════════════════════════════ */
+.prog-sofesta{
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:20px 18px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+.prog-sofesta h4{
+  font-family:var(--fh);
+  font-size:1.3rem;
+  font-weight:500;
+  color:var(--ink);
+  margin:0 0 8px;
+  line-height:1.25;
+}
+.prog-sofesta p{
+  font-family:var(--fb);
+  font-size:1.0625rem; /* 17px */
+  color:var(--ink);
+  line-height:1.65;
+  margin:0;
+}
+
+/* ══════════════════════════════════════════
+   DAY USE (card protagonista)
+══════════════════════════════════════════ */
+.prog-dayuse{
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:24px 22px 0;
+  margin:0 0 8px;
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
+  overflow:hidden;
+}
+.prog-dayuse-ttl{
+  font-family:var(--fh);
+  font-size:1.5rem;
+  font-weight:500;
+  color:var(--ink);
+  margin:0 0 12px;
+  line-height:1.2;
+}
+.prog-dayuse-txt{
+  font-family:var(--fb);
+  font-size:1.0625rem; /* 17px */
+  color:var(--ink);
+  line-height:1.65;
+  margin:0 0 20px;
+}
+.prog-dayuse-info{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:0 0 22px;
+}
+.pdu-i{
+  display:flex;
+  gap:12px;
+  align-items:baseline;
+}
+.pdu-i span:first-child{
+  font-size:1rem;
+  flex-shrink:0;
+  width:24px;
+}
+.pdu-i span:last-child{
+  font-family:var(--fb);
+  font-size:1rem;
+  color:var(--ink);
+  line-height:1.55;
+}
+
+/* ── Marcela (contato) — único bloco escuro dentro do day use ── */
+.prog-marcela{
+  background:var(--ink);
+  color:#FAF4E8;
+  border-top:1px solid var(--line);
+  margin:0 -22px;
+  padding:22px 22px 24px;
+}
+.prog-marcela h4{
+  font-family:var(--fh);
+  font-size:1.2rem;
+  font-weight:500;
+  color:#FAF4E8;
+  margin:0 0 6px;
+}
+.prog-marcela-lead{
+  font-family:var(--fb);
+  font-size:.95rem;
+  color:rgba(250,244,232,.78);
+  margin:0 0 16px;
+}
+.prog-marcela-lead strong{
+  color:var(--gold-soft);
+  font-weight:700;
+}
+.prog-marcela-ct{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:16px;
+}
+.prog-marcela-it{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 14px;
+  background:rgba(255,255,255,.06);
+  border-radius:10px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  border:1px solid rgba(255,255,255,.10);
+  transition:background .2s, border-color .2s;
+}
+.prog-marcela-it:hover{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(212,160,74,.45);
+}
+.prog-marcela-ico{
+  font-size:1.1rem;
+}
+.prog-marcela-inf{
+  flex:1;
+  text-align:left;
+}
+.prog-marcela-lb{
+  font-family:var(--fb);
+  font-size:.72rem;
+  color:var(--gold-soft);
+  letter-spacing:.10em;
+  font-weight:700;
+}
+.prog-marcela-vl{
+  font-family:var(--fb);
+  font-size:.98rem;
+  color:#FAF4E8;
+  margin-top:2px;
+}
+.prog-marcela-cp{
+  font-family:var(--fb);
+  font-size:.7rem;
+  color:var(--gold-soft);
+  letter-spacing:.10em;
+  font-weight:700;
+}
+.prog-marcela-hrs{
+  font-family:var(--fb);
+  font-size:.92rem;
+  color:rgba(250,244,232,.78);
+  line-height:1.7;
+}
+.prog-marcela-hrs strong{
+  color:#FAF4E8;
+  font-weight:700;
+}
+.prog-marcela-aviso{
+  font-family:var(--fb);
+  font-size:.88rem;
+  color:rgba(250,244,232,.6);
+  margin-top:10px;
+  line-height:1.55;
+}
+
+/* ══════════════════════════════════════════
+   2×2 LAZER — fotos com legenda em barra creme sólida
+══════════════════════════════════════════ */
+.prog-lazer-wrap{
+  margin:8px 0 36px;
+}
+.prog-lazer-panel{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px 16px 16px;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.prog-lazer-ttl{
+  font-family:var(--fh);
+  font-size:1.15rem;
+  font-style:italic;
+  font-weight:500;
+  letter-spacing:.01em;
+  color:var(--ink);
+  text-align:center;
+  margin:0 0 16px;
+  padding:0;
+}
+.prog-lazer-ttl::after{
+  content:'';
+  display:block;
+  width:48px;
+  height:1px;
+  background:var(--gold);
+  margin:8px auto 0;
+  opacity:.7;
+}
+.prog-lazer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.prog-lazer-card{
+  position:relative;
+  aspect-ratio:1;
+  border-radius:12px;
+  overflow:hidden;
+  height:100%;
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .25s ease;
+  -webkit-tap-highlight-color:transparent;
+  background:var(--paper-2);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  border:1.5px solid var(--line);
+  box-shadow:0 4px 12px rgba(0,0,0,.10);
+}
+.prog-lazer-card::after{
+  content:none;
+}
+.prog-lazer-card img{
+  width:100%;
+  height:calc(100% - 44px);
+  object-fit:cover;
+  display:block;
+  transition:filter .3s ease;
+  filter:saturate(1) brightness(1);
+  position:absolute;
+  inset:0 0 44px 0;
+  z-index:0;
+}
+.prog-lazer-card span{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:2;
+  height:44px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--paper);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  pointer-events:none;
+  transition:background .25s ease, color .25s ease;
+  font-family:var(--fb);
+  font-size:1rem;
+  font-weight:700;
+  letter-spacing:.01em;
+  color:var(--ink);
+  line-height:1.2;
+  text-align:center;
+  border-top:1px solid var(--line);
+}
+.prog-lazer-card.on{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold), 0 10px 22px rgba(212,160,74,.40);
+}
+.prog-lazer-card.on img{
+  filter:saturate(1.1) brightness(1.02);
+}
+.prog-lazer-card.on span{
+  background:var(--gold);
+  color:var(--ink);
+  border-top-color:var(--gold);
+}
+.prog-lazer-grid.has-open .prog-lazer-card:not(.on){
+  opacity:.55;
+}
+.prog-lazer-grid.has-open .prog-lazer-card:not(.on) img{
+  filter:saturate(.7) brightness(.92);
+}
+.prog-lazer-card:active{
+  transform:scale(.98);
+}
+@media(hover:hover){
+  .prog-lazer-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+    border-color:var(--gold-soft);
+  }
+  .prog-lazer-grid.has-open .prog-lazer-card:not(.on):hover{
+    opacity:.8;
+  }
+}
+
+.prog-lazer-panels{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .42s cubic-bezier(.4,0,.2,1), margin-top .28s ease;
+  margin-top:0;
+}
+.prog-lazer-panels.has-open{
+  grid-template-rows:1fr;
+  margin-top:14px;
+}
+.prog-lazer-panel-txt{
+  min-height:0;
+  overflow:hidden;
+  display:none;
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .24s ease, transform .24s ease;
+}
+.prog-lazer-panel-txt.on{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+.prog-lazer-panel-txt p{
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px 16px;
+  font-family:var(--fb);
+  font-size:1.0625rem; /* 17px */
+  line-height:1.7;
+  color:var(--ink);
+  margin:0;
+  box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
 
 /* destaque pulse no card 2×2 quando vier do link */
 @keyframes pulseOnce{
@@ -3159,6 +3209,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-lazer-wrap.pulse-once .prog-lazer-panel{
   animation:pulseOnce 1.4s ease-out;
 }
+
   
 
 /* ──────────── RSVP (CREME) ──────────── */
