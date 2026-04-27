@@ -2470,15 +2470,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   display:grid;
   grid-template-columns:repeat(3, minmax(0, 1fr));
   gap:10px;
-  max-width:78%;
-  margin:0 auto;
+  width:100%;
+  max-width:none;
+  margin:0;
 }
 @media (max-width:380px){
-  .prog-dias-grid{max-width:92%}
+  .prog-dias-grid{gap:8px}
 }
 
 .prog-dia-card{
   position:relative;
+  min-width:0;
   border-radius:12px;
   overflow:hidden;
   cursor:pointer;
@@ -2509,9 +2511,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   position:relative;
   z-index:2;
   font-family:var(--fh);
-  font-size:1.05rem;
+  font-size:clamp(.96rem,4vw,1.05rem);
   font-weight:600;
-  letter-spacing:.06em;
+  letter-spacing:.04em;
   color:var(--al);
   transition:color .28s ease;
 }
@@ -2527,9 +2529,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     box-shadow:0 8px 22px rgba(15,23,32,.28);
   }
   .prog-dia-card:hover .dow{color:var(--ap)}
+  .prog-dia-card.on:hover .dow{color:var(--n)}
   .prog-dias-grid.has-open .prog-dia-card:not(.on):hover{opacity:.8}
 }
-
 /* painel de texto que abre abaixo dos dias */
 .prog-dias-panels{
   display:grid;
