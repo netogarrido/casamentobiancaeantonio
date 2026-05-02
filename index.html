@@ -6285,6 +6285,133 @@ var nomeSalvo=getNomeSalvo();
   }
 });
 </script>
+
+<!-- Animation Performance Optimization: pausa animações CSS fora da viewport -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  function injectPausedCSS() {
+    var style = document.createElement('style');
+    style.textContent =
+      '.anim-paused.vestido::before,' +
+      '.anim-paused.vestido::after,' +
+      '.anim-paused #vestido_seta_presentes > span::after,' +
+      '.anim-paused.mo-box--textura::before' +
+      '{ animation-play-state: paused !important; }';
+    document.head.appendChild(style);
+  }
+
+  function initAnimObserver() {
+    if (!('IntersectionObserver' in window)) return;
+
+    injectPausedCSS();
+    var observer = createObserver();
+    observeStaticElements(observer);
+    watchDynamicElements(observer);
+  }
+
+  function createObserver() {
+    return new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        handleVisibilityChange(entry.target, entry.isIntersecting);
+      });
+    }, { threshold: 0 });
+  }
+
+  function handleVisibilityChange(target, isVisible) {
+    var state = isVisible ? 'running' : 'paused';
+
+    // Elementos diretos — style.animationPlayState
+    if (target.classList.contains('cd-n') ||
+        target.id === 'hero_cta_terciario' ||
+        target.classList.contains('pergaminho-abrir-seta')) {
+      target.style.animationPlayState = state;
+      return;
+    }
+
+    // Pseudo-elementos — toggle classe .anim-paused
+    if (target.classList.contains('vestido') ||
+        target.id === 'vestido_seta_presentes' ||
+        target.classList.contains('mo-box--textura')) {
+      target.classList.toggle('anim-paused', !isVisible);
+      return;
+    }
+
+    // Caso especial: play-btn (lógica condicional)
+    if (target.classList.contains('play-btn')) {
+      handlePlayBtnVisibility(target, isVisible);
+    }
+  }
+
+  function handlePlayBtnVisibility(btn, isVisible) {
+    if (btn.classList.contains('playing')) {
+      btn.style.animationPlayState = isVisible ? 'running' : 'paused';
+    }
+  }
+
+  function observeStaticElements(observer) {
+    // .cd-n (múltiplos)
+    var cdElements = document.querySelectorAll('.cd-n');
+    for (var i = 0; i < cdElements.length; i++) {
+      observer.observe(cdElements[i]);
+    }
+
+    // #hero_cta_terciario
+    var heroCta = document.getElementById('hero_cta_terciario');
+    if (heroCta) observer.observe(heroCta);
+
+    // #vestido_seta_presentes (pai de span::after)
+    var vestidoSeta = document.getElementById('vestido_seta_presentes');
+    if (vestidoSeta) observer.observe(vestidoSeta);
+
+    // .vestido (pai de ::before e ::after)
+    var vestido = document.querySelector('.vestido');
+    if (vestido) observer.observe(vestido);
+
+    // .play-btn
+    var playBtn = document.getElementById('playBtnEl');
+    if (playBtn) observer.observe(playBtn);
+
+    // .pergaminho-abrir-seta (pode ser múltiplo)
+    var pergaminhos = document.querySelectorAll('.pergaminho-abrir-seta');
+    for (var j = 0; j < pergaminhos.length; j++) {
+      observer.observe(pergaminhos[j]);
+    }
+  }
+
+  function watchDynamicElements(observer) {
+    if (!window.MutationObserver) return;
+
+    var moBox = document.querySelector('.mo-box');
+    var playBtn = document.getElementById('playBtnEl');
+
+    if (!moBox && !playBtn) return;
+
+    var mutObs = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mut) {
+        if (mut.target === moBox) {
+          if (moBox.classList.contains('mo-box--textura')) {
+            observer.observe(moBox);
+          } else {
+            observer.unobserve(moBox);
+            moBox.classList.remove('anim-paused');
+          }
+        }
+        if (mut.target === playBtn) {
+          if (!playBtn.classList.contains('playing')) {
+            playBtn.style.animationPlayState = '';
+          }
+        }
+      });
+    });
+
+    if (moBox) mutObs.observe(moBox, { attributes: true, attributeFilter: ['class'] });
+    if (playBtn) mutObs.observe(playBtn, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  initAnimObserver();
+});
+</script>
   
 </body>
 </html>
