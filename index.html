@@ -2663,6 +2663,73 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 /* ══════════════════════════════════════════
+   DESKTOP — dias em 3 colunas paralelas (sem toggle)
+   Mobile mantém comportamento acordeão original
+══════════════════════════════════════════ */
+@media (min-width: 768px){
+  /* Transforma painel em grid 3 colunas + 2 linhas (cards em cima, textos embaixo) */
+  .prog-dias-panel{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:auto 1fr;
+    column-gap:14px;
+    row-gap:14px;
+    align-items:stretch;
+  }
+  /* Cards dos dias ocupam row 1, uma coluna cada */
+  .prog-dias-grid{
+    display:contents;
+  }
+  .prog-dia-card[data-dia="sexta"]{grid-column:1; grid-row:1;}
+  .prog-dia-card[data-dia="sabado"]{grid-column:2; grid-row:1;}
+  .prog-dia-card[data-dia="domingo"]{grid-column:3; grid-row:1;}
+
+  /* Container de painéis ocupa row 2, mantém 3 colunas */
+  .prog-dias-panels{
+    grid-column:1 / -1;
+    grid-row:2;
+    display:block;
+    grid-template-rows:none !important;
+    margin-top:0 !important;
+  }
+  .prog-dias-panels-inner{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    column-gap:14px;
+    align-items:stretch;
+    overflow:visible;
+  }
+  /* Todos os 3 painéis de texto visíveis ao mesmo tempo */
+  .prog-dia-panel-txt{
+    display:flex !important;
+    flex-direction:column;
+    opacity:1 !important;
+    transform:none !important;
+    height:100%;
+  }
+  #pdPanel-sexta{grid-column:1}
+  #pdPanel-sabado{grid-column:2}
+  #pdPanel-domingo{grid-column:3}
+
+  /* Cards e painéis com altura igual entre irmãos */
+  .prog-dia-panel-txt > p,
+  .prog-dia-copy{
+    height:100%;
+    box-sizing:border-box;
+  }
+
+  /* Desabilita visual de "dia selecionado" que vem do toggle mobile */
+  .prog-dias-grid.has-open .prog-dia-card:not(.on){
+    opacity:1;
+  }
+  .prog-dia-card{
+    cursor:default;
+  }
+  .prog-dia-card:active{transform:none}
+  .prog-dia-card:hover{transform:none !important}
+}
+
+/* ══════════════════════════════════════════
    CAIXA 3×1 — VIAS DE PARTICIPAÇÃO
    (mesmo vocabulário da .pres-cats-panel)
 ══════════════════════════════════════════ */
