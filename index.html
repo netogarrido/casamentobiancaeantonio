@@ -183,7 +183,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   -webkit-appearance:none;
 }
 .popup-nome-input::placeholder{
-  color:rgba(255,255,255,.3);
+  color:rgba(255,255,255,.45);
 }
 .popup-nome-input:focus{
   outline:none;
@@ -240,11 +240,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 #popup_texto{
   font-family:var(--fb);
-  font-size:.85rem;
+  font-size:1rem;
   font-weight:300;
-  color:rgba(255,255,255,.78);
+  color:rgba(255,255,255,.88);
   letter-spacing:.01em;
-  line-height:1.5;
+  line-height:1.55;
   margin-bottom:0 !important;
   display:block;
   margin-top:8px;
@@ -256,10 +256,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   background:none;
   border:none;
   font-family:var(--fb);
-  font-size:.70rem;
+  font-size:.78rem;
   font-weight:600;
   letter-spacing:.14em;
-  color:rgba(255,255,255,.32);
+  color:rgba(255,255,255,.48);
   cursor:pointer;
   padding:4px 8px;
   border-radius:4px;
@@ -343,19 +343,51 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .popup-track{
     left:0;
     transform:none;
-    width:100%;
+    width:auto;
     max-width:none;
+    flex-direction:row;
+    height:100vh;
   }
   .popup-bg img{
-    width:100%;
+    width:auto;
     height:100vh;
-    object-fit:cover;
+    flex:0 0 auto;
+    object-fit:contain;
     object-position:center center;
-    transform:scale(1.02);
+    transform:none;
+    margin-top:0;
+    -webkit-mask-image:linear-gradient(90deg,
+      transparent 0%,
+      rgba(0,0,0,.15) 4%,
+      rgba(0,0,0,.6) 10%,
+      #000 18%,
+      #000 82%,
+      rgba(0,0,0,.6) 90%,
+      rgba(0,0,0,.15) 96%,
+      transparent 100%);
+    mask-image:linear-gradient(90deg,
+      transparent 0%,
+      rgba(0,0,0,.15) 4%,
+      rgba(0,0,0,.6) 10%,
+      #000 18%,
+      #000 82%,
+      rgba(0,0,0,.6) 90%,
+      rgba(0,0,0,.15) 96%,
+      transparent 100%);
+  }
+  .popup-bg img:first-child{
+    margin-top:0;
   }
   /* FIX desktop: popup card maior */
   .popup-c{
-    max-width:400px;
+    max-width:420px;
+    padding:36px 32px 28px;
+  }
+  .popup-c h2{
+    font-size:2.3rem;
+  }
+  .popup-c p{
+    font-size:1.15rem;
   }
 }
 
@@ -413,9 +445,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   position:relative;
   z-index:2;
   text-align:center;
-  padding:32px 28px 24px;
-  max-width:340px;
-  width:calc(100% - 48px);
+  padding:34px 30px 26px;
+  max-width:360px;
+  width:calc(100% - 40px);
   background:rgba(15,23,32,0.42);
   backdrop-filter:blur(22px) saturate(1.1);
   -webkit-backdrop-filter:blur(22px) saturate(1.1);
@@ -439,8 +471,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 .popup-c p{
-  font-size:.98rem;
-  color:rgba(255,255,255,.88);
+  font-size:1.08rem;
+  color:rgba(255,255,255,.92);
   line-height:1.65;
   margin-bottom:24px;
 }
@@ -457,10 +489,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   flex:0 1 auto;
   max-width:none;
   white-space:nowrap;
-  padding:15px 18px;
-  font-size:.78rem;
+  padding:16px 24px;
+  font-size:.86rem;
   letter-spacing:.08em;
-  min-height:46px;
+  min-height:48px;
 }
 
 /* ──────────── HERO ──────────── */
@@ -6036,21 +6068,37 @@ function startSlideshow(){
   track.style.transform='translate3d(0,0,0)';
   var PX_PER_SEC=75;
   var currentY=0;
+  var currentX=0;
   var lastTime=null;
   var halfH=0;
+  var halfW=0;
   var rafId=null;
+  var isDesktop=window.matchMedia('(min-width:768px)').matches;
+  window.matchMedia('(min-width:768px)').addEventListener('change',function(e){
+    isDesktop=e.matches;
+    halfH=0;halfW=0;currentY=0;currentX=0;lastTime=null;
+  });
   function calcHalf(){
-    halfH=0;
-    for(var i=0;i<validImgs.length;i++){halfH+=track.children[i].offsetHeight;}
+    halfH=0;halfW=0;
+    for(var i=0;i<validImgs.length;i++){
+      halfH+=track.children[i].offsetHeight;
+      halfW+=track.children[i].offsetWidth;
+    }
   }
   function step(ts){
     if(!lastTime){lastTime=ts;}
     var delta=(ts-lastTime)/1000;
     lastTime=ts;
-    if(!halfH)calcHalf();
-    currentY+=PX_PER_SEC*delta;
-    if(halfH&&currentY>=halfH){currentY=currentY-halfH;}
-    track.style.transform='translate3d(0,-'+currentY+'px,0)';
+    if(!halfH&&!halfW)calcHalf();
+    if(isDesktop){
+      currentX+=PX_PER_SEC*delta;
+      if(halfW&&currentX>=halfW){currentX=currentX-halfW;}
+      track.style.transform='translate3d(-'+currentX+'px,0,0)';
+    }else{
+      currentY+=PX_PER_SEC*delta;
+      if(halfH&&currentY>=halfH){currentY=currentY-halfH;}
+      track.style.transform='translate3d(0,-'+currentY+'px,0)';
+    }
     rafId=requestAnimationFrame(step);
   }
   var loaded=0;
