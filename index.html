@@ -299,17 +299,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   background:var(--n);
 }
 
-.popup-track{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  will-change:transform;
-  transform:translate3d(0,0,0);
-}
-
 .popup-bg img{
   width:100%;
   height:100vh;
@@ -322,6 +311,31 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     brightness(.82)
     contrast(.90)
     saturate(.92);
+  box-shadow:none;
+  margin-top:-12vh;
+  -webkit-mask-image:linear-gradient(180deg,
+    transparent 0%,
+    rgba(0,0,0,.10) 8%,
+    rgba(0,0,0,.55) 18%,
+    rgba(0,0,0,.92) 26%,
+    #000 34%,
+    #000 88%,
+    rgba(0,0,0,.70) 95%,
+    rgba(0,0,0,.30) 99%,
+    transparent 100%);
+  mask-image:linear-gradient(180deg,
+    transparent 0%,
+    rgba(0,0,0,.10) 8%,
+    rgba(0,0,0,.55) 18%,
+    rgba(0,0,0,.92) 26%,
+    #000 34%,
+    #000 88%,
+    rgba(0,0,0,.70) 95%,
+    rgba(0,0,0,.30) 99%,
+    transparent 100%);
+}
+.popup-bg img:first-child{
+  margin-top:0;
 }
 
 /* Desktop: faixa central proporcional, laterais navy puro */
@@ -359,6 +373,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
         rgba(15,23,32,.3) 90%,
         rgba(15,23,32,.5) 100%);
   }
+  /* FIX desktop: popup card maior */
+  .popup-c{
+    max-width:400px;
+  }
 }
 
 /* Filtros suaves — fotos quase no natural, vinheta vai por cima de cada uma */
@@ -376,38 +394,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   will-change:transform;
   transform:translate3d(0,0,0);
   background:#0F1720; /* navy: o que aparece "atrás" entre as máscaras */
-}
-
-/* Cada foto: máscara que apaga topo e base para transparente,
-   revelando o navy do popup-track por trás. As bordas SOMEM em vez de virar preto sólido. */
-.popup-bg img{
-  box-shadow:none;
-  display:block;
-  width:100%;
-  margin-top:-12vh; /* sobreposição: topo desta foto entra na base da anterior */
-  -webkit-mask-image:linear-gradient(180deg,
-    transparent 0%,
-    rgba(0,0,0,.10) 8%,
-    rgba(0,0,0,.55) 18%,
-    rgba(0,0,0,.92) 26%,
-    #000 34%,
-    #000 88%,
-    rgba(0,0,0,.70) 95%,
-    rgba(0,0,0,.30) 99%,
-    transparent 100%);
-  mask-image:linear-gradient(180deg,
-    transparent 0%,
-    rgba(0,0,0,.10) 8%,
-    rgba(0,0,0,.55) 18%,
-    rgba(0,0,0,.92) 26%,
-    #000 34%,
-    #000 88%,
-    rgba(0,0,0,.70) 95%,
-    rgba(0,0,0,.30) 99%,
-    transparent 100%);
-}
-.popup-bg img:first-child{
-  margin-top:0;
 }
 
 /* camada central — escurecimento atrás da caixa para legibilidade do texto */
@@ -943,9 +929,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
   
 /* ── Polaroids animadas — posicionadas em % do container ── */
-.vestido-foto-principal-wrap{
-  position:relative;
-}
 
 .vestido-polaroid{
   position:absolute;
@@ -3542,6 +3525,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .ty h3{font-family:var(--fh);font-size:1.35rem;margin-bottom:8px}
 .ty p{font-size:.84rem;color:var(--im);line-height:1.6;margin-bottom:20px}
 
+/* FIX desktop: modal de presente centralizado */
+@media(min-width:768px){
+  .mo{align-items:center}
+  .mo-box{border-radius:22px}
+  .mo-handle{display:none}
+}
+
 /* TOAST + MINI PLAYER */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--n);color:var(--al);padding:10px 20px;border-radius:var(--rs);font-size:.76rem;z-index:9999;transition:transform .35s;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:500;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
@@ -3571,6 +3561,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .lightbox-dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
 .lightbox-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .2s;cursor:pointer}
 .lightbox-dot.on{background:var(--al)}
+
+/* FIX desktop: lightbox maior e setas dentro do container */
+@media(min-width:768px){
+  .lightbox-img-wrap{max-width:min(92vw,900px)}
+  .lightbox-prev{left:12px}
+  .lightbox-next{right:12px}
+}
+
 </style>
 </head>
 <body>
