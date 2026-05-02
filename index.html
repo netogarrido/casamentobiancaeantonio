@@ -6049,7 +6049,7 @@ function startSlideshow(){
     /* Estimar largura de um set: cada foto retrato 4:5 tem largura = 100vh*4/5 */
     singleSetW=validImgs.length*(window.innerHeight*4/5);
     var repeats=Math.ceil((window.innerWidth*3)/singleSetW);
-    if(repeats<2)repeats=2;
+    if(repeats<4)repeats=4;
     for(var r=0;r<repeats;r++){
       validImgs.forEach(function(img,idx){
         var clone=img.cloneNode(true);
@@ -6448,3 +6448,4 @@ document.addEventListener('DOMContentLoaded', function() {
   
 </body>
 </html>
+
