@@ -2731,6 +2731,25 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
   .prog-dia-card:active{transform:none}
   .prog-dia-card:hover{transform:none !important}
+
+  /* Hero mais compacto no desktop */
+  .prog-hero-img-wrap{
+    aspect-ratio:auto !important;
+    height:400px;
+  }
+
+  /* Caixa dias mais compacta */
+  .prog-dias-panel{
+    padding:16px;
+  }
+
+  /* Lazer 4 colunas em vez de 2×2 no desktop */
+  .prog-lazer-grid{
+    grid-template-columns:1fr 1fr 1fr 1fr;
+  }
+  .prog-lazer-card{
+    aspect-ratio:3/4;
+  }
 }
 
 /* ══════════════════════════════════════════
