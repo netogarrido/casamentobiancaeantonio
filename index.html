@@ -322,6 +322,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   will-change:transform;
   transform:translate3d(0,0,0);
   z-index:1;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.popup-track.ready{
+  opacity:1;
 }
 
 .popup-bg img{
@@ -3774,6 +3779,55 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .rsvp-ok h3{color:var(--i) !important}
 .rsvp-ok p{color:var(--im) !important}
 
+/* RSVP — aviso Day use e radios de hospedagem condicional */
+.rsvp-aviso{
+  font-family:var(--fb);
+  font-size:.82rem;
+  line-height:1.55;
+  color:var(--im);
+  background:rgba(212,160,74,.10);
+  border-left:3px solid var(--a);
+  padding:10px 12px;
+  border-radius:6px;
+  margin-top:8px;
+}
+.rsvp-radios{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:4px;
+}
+.rsvp-radio{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 14px;
+  background:#fff;
+  border:1px solid var(--st);
+  border-radius:var(--rs);
+  cursor:pointer;
+  font-family:var(--fb);
+  font-size:.96rem;
+  color:var(--i);
+  transition:border-color .2s, background .2s;
+  -webkit-tap-highlight-color:transparent;
+  min-height:52px;
+}
+.rsvp-radio:hover{border-color:var(--a)}
+.rsvp-radio input[type="radio"]{
+  appearance:auto;
+  -webkit-appearance:radio;
+  accent-color:var(--a);
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+  margin:0;
+}
+.rsvp-radio:has(input:checked){
+  background:rgba(212,160,74,.06);
+  border-color:var(--a);
+}
+
 /* ──────────── TRAJE (PRETO) ──────────── */
 .traje{background:var(--n);color:var(--s)}
 .traje .ttl{color:var(--s)}.traje .txt{color:rgba(250,244,232,.55)}.traje .lbl{color:var(--al)}
@@ -4431,22 +4485,30 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <select class="fsel" name="participacao" required id="rsvp_select_participacao" onchange="onParticiplacaoChange(this.value)">
     <option value="">Selecione...</option>
     <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna"></option>
-    <option value="hospedagem_outro" id="rsvp_opcao_hospedagem_outro"></option>
     <option value="dayuse" id="rsvp_opcao_dayuse"></option>
     <option value="festa" id="rsvp_opcao_festa"></option>
   </select>
-  <p style="font-size:.66rem;color:var(--is);margin-top:4px" id="rsvp_dayuse_aviso"></p>
+  <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none"></p>
+</div>
+
+<!-- Pergunta condicional: hospedagem próxima (só para day use / festa) -->
+<div class="fg" id="rsvp_hosp_outro_wrap" style="display:none">
+  <label class="fl" id="rsvp_opcao_hospedagem_outro"></label>
+  <div class="rsvp-radios">
+    <label class="rsvp-radio">
+      <input type="radio" name="hospedagem_tipo" value="hotel" onchange="onHospedagemChange(this.value)">
+      <span id="rsvp_opcao_hospedagem_outro_hotel"></span>
+    </label>
+    <label class="rsvp-radio">
+      <input type="radio" name="hospedagem_tipo" value="sem" onchange="onHospedagemChange(this.value)">
+      <span id="rsvp_opcao_hospedagem_sem"></span>
+    </label>
+  </div>
 </div>
 
 <div class="fg" id="rsvp_nome_hotel_wrap" style="display:none">
-  <label class="fl">Nome do hotel</label>
-  <select class="fsel" name="nome_hotel" id="rsvp_nome_hotel_select" onchange="onHotelChange(this.value)" disabled>
-    <option value="">Selecione…</option>
-    <option value="Hotel Ancona">Hotel Ancona</option>
-    <option value="Prado Hotel">Prado Hotel</option>
-    <option value="outro">Outro</option>
-  </select>
-  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="Nome do hotel onde vai se hospedar" style="margin-top:8px;display:none" disabled>
+  <label class="fl" id="rsvp_nome_hospedagem"></label>
+  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="" disabled>
 </div>
     
     <div class="fg"><label class="fl" id="rsvp_campo_restricoes"></label><textarea class="fta" name="restricoes" rows="2" id="rsvp_restricoes_ta"></textarea></div>
@@ -5147,14 +5209,24 @@ function applyConteudo(rows){
       'rsvp_campo_restricoes_placeholder':'rsvp_restricoes_ta',
       'rsvp_campo_sugestao_placeholder':'rsvp_sug_input',
       'rsvp_campo_msg_publica_placeholder':'rsvp_msg_ta',
-      'modal_msg_placeholder':'mMs'
+      'modal_msg_placeholder':'mMs',
+      'rsvp_nome_hospedagem':'rsvp_nome_hotel_input'
     };
-    if(phMap[key]){
+    /* placeholders: mapeamento direto OU por tipo=placeholder */
+    if(phMap[key] && (String(r.tipo||'').toLowerCase()==='placeholder' || key.indexOf('_placeholder')!==-1 || key.indexOf('placeholder')!==-1)){
       var phEl=document.getElementById(phMap[key]);
       if(!phEl)return;
       if(ativo==='nao'){phEl.placeholder='';}
       else{phEl.placeholder=cleaned;}
       return;
+    }
+    if(phMap[key] && !r.tipo){
+      var phEl2=document.getElementById(phMap[key]);
+      if(phEl2){
+        if(ativo==='nao'){phEl2.placeholder='';}
+        else{phEl2.placeholder=cleaned;}
+        return;
+      }
     }
 
     var el=document.getElementById(key);
@@ -6052,40 +6124,41 @@ function sSug(inputId){
 }
 
 /* ══════════════════════════════════════════
-   RSVP — CAMPO HOTEL DINÂMICO
+   RSVP — PARTICIPAÇÃO + HOSPEDAGEM CONDICIONAL
 ══════════════════════════════════════════ */
 function onParticiplacaoChange(val){
-  var wrap=document.getElementById('rsvp_nome_hotel_wrap');
-  var sel=document.getElementById('rsvp_nome_hotel_select');
-  var input=document.getElementById('rsvp_nome_hotel_input');
-  if(val==='hospedagem_santanna'){
-    wrap.style.display='block';
-    sel.style.display='none';sel.disabled=true;sel.value='';
-    input.style.display='block';input.disabled=false;
-    input.value=TXT('rsvp_hotel_santanna_nome',"Sant'Anna Fazenda Hotel — Amparo/SP");
-    input.readOnly=true;input.style.opacity='.55';
-  }else if(val==='hospedagem_outro'){
-    wrap.style.display='block';
-    sel.style.display='block';sel.disabled=false;sel.value='';
-    input.style.display='none';input.disabled=true;
-    input.value='';input.readOnly=false;input.style.opacity='1';
+  var hospWrap=document.getElementById('rsvp_hosp_outro_wrap');
+  var hotelWrap=document.getElementById('rsvp_nome_hotel_wrap');
+  var hotelInput=document.getElementById('rsvp_nome_hotel_input');
+  var avisoDay=document.getElementById('rsvp_dayuse_aviso');
+
+  /* Reset do bloco secundário sempre que muda participação */
+  document.querySelectorAll('input[name="hospedagem_tipo"]').forEach(function(r){r.checked=false;});
+  if(hotelWrap)hotelWrap.style.display='none';
+  if(hotelInput){hotelInput.value='';hotelInput.disabled=true;}
+
+  /* Aviso Day use: só quando escolhe day use */
+  if(avisoDay){
+    avisoDay.style.display=(val==='dayuse')?'block':'none';
+  }
+
+  /* Pergunta condicional hospedagem: day use ou festa */
+  if(val==='dayuse' || val==='festa'){
+    if(hospWrap)hospWrap.style.display='block';
   }else{
-    wrap.style.display='none';
-    sel.style.display='none';sel.disabled=true;sel.value='';
-    input.style.display='none';input.disabled=true;
-    input.value='';input.readOnly=false;input.style.opacity='1';
+    if(hospWrap)hospWrap.style.display='none';
   }
 }
 
-function onHotelChange(val){
-  var input=document.getElementById('rsvp_nome_hotel_input');
-  if(val==='outro'){
-    input.style.display='block';input.disabled=false;
-    input.value='';input.readOnly=false;input.style.opacity='1';
-    input.focus();
+function onHospedagemChange(val){
+  var hotelWrap=document.getElementById('rsvp_nome_hotel_wrap');
+  var hotelInput=document.getElementById('rsvp_nome_hotel_input');
+  if(val==='hotel'){
+    if(hotelWrap)hotelWrap.style.display='block';
+    if(hotelInput){hotelInput.disabled=false;hotelInput.value='';}
   }else{
-    input.style.display='none';input.disabled=true;
-    input.value='';
+    if(hotelWrap)hotelWrap.style.display='none';
+    if(hotelInput){hotelInput.disabled=true;hotelInput.value='';}
   }
 }
 
@@ -6098,6 +6171,16 @@ function sR(e){
   var d={type:'rsvp'};
   fd.forEach(function(v,k){d[k]=v;});
   if(!d.nome)d.nome=getNomeSalvo();
+
+  /* Normalização: para santanna, força hospedagem_tipo='santanna' e nome_hotel fixo */
+  if(d.participacao==='hospedagem_santanna'){
+    d.hospedagem_tipo='santanna';
+    d.nome_hotel=TXT('rsvp_hotel_santanna_nome',"Sant'Anna Fazenda Hotel");
+  }else if(d.hospedagem_tipo==='sem'){
+    d.nome_hotel='';
+  }
+  /* Se day use/festa e não respondeu hospedagem_tipo, manter vazio */
+
   var sug=(d.sugestao_musica||'').trim();
   var msg=(d.mensagem||'').trim();
   delete d.sugestao_musica;
@@ -6597,6 +6680,7 @@ function startSlideshow(){
   if(track.dataset.ready==='1')return;
   
   track.innerHTML='';
+  track.classList.remove('ready');
   validImgs.forEach(function(img,idx){
     img.classList.remove('popup-stage-1','popup-stage-2','popup-stage-3','popup-stage-4');
     img.classList.add('popup-stage-'+String((idx%4)+1));
@@ -6679,6 +6763,8 @@ function startSlideshow(){
       if(rafId)cancelAnimationFrame(rafId);
       lastTime=null;
       rafId=requestAnimationFrame(step);
+      /* Revelar track só depois de todas imagens carregadas */
+      track.classList.add('ready');
       /* Esconder fallback quando slideshow pronto */
       if(fallbackImg){fallbackImg.classList.add('hidden');}
     }
