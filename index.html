@@ -5959,6 +5959,16 @@ function applyConteudo(rows){
     fpm.classList.add('sheet-preserve-case');
   }
   popularPergaminho();
+
+  /* Fix: applyConteudo reseta style.display='' dos elementos com chave — isso sobrescreve
+     o display:none inline do #rsvp_dayuse_aviso, fazendo o aviso aparecer sem o usuário escolher.
+     Re-sincronizamos o estado do RSVP após applyConteudo. */
+  try{
+    var rsvpSelSync=document.getElementById('rsvp_select_participacao');
+    if(rsvpSelSync && typeof onParticiplacaoChange==='function'){
+      onParticiplacaoChange(rsvpSelSync.value);
+    }
+  }catch(e){}
 }
     
 
