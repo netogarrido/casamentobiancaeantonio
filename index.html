@@ -4693,15 +4693,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <div class="prog-dias-panel">
       
 <div class="prog-dias-grid">
-        <div class="prog-dia-card" data-dia="sexta" onclick="toggleDia('sexta')">
-          <span class="dow" id="sexta_titulo"></span>
-        </div>
-        <div class="prog-dia-card" data-dia="sabado" onclick="toggleDia('sabado')">
-          <span class="dow" id="sabado_titulo"></span>
-        </div>
-        <div class="prog-dia-card" data-dia="domingo" onclick="toggleDia('domingo')">
-          <span class="dow" id="domingo_titulo"></span>
-        </div>
+        <button type="button" class="prog-dia-card" data-dia="sexta" aria-pressed="false" onclick="toggleDia('sexta')">
+          <span class="dow" id="sexta_titulo">Sexta-feira</span>
+        </button>
+        <button type="button" class="prog-dia-card" data-dia="sabado" aria-pressed="false" onclick="toggleDia('sabado')">
+          <span class="dow" id="sabado_titulo">Sábado</span>
+        </button>
+        <button type="button" class="prog-dia-card" data-dia="domingo" aria-pressed="false" onclick="toggleDia('domingo')">
+          <span class="dow" id="domingo_titulo">Domingo</span>
+        </button>
       </div>
 
       
@@ -4874,27 +4874,27 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
   
 <!-- CONFIRME SUA PRESENÇA (RSVP) -->
-<section class="rsvp" id="rsvp"><div class="inn">
-  <h2 class="ttl" id="rsvp_titulo"></h2>
-  <p class="txt" id="rsvp_subtitulo"></p>
+<section class="rsvp" id="rsvp" aria-labelledby="rsvp_titulo"><div class="inn">
+  <h2 class="ttl" id="rsvp_titulo">Confirme sua presença</h2>
+  <p class="txt" id="rsvp_subtitulo">Queremos receber cada convidado com carinho — por isso, precisamos saber como você vai participar. Quanto antes responder, melhor.</p>
   <form id="rF" onsubmit="sR(event)">
     
     
-    <div class="fg"><label class="fl" id="rsvp_campo_nome"></label><input class="fi" name="nome" id="rsvpNomeInput" required maxlength="60" autocapitalize="words" autocomplete="name" placeholder="Seu nome completo" onblur="if(this.value.trim())salvarNomeConvidado(this.value.trim())"></div>
+    <div class="fg"><label class="fl" for="rsvpNomeInput" id="rsvp_campo_nome">Nome completo</label><input class="fi" name="nome" id="rsvpNomeInput" required maxlength="60" autocapitalize="words" autocomplete="name" placeholder="Seu nome completo" onblur="if(this.value.trim())salvarNomeConvidado(this.value.trim())"></div>
     
     <div class="frow">
-      <div class="fg"><label class="fl" id="rsvp_campo_adultos"></label><input class="fi" name="adultos" type="number" min="1" value="1"></div>
-      <div class="fg"><label class="fl" id="rsvp_campo_criancas"></label><input class="fi" name="criancas" type="number" min="0" value="0"></div>
+      <div class="fg"><label class="fl" for="rsvpAdultosInput" id="rsvp_campo_adultos">Quantidade de adultos</label><input class="fi" name="adultos" id="rsvpAdultosInput" type="number" min="1" value="1" inputmode="numeric" pattern="[0-9]*"></div>
+      <div class="fg"><label class="fl" for="rsvpCriancasInput" id="rsvp_campo_criancas">Quantidade de crianças</label><input class="fi" name="criancas" id="rsvpCriancasInput" type="number" min="0" value="0" inputmode="numeric" pattern="[0-9]*"></div>
     </div>
    <div class="fg">
-  <label class="fl" id="rsvp_campo_participacao"></label>
-  <select class="fsel" name="participacao" required id="rsvp_select_participacao" onchange="onParticiplacaoChange(this.value)">
+  <label class="fl" for="rsvp_select_participacao" id="rsvp_campo_participacao">Como você ou seu grupo vai participar do fim de semana?</label>
+  <select class="fsel" name="participacao" id="rsvp_select_participacao" onchange="onParticiplacaoChange(this.value)">
     <option value="">Selecione...</option>
-    <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna"></option>
-    <option value="dayuse" id="rsvp_opcao_dayuse"></option>
-    <option value="festa" id="rsvp_opcao_festa"></option>
+    <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna">Já tenho reserva no Sant'Anna (hotel esgotado)</option>
+    <option value="dayuse" id="rsvp_opcao_dayuse">Day use no sábado + festa</option>
+    <option value="festa" id="rsvp_opcao_festa">Somente festa de sábado</option>
   </select>
-  <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none"></p>
+  <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none">O day use tem vagas limitadas e precisa ser reservado antecipadamente com a Marcela, mediante pagamento de 20% de sinal e sujeito à lotação.</p>
   <!-- Sugestão pra quem ainda não escolheu: leva ao Day use dentro de Programação -->
   <button type="button" class="rsvp-cta-opcoes" id="rsvp_cta_opcoes" onclick="irVerOpcoesDayUse()">
     <span>Veja as opções abaixo</span>
@@ -4904,36 +4904,36 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 <!-- Pergunta condicional: hospedagem próxima (só para day use / festa) -->
 <div class="fg" id="rsvp_hosp_outro_wrap" style="display:none">
-  <label class="fl" id="rsvp_opcao_hospedagem_outro"></label>
+  <label class="fl" id="rsvp_opcao_hospedagem_outro">Você vai ficar hospedado em outro hotel próximo?</label>
   <div class="rsvp-radios">
     <label class="rsvp-radio">
       <input type="radio" name="hospedagem_tipo" value="hotel" onchange="onHospedagemChange(this.value)">
-      <span id="rsvp_opcao_hospedagem_outro_hotel"></span>
+      <span id="rsvp_opcao_hospedagem_outro_hotel">Sim, em outro hotel</span>
     </label>
     <label class="rsvp-radio">
       <input type="radio" name="hospedagem_tipo" value="sem" onchange="onHospedagemChange(this.value)">
-      <span id="rsvp_opcao_hospedagem_sem"></span>
+      <span id="rsvp_opcao_hospedagem_sem">Não me hospedarei</span>
     </label>
   </div>
 </div>
 
 <div class="fg" id="rsvp_nome_hotel_wrap" style="display:none">
-  <label class="fl" id="rsvp_nome_hospedagem"></label>
-  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="" disabled>
+  <label class="fl" for="rsvp_nome_hotel_input" id="rsvp_nome_hospedagem">Qual é o nome do hotel?</label>
+  <input class="fi" name="nome_hotel" id="rsvp_nome_hotel_input" placeholder="Nome do hotel" disabled>
 </div>
     
-    <div class="fg"><label class="fl" id="rsvp_campo_restricoes"></label><textarea class="fta" name="restricoes" rows="2" id="rsvp_restricoes_ta"></textarea></div>
+    <div class="fg"><label class="fl" for="rsvp_restricoes_ta" id="rsvp_campo_restricoes">Você ou alguém do seu grupo tem alguma restrição alimentar?</label><textarea class="fta" name="restricoes" rows="2" id="rsvp_restricoes_ta" placeholder="Conte para nós aqui"></textarea></div>
     
-    <div class="fg"><label class="fl" id="rsvp_campo_sugestao_musica"></label><input class="fi" name="sugestao_musica" id="rsvp_sug_input"></div>
+    <div class="fg"><label class="fl" for="rsvp_sug_input" id="rsvp_campo_sugestao_musica">Sugira uma música para a banda tocar</label><input class="fi" name="sugestao_musica" id="rsvp_sug_input" placeholder="Nome da música e artista"></div>
     
-    <div class="fg"><label class="fl" id="rsvp_campo_msg_publica"></label><textarea class="fta" name="mensagem" rows="2" id="rsvp_msg_ta"></textarea></div>
-    <button type="submit" class="btn btn-a" style="width:100%" id="rsvp_campo_botao"></button>
-    <p class="rsvp-note" id="rsvp_texto_apoio"></p>
+    <div class="fg"><label class="fl" for="rsvp_msg_ta" id="rsvp_campo_msg_publica">Deixe uma mensagem para nós</label><textarea class="fta" name="mensagem" rows="2" id="rsvp_msg_ta" placeholder="Escreva aqui sua mensagem. Ela também poderá aparecer no site."></textarea></div>
+    <button type="submit" class="btn btn-a" style="width:100%" id="rsvp_campo_botao">Enviar confirmação</button>
+    <p class="rsvp-note" id="rsvp_texto_apoio">Além da confirmação de presença, esse formulário nos ajuda a organizar hospedagem, day use, alimentação e pequenos detalhes para acolher cada convidado com carinho.</p>
   </form>
   <div class="rsvp-ok" id="rO">
     <div style="font-size:2.2rem;margin-bottom:12px">💛</div>
-    <h3 style="font-family:var(--fh);font-size:1.3rem;color:var(--s)" id="rsvp_confirmacao_titulo"></h3>
-    <p style="font-size:.84rem;color:rgba(250,244,232,.6)" id="rsvp_confirmacao_texto"></p>
+    <h3 style="font-family:var(--fh);font-size:1.3rem;color:var(--s)" id="rsvp_confirmacao_titulo">Obrigado! Sua presença foi confirmada.</h3>
+    <p style="font-size:.84rem;color:rgba(250,244,232,.6)" id="rsvp_confirmacao_texto">Em breve entraremos em contato se precisarmos de mais algum detalhe.</p>
   </div>
 </div></section>
 
@@ -6667,6 +6667,7 @@ function sSug(inputId){
    RSVP — PARTICIPAÇÃO + HOSPEDAGEM CONDICIONAL
 ══════════════════════════════════════════ */
 function onParticiplacaoChange(val){
+  try{ trackEvento('rsvp_participacao_mudou', val||'vazio'); }catch(e){}
   var hospWrap=document.getElementById('rsvp_hosp_outro_wrap');
   var hotelWrap=document.getElementById('rsvp_nome_hotel_wrap');
   var hotelInput=document.getElementById('rsvp_nome_hotel_input');
@@ -6698,7 +6699,7 @@ function onParticiplacaoChange(val){
 
 /* Leva o usuário direto ao Day use dentro da seção Programação */
 function irVerOpcoesDayUse(){
-  try{trackEvento('rsvp_cta_opcoes_clicou','vazio');}catch(e){}
+  try{trackEvento('rsvp_dayuse_cta_clicou','vazio');}catch(e){}
   if(typeof abrirDayUseDaProgramacao==='function'){
     abrirDayUseDaProgramacao();
   } else {
@@ -6723,8 +6724,10 @@ function onHospedagemChange(val){
 /* ══════════════════════════════════════════
    RSVP SUBMIT
 ══════════════════════════════════════════ */
+var _rsvpEmEnvio=false;
 function sR(e){
   e.preventDefault();
+  if(_rsvpEmEnvio)return; /* guard duplo-clique/enter */
   var form=e.target;
   var fd=new FormData(form);
   var d={type:'rsvp'};
@@ -6742,9 +6745,25 @@ function sR(e){
     return;
   }
 
+  /* Trava submit agora (libera em caso de erro no fluxo de confirmação/modal) */
+  _rsvpEmEnvio=true;
+  var btnSubmit=form.querySelector('button[type="submit"]');
+  if(btnSubmit){
+    btnSubmit.disabled=true;
+    btnSubmit.dataset.originalText=btnSubmit.textContent;
+    btnSubmit.textContent='Enviando...';
+  }
+
   /* Confirmação antes de enviar (popup tipo presentes) */
   confirmarEnvioRSVP(d,function(){
     _enviarRSVP(d,form);
+  },function(){
+    /* callback de cancelamento/fechamento do modal: libera submit */
+    _rsvpEmEnvio=false;
+    if(btnSubmit){
+      btnSubmit.disabled=false;
+      btnSubmit.textContent=btnSubmit.dataset.originalText||'Enviar confirmação';
+    }
   });
 }
 
@@ -6797,9 +6816,11 @@ function fecharAlertaRSVP(){
 /* Modal de confirmação do RSVP — mostra resumo antes de enviar */
 var _rsvpPendente=null;
 var _rsvpCallback=null;
-function confirmarEnvioRSVP(d,callback){
+var _rsvpCancelCallback=null;
+function confirmarEnvioRSVP(d,callback,onCancel){
   _rsvpPendente=d;
   _rsvpCallback=callback;
+  _rsvpCancelCallback=onCancel||null;
 
   var m=document.getElementById('moConfirmaRSVP');
   if(!m){
@@ -6835,17 +6856,29 @@ function confirmarEnvioRSVP(d,callback){
 function fecharConfirmaRSVP(){
   var m=document.getElementById('moConfirmaRSVP');
   if(m)m.classList.remove('on');
+  /* Se há callback de cancelamento (do sR), executa pra liberar o submit */
+  if(_rsvpCancelCallback){
+    var oc=_rsvpCancelCallback;
+    _rsvpCancelCallback=null;
+    try{oc();}catch(e){}
+  }
   _rsvpPendente=null;
   _rsvpCallback=null;
   unlockScroll();
 }
 function confirmarEEnviarRSVP(){
+  /* Usuário confirmou — não roda o cancelCallback */
+  _rsvpCancelCallback=null;
   if(_rsvpCallback){
     var cb=_rsvpCallback;
     _rsvpCallback=null;
     cb();
   }
-  fecharConfirmaRSVP();
+  /* Fecha o modal sem disparar cancel */
+  var m=document.getElementById('moConfirmaRSVP');
+  if(m)m.classList.remove('on');
+  _rsvpPendente=null;
+  unlockScroll();
 }
 function _esc(s){
   return String(s==null?'':s).replace(/[&<>"']/g,function(c){
@@ -7213,7 +7246,9 @@ function toggleDia(d){
   var novo=(_diaAtivo===d)?null:d;
   var wrap=document.getElementById('progDiasPanels');
   document.querySelectorAll('.prog-dia-card').forEach(function(c){
-    c.classList.toggle('on',c.dataset.dia===novo);
+    var ativo = c.dataset.dia===novo;
+    c.classList.toggle('on',ativo);
+    c.setAttribute('aria-pressed', ativo ? 'true' : 'false');
   });
   document.querySelectorAll('.prog-dia-panel-txt').forEach(function(p){
     p.classList.toggle('on',p.id==='pdPanel-'+novo);
@@ -7775,6 +7810,21 @@ var nomeSalvo=getNomeSalvo();
       toggleVia('day');
     }
   },600);
+
+  /* Abre "Sábado" como default (dia-protagonista do casamento) — designer-ux #3B */
+  setTimeout(function(){
+    if(typeof toggleDia==='function' && _diaAtivo!=='sabado'){
+      toggleDia('sabado');
+    }
+  },650);
+
+  /* Garante estado inicial correto do RSVP (aviso day use, botão CTA opções) */
+  try{
+    var rsvpSel=document.getElementById('rsvp_select_participacao');
+    if(rsvpSel && typeof onParticiplacaoChange==='function'){
+      onParticiplacaoChange(rsvpSel.value);
+    }
+  }catch(e){}
 
   /* Animação glow no card Sábado até primeiro clique (apenas esta sessão) */
   initSabadoGlow();
