@@ -1159,7 +1159,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding-bottom:var(--pad);
 }
 
-/* Título — editorial, leve, arejado. Cor: creme sussurro (dentro da paleta ouro/navy/creme) */
+/* Título — editorial, leve, arejado. Cor: ouro (dentro da paleta ouro/navy/creme). Fundo da seção é creme, então cores claras (creme, cinza) sumiriam. */
 .vestido-titulo{
   font-family:var(--fh);
   font-weight:400;
@@ -1167,13 +1167,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-size:clamp(2.6rem,9vw,3.7rem);
   line-height:1.1;
   text-align:center;
-  color:rgba(250,244,232,.72); /* era var(--is) #8A8070 (cinza fora da paleta) */
+  color:var(--a); /* ouro #D4A04A — alto contraste editorial sobre creme */
   margin:0 auto 18px;
   letter-spacing:.005em;
   position:relative;
   z-index:1;
   padding-top:32px;
-  text-shadow:0 2px 12px rgba(15,23,32,.28); /* contraste editorial sobre fundo escuro */
 }
 .vestido-titulo i{
   font-style:italic;
@@ -1187,7 +1186,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-size:clamp(.98rem,2.4vw,1.08rem);
   line-height:1.55;
   text-align:center;
-  color:rgba(250,244,232,.85);
+  color:rgba(30,24,16,.78); /* navy escuro @ 78% — legível sobre creme da seção */
   max-width:520px;
   margin:0 auto 28px;
   padding:0 16px;
@@ -1476,7 +1475,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-weight:500;
   letter-spacing:.04em; /* era .16em; reduz espaçamento exagerado */
 
-  color:rgba(250,244,232,.92); /* era .78; melhora contraste */
+  color:rgba(30,24,16,.86); /* navy escuro — legível sobre fundo creme da seção Vestido */
   white-space:normal; /* era nowrap; permite 2 linhas */
   display:-webkit-box;
   -webkit-line-clamp:2;
@@ -1489,7 +1488,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-style:italic;
   font-size:.82rem;
   font-weight:400;
-  color:rgba(250,244,232,.72);
+  color:rgba(30,24,16,.62); /* navy discreto */
   letter-spacing:.02em;
   margin-top:4px;
   line-height:1.15;
