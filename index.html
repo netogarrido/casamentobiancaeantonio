@@ -2522,6 +2522,27 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   letter-spacing:.04em;
 }
 
+/* B15: subtítulo editorial da categoria — Cormorant italic, tom discreto pra não competir com o nome */
+.cat-desc{
+  margin:2px 0 1px;
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:.64rem;
+  line-height:1.25;
+  color:rgba(30,24,16,.66);
+  letter-spacing:.01em;
+  max-width:100%;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+}
+.cat-card.on .cat-desc{color:rgba(15,23,32,.72)}
+@media(min-width:480px){
+  .cat-desc{font-size:.78rem}
+}
+
 /* ── Expansão das subcategorias dentro da caixa-mãe ── */
 .cat-panels-wrap{
   display:grid;
@@ -4605,7 +4626,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <a href="#programacao" id="nav_menu_programacao">Programação</a>
     <a href="#rsvp" id="nav_menu_rsvp">Confirmar presença</a>
     <a href="#presentes" id="nav_menu_presentes">Presentes</a>
-    <a href="#vestido" id="nav_menu_vestido">Vestido Vestido</a>
+    <a href="#vestido" id="nav_menu_vestido">Vestido</a>
     <a href="#traje" id="nav_menu_traje">O que vestir</a>
     <a href="#faq" id="nav_menu_faq">Dúvidas</a>
   </nav>
@@ -5951,7 +5972,17 @@ function applyPresentes(rows){
     var tipo=r.tipo;var catId=r.categoria_id;
     var ordem=r.ordem;
     var pixKey=catId+'_'+String(Math.round(Number(ordem)||0));
-    var link=PIX[pixKey]||'';
+    /* P4: lê o link PIX da coluna do Sheet como fonte primária;
+       fallback pro dicionário hardcoded se coluna vazia.
+       Remove a falha silenciosa quando noivos adicionam item novo ou mudam ordem. */
+    var linkFromSheet=String(
+      r['Link pix (hardcoded no html)']||
+      r.link_pix||
+      r.pix||
+      r.link||
+      ''
+    ).trim();
+    var link=linkFromSheet||PIX[pixKey]||'';
     var val=r.valor;
     var isLivre=(String(val||'').toLowerCase()==='livre'||val===''||val===null||val===undefined||isNaN(Number(val)));
     var item={
@@ -5964,6 +5995,12 @@ function applyPresentes(rows){
       catId:catId,
       ordem:Number(ordem)||0
     };
+    /* P4 guard: bloqueia item sem link Pix (evita modal "enviado" que não abre Nubank) */
+    if(!item.l && catId!=='outro_valor'){
+      try{console.warn('[applyPresentes] item sem link_pix ignorado:',catId,ordem,item.n);}catch(e){}
+      try{trackEvento('presente_sem_link',(catId||'?')+'_'+ordem+' | '+item.n);}catch(e){}
+      return; /* não adiciona em GIFTS nem em CAIXINHAS */
+    }
     if(tipo==='presente'){
       if(!GIFTS[catId])GIFTS[catId]=[];
       GIFTS[catId].push(item);
@@ -5998,9 +6035,15 @@ function renderCats(){
     var maxV=vals.length?Math.max.apply(null,vals):0;
     var rng=vals.length?'A partir de R$ '+minV.toLocaleString('pt-BR'):''; /* P22: antes era "R$ min – R$ max" que esmagava itens baixos */
     var img=CAT_IMGS[cid]||'';
+    /* B15: subtítulo editorial — lê do Sheet conteudo `categoria_<id>_descricao`; se vazio, oculta.
+       Inclui contagem automática "· N itens" pra dar escala. */
+    var descChave='categoria_'+cid+'_descricao';
+    var descTxt=(CONTEUDO&&CONTEUDO[descChave])?String(CONTEUDO[descChave]).trim():'';
+    var qtd=items.length;
+    var descHtml=descTxt?'<p class="cat-desc">'+descTxt+' · '+qtd+' '+(qtd===1?'item':'itens')+'</p>':'';
     /* P19: <article> semântico + <h3> pra hierarquia SEO/LLM */
     var d=document.createElement('article');d.className='cat-card';d.dataset.c=cid;
-    d.innerHTML='<img src="'+img+'" alt="'+catNames[cid].replace(/^[^\w\s]+\s*/,'')+'" loading="lazy"><div class="cat-lbl"><h3 class="cat-nm">'+catNames[cid]+'</h3><div class="cat-rng">'+rng+'</div></div>';
+    d.innerHTML='<img src="'+img+'" alt="'+catNames[cid].replace(/^[^\w\s]+\s*/,'')+'" loading="lazy"><div class="cat-lbl"><h3 class="cat-nm">'+catNames[cid]+'</h3>'+descHtml+'<div class="cat-rng">'+rng+'</div></div>';
     d.onclick=function(){
       trackEvento('categoria_clicou',catNames[cid]);
       toggleCat(cid);
