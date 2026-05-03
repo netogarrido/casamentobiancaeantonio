@@ -5710,7 +5710,9 @@ function handleStart(){
   }
   salvarNomeConvidado(nome);
   registrarEntrada(nome,true);
-  trackEvento('popup_stage_um_sim','');
+  /* P9 opção A — enriquecer evento com com_musica e tempo_ms pra dispensar join com Sheet analytics */
+  var _tSim=window._popupAbertoTs?(Date.now()-window._popupAbertoTs):0;
+  trackEvento('popup_stage_um_sim','com_musica=sim&tempo_ms='+_tSim);
   playHeroVideo();
   au.play().then(function(){syncPlayerUI();}).catch(function(){});
   hP('sim');
@@ -5731,7 +5733,9 @@ function handleSkip(){
   }
   salvarNomeConvidado(nome);
   registrarEntrada(nome,false);
-  trackEvento('popup_stage_um_nao','');
+  /* P9 opção A — enriquecer evento com com_musica e tempo_ms */
+  var _tNao=window._popupAbertoTs?(Date.now()-window._popupAbertoTs):0;
+  trackEvento('popup_stage_um_nao','com_musica=nao&tempo_ms='+_tNao);
   playHeroVideo();
   hP('nao');
   initVestidoSwap();
@@ -6994,8 +6998,23 @@ function startSlideshow(){
       rafId=requestAnimationFrame(step);
       /* Revelar track só depois de todas imagens carregadas */
       track.classList.add('ready');
-      /* Esconder fallback quando slideshow pronto */
-      if(fallbackImg){fallbackImg.classList.add('hidden');}
+      /* Sinal de performance: quanto tempo até o popup estar visualmente pronto */
+      try{
+        if(window._popupAbertoTs && !startSlideshow._readyTracked){
+          startSlideshow._readyTracked=true;
+          var dt=Date.now()-window._popupAbertoTs;
+          if(typeof trackEvento==='function')trackEvento('perf_popup_track_ready',dt+'ms');
+        }
+      }catch(e){}
+      /* Esconder fallback quando slideshow pronto + remover do DOM após fade pra liberar memória em iOS antigo */
+      if(fallbackImg){
+        fallbackImg.classList.add('hidden');
+        setTimeout(function(){
+          if(fallbackImg&&fallbackImg.parentNode){
+            fallbackImg.parentNode.removeChild(fallbackImg);
+          }
+        },700);
+      }
     }
   }
   Array.from(track.querySelectorAll('img')).forEach(function(img){
@@ -7181,6 +7200,42 @@ var nomeSalvo=getNomeSalvo();
   /* B1 — marcar abertura do popup e emitir evento com stage inicial */
   window._popupAbertoTs=Date.now();
   trackEvento('popup_abriu', nomeSalvo ? 'stage_um_retornante' : 'stage_zero_novo');
+
+  /* P6 — Core Web Vitals: FCP + LCP (com buffered:true pra captar entradas anteriores ao observer) */
+  try{
+    if('PerformanceObserver' in window){
+      /* FCP */
+      new PerformanceObserver(function(list){
+        list.getEntries().forEach(function(e){
+          if(e.name==='first-contentful-paint' && !window._fcpTracked){
+            window._fcpTracked=true;
+            trackEvento('perf_fcp', Math.round(e.startTime)+'ms');
+          }
+        });
+      }).observe({type:'paint', buffered:true});
+
+      /* LCP — pode emitir múltiplas entradas; guardar só a última em window e emitir ao unload */
+      var _lcpValor=0;
+      new PerformanceObserver(function(list){
+        var entries=list.getEntries();
+        if(entries.length){
+          _lcpValor=entries[entries.length-1].startTime;
+        }
+      }).observe({type:'largest-contentful-paint', buffered:true});
+
+      var _emitLcp=function(){
+        if(_lcpValor && !window._lcpTracked){
+          window._lcpTracked=true;
+          trackEvento('perf_lcp', Math.round(_lcpValor)+'ms');
+        }
+      };
+      /* Emitir LCP uma única vez quando o usuário for sair/esconder a aba */
+      window.addEventListener('pagehide', _emitLcp, {once:true});
+      document.addEventListener('visibilitychange', function(){
+        if(document.visibilityState==='hidden') _emitLcp();
+      });
+    }
+  }catch(e){}
 
   /* B4 — trackear preenchimento do nome uma vez por sessão (só comprimento, não o nome) */
   var popupNomeInp=document.getElementById('popup_nome');
