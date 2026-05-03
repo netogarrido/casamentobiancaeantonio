@@ -5173,7 +5173,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <span class="mo-reservar-ico">💬</span>
       <div class="mo-reservar-info">
         <div class="mo-reservar-lb">WhatsApp</div>
-        <div class="mo-reservar-vl" id="reserva_marcela_whatsapp_modal"></div>
+        <div class="mo-reservar-vl" id="reserva_marcela_whatsapp_modal">(19) 97157-5937</div>
+      </div>
+      <span class="mo-reservar-cp">Copiar</span>
+    </div>
+
+    <div class="mo-reservar-contato" onclick="cpEmailReservar()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cpEmailReservar();}">
+      <span class="mo-reservar-ico">✉️</span>
+      <div class="mo-reservar-info">
+        <div class="mo-reservar-lb">E-mail</div>
+        <div class="mo-reservar-vl" id="reserva_marcela_email_modal">reservas@santannafazenda.com.br</div>
       </div>
       <span class="mo-reservar-cp">Copiar</span>
     </div>
@@ -7254,12 +7263,20 @@ function cpFallback(text,msg){
 }
 
 function cpEmail(){
-  var v=document.getElementById('reserva_marcela_email').textContent.trim();
+  /* Legado: alias defensivo — modal Reservar agora usa cpEmailReservar() */
+  var el=document.getElementById('reserva_marcela_email');
+  if(!el)return;
+  var v=(el.textContent||'').trim();
+  if(!v)return;
   trackEvento('contato_marcela_copiou','email');
   cp(v,'E-mail copiado!');
 }
 function cpWA(){
-  var v=document.getElementById('reserva_marcela_whatsapp').textContent.trim().replace(/\D/g,'');
+  /* Legado: alias defensivo */
+  var el=document.getElementById('reserva_marcela_whatsapp');
+  if(!el)return;
+  var v=(el.textContent||'').trim().replace(/\D/g,'');
+  if(!v)return;
   trackEvento('contato_marcela_copiou','whatsapp');
   cp(v,'WhatsApp copiado!');
 }
@@ -7276,6 +7293,7 @@ function _popularReservarModal(){
   set('reserva_titulo_modal','reserva_titulo');
   set('reserva_marcela_nome_modal','reserva_marcela_nome');
   set('reserva_marcela_whatsapp_modal','reserva_marcela_whatsapp');
+  set('reserva_marcela_email_modal','reserva_marcela_email');
   set('reserva_marcela_horarios_modal','reserva_marcela_horarios');
   set('reserva_marcela_aviso_modal','reserva_marcela_aviso');
 }
@@ -7298,7 +7316,23 @@ function cpWAReservar(){
   if(!v)return;
   trackEvento('contato_marcela_copiou','whatsapp_modal');
   cp(v,'WhatsApp copiado!');
-  var card=document.querySelector('#moReservar .mo-reservar-contato');
+  /* Seleciona especificamente o card do whatsapp (primeiro .mo-reservar-contato) */
+  var cards=document.querySelectorAll('#moReservar .mo-reservar-contato');
+  var card=cards[0];
+  if(card){
+    card.classList.add('copiado');
+    setTimeout(function(){card.classList.remove('copiado');},1800);
+  }
+}
+function cpEmailReservar(){
+  var el=document.getElementById('reserva_marcela_email_modal');
+  var v=el?el.textContent.trim():'';
+  if(!v)return;
+  trackEvento('contato_marcela_copiou','email_modal');
+  cp(v,'E-mail copiado!');
+  /* Seleciona especificamente o card do email (segundo .mo-reservar-contato) */
+  var cards=document.querySelectorAll('#moReservar .mo-reservar-contato');
+  var card=cards[1];
   if(card){
     card.classList.add('copiado');
     setTimeout(function(){card.classList.remove('copiado');},1800);
