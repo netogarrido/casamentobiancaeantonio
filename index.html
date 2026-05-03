@@ -118,6 +118,8 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   color:var(--al);
   font-weight:400;
   transition:transform .15s ease;
+  /* B4 — text-shadow sutil protege legibilidade sobre frames claros do vídeo */
+  text-shadow:0 1px 12px rgba(15,23,32,.35);
 }
 
 .nav-logo:active{
@@ -316,6 +318,9 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
 /* Reduced-motion: sem animação */
 @media (prefers-reduced-motion: reduce){
   .nav-overlay,.nav-overlay-links a{transition:none !important;transform:none !important}
+  /* B5 — respeitar preferência do usuário no hero: countdown e seta não pulsam */
+  .cd-n{animation:none !important}
+  #hero_cta_terciario{animation:none !important}
 }
 
 /* Helper a11y — visually hidden (pro H2 do overlay) */
@@ -747,6 +752,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* ──────────── HERO ──────────── */
 .hero{
   height:100svh;
+  height:100dvh;
   min-height:560px;
   display:flex;
   align-items:stretch;
@@ -767,17 +773,22 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   flex-direction:column;
   align-items:center;
   text-align:center;
-  gap:12px;
+  gap:14px;
   min-height:0;
+  /* B9 — subir H1: vídeo limitado em mobile pra deixar hero-text com respiro acima da dobra */
+  justify-content:flex-start;
+  padding-top:clamp(8px, 2vh, 24px);
 }
-/* vídeo em card — cresce pra preencher o espaço disponível em mobile */
+/* vídeo em card — em mobile tem altura máxima controlada pra não empurrar H1 pro fundo */
 .hero-vid-wrap{
   position:relative;
-  flex:1 1 auto;
+  flex:0 1 auto;
   min-height:0;
   width:auto;
   max-width:calc(100vw - 40px);
   aspect-ratio:4/5;
+  /* B9 — mobile: altura limitada a ~40-48% da viewport pra H1 subir pra ~y=440 em iPhone 14 Pro (844) */
+  max-height:min(48vh, 48dvh);
   border-radius:22px;
   overflow:hidden;
   box-shadow:0 14px 40px rgba(0,0,0,.42);
@@ -805,6 +816,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     flex:0 0 auto;
     width:min(40vw, 440px);
     max-width:none;
+    max-height:none;
     min-height:0;
   }
   .hero-text{
@@ -916,7 +928,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* gradiente sobre o fundo */
 .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,23,32,.6),rgba(15,23,32,.85))}
 .hero-text{flex:1}
-.hero h1{font-family:var(--fh);font-weight:300;font-size:clamp(2rem,7vw,3.4rem);color:var(--s);line-height:1.08;margin-bottom:4px}
+.hero h1{font-family:var(--fh);font-weight:300;font-size:clamp(2rem,7vw,3.4rem);color:var(--s);line-height:1.08;margin-bottom:4px;text-shadow:0 2px 18px rgba(15,23,32,.28)}
 .hero h1 i{font-style:italic;color:var(--al)}
 
 .hero-date{font-size:.86rem;font-weight:700;letter-spacing:.18em;color:var(--a);margin-bottom:2px}
@@ -5870,6 +5882,14 @@ var au=document.getElementById('bgMusic');
 function playHeroVideo(){
   var hero=document.getElementById('hero');
   var vids=document.querySelectorAll('[data-midia="hero_video"], [data-midia-bg="hero_video"]');
+  /* B5 — respeitar prefers-reduced-motion: não iniciar autoplay, deixar poster/fallback ativo */
+  var reduzirMov=false;
+  try{reduzirMov=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  if(reduzirMov){
+    /* ativa fallback visual imediato em vez de autoplay */
+    vids.forEach(function(v){ativarFallbackHero(v);});
+    return;
+  }
   if(hero)hero.classList.add('hero-video-started');
   vids.forEach(function(v){try{v.play().catch(function(){ativarFallbackHero(v);});}catch(e){ativarFallbackHero(v);}});
 }
