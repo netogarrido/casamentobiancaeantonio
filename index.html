@@ -2366,7 +2366,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-hero-wrap{
   position:relative;
   width:100%;
-  margin:0 0 24px;
+  margin:0 0 8px;
   cursor:pointer;
   background:#0B1F3A;
   overflow:hidden;
@@ -2735,7 +2735,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   /* Hero mais compacto no desktop */
   .prog-hero-img-wrap{
     aspect-ratio:auto !important;
-    height:400px;
+    height:320px;
+  }
+  .prog-hero-wrap{
+    margin:0 0 4px;
+  }
+  .prog-dias-wrap{
+    margin:0 0 16px;
   }
 
   /* Caixa dias mais compacta */
@@ -2986,13 +2992,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .prog-divider-txt,
 .prog-cta-txt{
-  font-family:var(--fh);
-  font-size:.78rem;
+  font-family:var(--fb);
+  font-size:.92rem;
   font-weight:700;
-  letter-spacing:.18em;
-  color:var(--ap);
+  letter-spacing:.06em;
+  color:var(--al);
   white-space:nowrap;
-  opacity:.95;
+  opacity:1;
+  text-transform:uppercase;
 }
 .prog-cta-txt{color:var(--al)}
 
@@ -3141,8 +3148,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   left:50%;
   width:170%;
   padding:8px 0 7px;
-  background:#B3261E;
-  color:#fff;
+  background:rgba(179,38,30,.28);
+  color:rgba(255,255,255,.78);
   font-family:var(--fb);
   font-size:.72rem;
   font-weight:900;
@@ -3151,8 +3158,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   text-align:center;
   text-transform:uppercase;
   transform:translate(-50%,-50%) rotate(-18deg);
-  box-shadow:0 8px 20px rgba(179,38,30,.28);
+  box-shadow:0 2px 8px rgba(179,38,30,.1);
   z-index:3;
+  backdrop-filter:blur(1px);
+  -webkit-backdrop-filter:blur(1px);
 }
 
 @media(max-width:380px){
@@ -3349,6 +3358,206 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 /* ══════════════════════════════════════════
+   BOTÕES RESERVAR (Day use) e HOSP (hospedagem)
+══════════════════════════════════════════ */
+.prog-reservar-btn,
+.prog-hosp-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  padding:15px 18px;
+  margin:12px 0 16px;
+  font-family:var(--fb);
+  font-size:.92rem;
+  font-weight:700;
+  letter-spacing:.02em;
+  text-transform:none;
+  color:var(--n);
+  background:linear-gradient(135deg,var(--a),var(--al));
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 6px 20px rgba(212,160,74,.32), inset 0 1px 0 rgba(255,255,255,.4);
+  transition:transform .2s ease, box-shadow .2s ease;
+  min-height:52px;
+}
+.prog-reservar-btn:hover,
+.prog-hosp-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 24px rgba(212,160,74,.42), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.prog-reservar-btn:active,
+.prog-hosp-btn:active{transform:scale(.98)}
+.prog-reservar-ico,
+.prog-hosp-btn-ico{font-size:1.1rem}
+.prog-reservar-arrow,
+.prog-hosp-btn-arrow{font-size:1rem;margin-left:2px}
+
+.prog-reservar-btn--base{
+  margin-top:18px;
+  margin-bottom:0;
+}
+
+.prog-hosp-btn--day{
+  background:rgba(255,255,255,.85);
+  color:var(--n);
+  border:1px solid rgba(212,160,74,.4);
+  box-shadow:0 4px 14px rgba(15,23,32,.08);
+}
+.prog-hosp-btn--day:hover{
+  background:#fff;
+  box-shadow:0 6px 18px rgba(15,23,32,.12);
+}
+
+/* ══════════════════════════════════════════
+   MODAL HOTEIS ALTERNATIVOS
+══════════════════════════════════════════ */
+.mo-box--hoteis,
+.mo-box--reservar{
+  padding:26px 22px 22px;
+  max-width:480px;
+  width:100%;
+}
+@media(min-width:768px){
+  .mo-box--hoteis,
+  .mo-box--reservar{
+    padding:32px 28px 26px;
+  }
+}
+
+.mo-hoteis-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:4px 0 16px;
+}
+.mo-hotel-card{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 14px;
+  background:var(--p);
+  border:1px solid var(--st);
+  border-radius:14px;
+  cursor:pointer;
+  transition:background .25s, border-color .25s, transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mo-hotel-card:hover{
+  background:#fff;
+  border-color:var(--a);
+}
+.mo-hotel-card:active{transform:scale(.99)}
+.mo-hotel-info{flex:1;min-width:0;text-align:left}
+.mo-hotel-info h4{
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:500;
+  font-size:1.15rem;
+  color:var(--n);
+  margin:0 0 2px;
+  line-height:1.2;
+}
+.mo-hotel-info p{
+  font-family:var(--fb);
+  font-size:.76rem;
+  color:var(--im);
+  margin:0 0 4px;
+}
+.mo-hotel-info .prog-phone-number{
+  font-family:var(--fb);
+  font-size:.82rem;
+  font-weight:700;
+  color:var(--a);
+  letter-spacing:.02em;
+}
+.mo-hotel-copy{
+  font-family:var(--fb);
+  font-size:.66rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--a);
+  padding:7px 11px;
+  border:1px solid rgba(212,160,74,.4);
+  border-radius:999px;
+  flex-shrink:0;
+}
+.mo-hotel-card.copiado .mo-hotel-copy{
+  background:var(--a);
+  color:var(--n);
+  border-color:var(--a);
+}
+
+/* ══════════════════════════════════════════
+   MODAL RESERVAR DAY USE
+══════════════════════════════════════════ */
+.mo-reservar-contato{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 14px;
+  background:var(--n);
+  color:#FAF4E8;
+  border-radius:14px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  margin:0 0 12px;
+  transition:background .2s;
+}
+.mo-reservar-contato:hover{background:var(--nm)}
+.mo-reservar-ico{font-size:1.2rem}
+.mo-reservar-info{flex:1;min-width:0;text-align:left}
+.mo-reservar-lb{
+  font-family:var(--fb);
+  font-size:.66rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(250,244,232,.55);
+}
+.mo-reservar-vl{
+  font-family:var(--fb);
+  font-size:.96rem;
+  font-weight:700;
+  color:#FAF4E8;
+  margin-top:2px;
+}
+.mo-reservar-cp{
+  font-family:var(--fb);
+  font-size:.66rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--al);
+  padding:6px 10px;
+  border:1px solid rgba(212,160,74,.4);
+  border-radius:999px;
+  flex-shrink:0;
+}
+.mo-reservar-contato.copiado{background:var(--a)}
+.mo-reservar-contato.copiado .mo-reservar-cp{color:var(--n);border-color:var(--n)}
+
+.mo-reservar-hrs{
+  font-family:var(--fb);
+  font-size:.9rem;
+  color:var(--im);
+  line-height:1.7;
+  margin:10px 0 4px;
+}
+.mo-reservar-hrs strong{color:var(--n);font-weight:700}
+.mo-reservar-aviso{
+  font-family:var(--fb);
+  font-size:.82rem;
+  color:var(--im);
+  line-height:1.55;
+  margin:6px 0 0;
+}
+
+/* ══════════════════════════════════════════
    2×2 LAZER — vocabulário idêntico ao .cat-card
 ══════════════════════════════════════════ */
 .prog-lazer-wrap{margin:8px 0 36px}
@@ -3519,6 +3728,29 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .prog-lazer-wrap.pulse-once .prog-lazer-panel{
   animation:pulseOnce 1.4s ease-out;
+}
+
+/* Glow pulsante no card Sábado convidando 1º clique (até primeira interação) */
+@keyframes sabadoGlow{
+  0%,100%{
+    box-shadow:
+      0 0 0 0 rgba(212,160,74,0),
+      0 0 14px 2px rgba(212,160,74,.20),
+      inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  50%{
+    box-shadow:
+      0 0 0 6px rgba(212,160,74,.08),
+      0 0 24px 6px rgba(212,160,74,.55),
+      inset 0 1px 0 rgba(255,255,255,.7);
+  }
+}
+.prog-dia-card.sabado-glow{
+  animation:sabadoGlow 2.2s ease-in-out infinite;
+  border-color:var(--a) !important;
+}
+@media (prefers-reduced-motion:reduce){
+  .prog-dia-card.sabado-glow{animation:none}
 }
 
   
@@ -4069,19 +4301,21 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       </div>
 
       <p class="prog-alt-texto-solto" id="reserva_santanna_texto"></p>
-
-      <div class="prog-alt-card" role="button" tabindex="0" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
-        <h4 id="hotel_ancona_nome"></h4>
-        <p>~20 min do hotel</p>
-        <span class="prog-phone-number" id="hotel_ancona_contato"></span>
-      </div>
-
-      <div class="prog-alt-card" role="button" tabindex="0" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
-        <h4 id="hotel_prado_nome"></h4>
-        <p>~20 min do hotel</p>
-        <span class="prog-phone-number" id="hotel_prado_contato"></span>
-      </div>
     </div>
+
+    <!-- Botão para ver hospedagens alternativas (abre modal) -->
+    <button type="button" class="prog-hosp-btn" onclick="abrirHoteis()">
+      <span class="prog-hosp-btn-ico">🏨</span>
+      <span>Ver hospedagens alternativas</span>
+      <span class="prog-hosp-btn-arrow">→</span>
+    </button>
+
+    <!-- Botão para redirecionar ao Day use -->
+    <button type="button" class="prog-hosp-btn prog-hosp-btn--day" onclick="toggleVia('day')">
+      <span class="prog-hosp-btn-ico">🍹</span>
+      <span>Conheça a melhor opção disponível</span>
+      <span class="prog-hosp-btn-arrow">→</span>
+    </button>
   </div>
 </div>
 
@@ -4095,6 +4329,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
             </div>
             <div class="prog-dayuse">
               <h3 class="prog-dayuse-ttl" id="reserva_dayuse_chamada"></h3>
+
+              <!-- Botão Reservar — TOPO -->
+              <button type="button" class="prog-reservar-btn" onclick="abrirReservar()">
+                <span class="prog-reservar-ico">📞</span>
+                <span>Reservar day use</span>
+                <span class="prog-reservar-arrow">→</span>
+              </button>
+
               <p class="prog-dayuse-txt" id="reserva_dayuse_convite"></p>
               <div class="prog-dayuse-info">
                 
@@ -4110,19 +4352,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
                 <span>👇</span> Veja a estrutura do hotel
               </button>
 
-              <div class="prog-marcela">
-                <h4 id="reserva_titulo"></h4>
-                <p class="prog-marcela-lead">Diretamente com <strong id="reserva_marcela_nome"></strong>:</p>
-                <div class="prog-marcela-ct">
-                  <div class="prog-marcela-it" onclick="cpWA()">
-                    <span class="prog-marcela-ico">💬</span>
-                    <div class="prog-marcela-inf"><div class="prog-marcela-lb">WhatsApp</div><div class="prog-marcela-vl" id="reserva_marcela_whatsapp"></div></div>
-                    <span class="prog-marcela-cp">Copiar</span>
-                  </div>
-                </div>
-                <div class="prog-marcela-hrs" id="reserva_marcela_horarios"></div>
-                <p class="prog-marcela-aviso" id="reserva_marcela_aviso"></p>
-              </div>
+              <!-- Botão Reservar — BASE -->
+              <button type="button" class="prog-reservar-btn prog-reservar-btn--base" onclick="abrirReservar()">
+                <span class="prog-reservar-ico">📞</span>
+                <span>Reservar day use</span>
+                <span class="prog-reservar-arrow">→</span>
+              </button>
             </div>
           </div>
 
@@ -4308,6 +4543,70 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <p id="modal_agradecimento_texto"></p>
       <button class="btn btn-a btn-sm" onclick="cM()">Fechar</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL HOSPEDAGENS ALTERNATIVAS -->
+<div class="mo" id="moHoteis">
+  <div class="mo-box mo-box--hoteis">
+    <button class="mo-close" onclick="fecharHoteis()">✕</button>
+    <div class="mo-handle"></div>
+
+    <div class="mo-gh">
+      <div class="mo-gi">🏨</div>
+      <div class="mo-gn">Hospedagens alternativas</div>
+      <div class="mo-gd">Dois hotéis próximos ao local da festa, cerca de 20 minutos de carro.</div>
+    </div>
+
+    <div class="mo-hoteis-list">
+      <div class="mo-hotel-card" role="button" tabindex="0" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
+        <div class="mo-hotel-info">
+          <h4 id="hotel_ancona_nome_modal"></h4>
+          <p>~20 min do hotel</p>
+          <span class="prog-phone-number" id="hotel_ancona_contato"></span>
+        </div>
+        <span class="mo-hotel-copy">Copiar</span>
+      </div>
+
+      <div class="mo-hotel-card" role="button" tabindex="0" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
+        <div class="mo-hotel-info">
+          <h4 id="hotel_prado_nome_modal"></h4>
+          <p>~20 min do hotel</p>
+          <span class="prog-phone-number" id="hotel_prado_contato"></span>
+        </div>
+        <span class="mo-hotel-copy">Copiar</span>
+      </div>
+    </div>
+
+    <button class="btn btn-g btn-sm" style="width:100%;margin-top:6px" onclick="fecharHoteis()">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL RESERVAR DAY USE -->
+<div class="mo" id="moReservar">
+  <div class="mo-box mo-box--reservar">
+    <button class="mo-close" onclick="fecharReservar()">✕</button>
+    <div class="mo-handle"></div>
+
+    <div class="mo-gh">
+      <div class="mo-gi">📞</div>
+      <div class="mo-gn" id="reserva_titulo_modal"></div>
+      <div class="mo-gd">Diretamente com <strong id="reserva_marcela_nome_modal"></strong></div>
+    </div>
+
+    <div class="mo-reservar-contato" onclick="cpWAReservar()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cpWAReservar();}">
+      <span class="mo-reservar-ico">💬</span>
+      <div class="mo-reservar-info">
+        <div class="mo-reservar-lb">WhatsApp</div>
+        <div class="mo-reservar-vl" id="reserva_marcela_whatsapp_modal"></div>
+      </div>
+      <span class="mo-reservar-cp">Copiar</span>
+    </div>
+
+    <div class="mo-reservar-hrs" id="reserva_marcela_horarios_modal"></div>
+    <p class="mo-reservar-aviso" id="reserva_marcela_aviso_modal"></p>
+
+    <button class="btn btn-g btn-sm" style="width:100%;margin-top:10px" onclick="fecharReservar()">Fechar</button>
   </div>
 </div>
 
@@ -4702,6 +5001,10 @@ function loadAll(){
     applyConteudo(res[2]);
     applyPresentes(res[3]);
     applyPerguntas(res[4]);
+    /* Day use aberto por default (Santana esgotado) */
+    setTimeout(function(){
+      if(_viaAtiva===null){toggleVia('day',{skipScroll:true});}
+    },300);
   }).catch(function(e){
     console.warn('Sheets load error:',e);
   });
@@ -5966,6 +6269,90 @@ function cpWA(){
 }
 
 /* ══════════════════════════════════════════
+   MODAL RESERVAR DAY USE
+══════════════════════════════════════════ */
+function _popularReservarModal(){
+  function set(idDest,idSrc){
+    var src=CONTEUDO&&CONTEUDO[idSrc];
+    var el=document.getElementById(idDest);
+    if(el && src!==undefined){el.textContent=src;}
+  }
+  set('reserva_titulo_modal','reserva_titulo');
+  set('reserva_marcela_nome_modal','reserva_marcela_nome');
+  set('reserva_marcela_whatsapp_modal','reserva_marcela_whatsapp');
+  set('reserva_marcela_horarios_modal','reserva_marcela_horarios');
+  set('reserva_marcela_aviso_modal','reserva_marcela_aviso');
+}
+function abrirReservar(){
+  _popularReservarModal();
+  var m=document.getElementById('moReservar');
+  if(!m)return;
+  m.classList.add('on');
+  lockScroll();
+  trackEvento('reserva_modal_abriu','day_use');
+}
+function fecharReservar(){
+  var m=document.getElementById('moReservar');
+  if(m)m.classList.remove('on');
+  unlockScroll();
+}
+function cpWAReservar(){
+  var el=document.getElementById('reserva_marcela_whatsapp_modal');
+  var v=el?el.textContent.trim().replace(/\D/g,''):'';
+  if(!v)return;
+  trackEvento('contato_marcela_copiou','whatsapp_modal');
+  cp(v,'WhatsApp copiado!');
+  var card=document.querySelector('#moReservar .mo-reservar-contato');
+  if(card){
+    card.classList.add('copiado');
+    setTimeout(function(){card.classList.remove('copiado');},1800);
+  }
+}
+
+/* ══════════════════════════════════════════
+   MODAL HOSPEDAGENS ALTERNATIVAS
+══════════════════════════════════════════ */
+function _popularHoteisModal(){
+  function set(idDest,idSrc){
+    var src=CONTEUDO&&CONTEUDO[idSrc];
+    var el=document.getElementById(idDest);
+    if(el && src!==undefined){el.textContent=src;}
+  }
+  set('hotel_ancona_nome_modal','hotel_ancona_nome');
+  set('hotel_prado_nome_modal','hotel_prado_nome');
+}
+function abrirHoteis(){
+  _popularHoteisModal();
+  var m=document.getElementById('moHoteis');
+  if(!m)return;
+  m.classList.add('on');
+  lockScroll();
+  trackEvento('hoteis_alt_modal_abriu','hospedagem');
+}
+function fecharHoteis(){
+  var m=document.getElementById('moHoteis');
+  if(m)m.classList.remove('on');
+  unlockScroll();
+}
+
+/* fechar modais ao clicar no overlay */
+(function(){
+  function bindOverlay(id,closeFn){
+    var m=document.getElementById(id);
+    if(m){m.addEventListener('click',function(e){if(e.target===this)closeFn();});}
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      bindOverlay('moReservar',fecharReservar);
+      bindOverlay('moHoteis',fecharHoteis);
+    });
+  }else{
+    bindOverlay('moReservar',fecharReservar);
+    bindOverlay('moHoteis',fecharHoteis);
+  }
+})();
+
+/* ══════════════════════════════════════════
    PROG — LAZER CLICÁVEL
 ══════════════════════════════════════════ */
 var _lazerAtivo=null;
@@ -5991,6 +6378,18 @@ function toggleLazer(id){
 
   _lazerAtivo=novoId;
   if(novoId){trackEvento('prog_lazer_abriu',String(novoId));}
+
+  /* Scroll-to-top ao abrir card lazer (sempre — desktop e mobile) */
+  if(novoId){
+    setTimeout(function(){
+      var anchor=document.getElementById('progLazerAnchor');
+      if(anchor){
+        var navOffset=78;
+        var top=anchor.getBoundingClientRect().top+window.scrollY-navOffset;
+        window.scrollTo({top:top,behavior:'smooth'});
+      }
+    },250);
+  }
 }
 
 var _diaAtivo=null;
@@ -6006,10 +6405,31 @@ function toggleDia(d){
   if(wrap){wrap.classList.toggle('has-open',!!novo);}
   _diaAtivo=novo;
   if(novo){trackEvento('prog_dia_abriu',novo);}
+
+  /* Remover glow do Sábado ao primeiro clique em qualquer dia */
+  try{
+    document.querySelectorAll('.prog-dia-card.sabado-glow').forEach(function(c){
+      c.classList.remove('sabado-glow');
+    });
+    sessionStorage.setItem('prog_sabado_glow_off','1');
+  }catch(e){}
+
+  /* Scroll-to-top ao abrir dia — APENAS mobile (desktop usa grid 3 colunas) */
+  if(novo && window.innerWidth<768){
+    setTimeout(function(){
+      var anchor=document.querySelector('.prog-dias-wrap')||document.querySelector('.prog-dias-panel');
+      if(anchor){
+        var navOffset=78;
+        var top=anchor.getBoundingClientRect().top+window.scrollY-navOffset;
+        window.scrollTo({top:top,behavior:'smooth'});
+      }
+    },250);
+  }
 }
 
 var _viaAtiva=null;
-function toggleVia(v){
+function toggleVia(v,opts){
+  opts=opts||{};
   var nova=(_viaAtiva===v)?null:v;
   var wrap=document.getElementById('progViaPanels');
   var grid=document.querySelector('.prog-via-grid');
@@ -6028,7 +6448,20 @@ function toggleVia(v){
   if(grid){grid.classList.toggle('has-open',!!nova);}
 
   _viaAtiva=nova;
-  if(nova){trackEvento('prog_via_abriu',nova);}
+  if(nova){
+    trackEvento('prog_via_abriu',nova);
+    /* Scroll-to-top: o container inteiro da caixa vias no topo da viewport */
+    if(!opts.skipScroll && nova){
+      setTimeout(function(){
+        var target=document.querySelector('.prog-via-wrap');
+        if(target){
+          var navOffset=78;
+          var top=target.getBoundingClientRect().top+window.scrollY-navOffset;
+          window.scrollTo({top:top,behavior:'smooth'});
+        }
+      },250);
+    }
+  }
 }
 
 function abrirDayUseDaProgramacao(){
@@ -6449,7 +6882,25 @@ var nomeSalvo=getNomeSalvo();
     },{threshold:0.25});
     vpObs.observe(vestidoSec);
   }
+
+  /* Abre "Day use" como default na Programação */
+  setTimeout(function(){
+    if(typeof toggleVia==='function' && _viaAtiva!=='day'){
+      toggleVia('day');
+    }
+  },600);
+
+  /* Animação glow no card Sábado até primeiro clique (apenas esta sessão) */
+  initSabadoGlow();
 });
+
+function initSabadoGlow(){
+  try{
+    if(sessionStorage.getItem('prog_sabado_glow_off')==='1')return;
+  }catch(e){}
+  var card=document.querySelector('.prog-dia-card[data-dia="sabado"]');
+  if(card){card.classList.add('sabado-glow');}
+}
 </script>
 
 <!-- Animation Performance Optimization: pausa animações CSS fora da viewport -->
