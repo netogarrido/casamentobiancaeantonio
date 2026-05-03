@@ -4411,7 +4411,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <div class="nav-lk">
       <a href="#presentes" id="nav_presentes">Presentes</a>
       <a href="#rsvp" id="nav_rsvp">RSVP</a>
-      <a href="#prog" id="nav_prog">Programação</a>
+      <a href="#programacao" id="nav_prog">Programação</a>
       <a href="#faq" id="nav_faq">FAQ</a>
     </div>
 
@@ -4436,7 +4436,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <button class="nav-overlay-close" type="button" aria-label="Fechar menu" onclick="fecharMenuHamb()">×</button>
   <nav class="nav-overlay-links" aria-label="Menu principal">
     <a href="#rsvp" id="nav_menu_rsvp">Confirmar presença</a>
-    <a href="#prog" id="nav_menu_programacao">Programação</a>
+    <a href="#programacao" id="nav_menu_programacao">Programação</a>
     <a href="#presentes" id="nav_menu_presentes">Presentes</a>
     <a href="#vestido" id="nav_menu_vestido">Vestido Vestido</a>
     <a href="#traje" id="nav_menu_traje">O que vestir</a>
@@ -4639,7 +4639,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
-<section class="prog" id="prog">
+<section class="prog" id="programacao">
 
   <!-- Hero horizontal: foto hotel + título sobreposto + fade azul -->
   <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
@@ -5507,6 +5507,47 @@ function applyMidia(rows){
     var key=el.getAttribute('data-midia-bg');
     if(MIDIAS[key])el.src=MIDIAS[key];
   });
+
+  /* ═════ B12 — Fallback proativo do vídeo hero ═════
+     Se MIDIAS.hero_video ficou undefined (aba 'midia' do Sheets caiu ou chave ausente),
+     o <video> permanece sem src. Nesse caso, onerror NÃO dispara (não há tentativa de load),
+     então heroVideoFallback/heroVideoFallbackBg nunca seriam chamados.
+     Este bloco força a ativação do fallback de imagem (popup_bg_hero → hero_poster → hero_popup.jpg) imediatamente. */
+  try{
+    var temHeroVideo = !!(MIDIAS && MIDIAS['hero_video']);
+    if(!temHeroVideo){
+      var fallbackSrc = (MIDIAS && (MIDIAS['popup_bg_hero'] || MIDIAS['hero_poster'])) ||
+                        'https://netogarrido.github.io/casamentobiancaeantonio/img/hero_popup.jpg';
+      /* Vídeo principal (card) */
+      var vMain = document.getElementById('heroVideoMain');
+      var imgMain = document.getElementById('heroVidFallback');
+      if(imgMain && fallbackSrc){
+        imgMain.src = fallbackSrc;
+        imgMain.hidden = false;
+        if(vMain) vMain.style.display = 'none';
+      }
+      /* Vídeo de fundo (full-bleed) */
+      var imgBg = document.getElementById('heroBgFallback');
+      var vBg = document.querySelector('[data-midia-bg="hero_video"]');
+      if(imgBg && fallbackSrc){
+        imgBg.src = fallbackSrc;
+        imgBg.hidden = false;
+        if(vBg) vBg.style.display = 'none';
+      }
+      /* Sinal visual pro hero saber que já está "pronto" sem video */
+      var hero = document.getElementById('hero');
+      if(hero) hero.classList.add('hero-video-started');
+      /* Telemetria — sem flood: marca uma vez */
+      if(!window._heroFallbackAtivadoProativo){
+        window._heroFallbackAtivadoProativo = true;
+        try{trackEvento('hero_video_fallback_proativo','midia_hero_video_undefined');}catch(e){}
+      }
+    }
+  }catch(e){
+    console.warn('Fallback proativo do hero falhou:', e);
+  }
+}
+
 var au=document.getElementById('bgMusic');
   au.addEventListener('play',function(){
     _audioUltimoPlay=Date.now();
