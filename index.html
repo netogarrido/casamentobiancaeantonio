@@ -388,19 +388,23 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     margin-top:0;
     margin-left:0;
     -webkit-mask-image:linear-gradient(90deg,
-      rgba(0,0,0,.65) 0%,
-      rgba(0,0,0,.88) 6%,
-      #000 14%,
-      #000 86%,
-      rgba(0,0,0,.88) 94%,
-      rgba(0,0,0,.65) 100%);
+      rgba(0,0,0,.25) 0%,
+      rgba(0,0,0,.55) 10%,
+      rgba(0,0,0,.85) 22%,
+      #000 32%,
+      #000 68%,
+      rgba(0,0,0,.85) 78%,
+      rgba(0,0,0,.55) 90%,
+      rgba(0,0,0,.25) 100%);
     mask-image:linear-gradient(90deg,
-      rgba(0,0,0,.65) 0%,
-      rgba(0,0,0,.88) 6%,
-      #000 14%,
-      #000 86%,
-      rgba(0,0,0,.88) 94%,
-      rgba(0,0,0,.65) 100%);
+      rgba(0,0,0,.25) 0%,
+      rgba(0,0,0,.55) 10%,
+      rgba(0,0,0,.85) 22%,
+      #000 32%,
+      #000 68%,
+      rgba(0,0,0,.85) 78%,
+      rgba(0,0,0,.55) 90%,
+      rgba(0,0,0,.25) 100%);
   }
   .popup-bg img:first-child{
     margin-left:0;
@@ -2278,8 +2282,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
 
   .cat-grid{
-    grid-template-columns:1fr 1fr 1fr;
-    grid-auto-rows:155px;
+    grid-template-columns:1fr 1fr;
+    grid-auto-rows:180px;
     max-width:none;
   }
 
@@ -2691,66 +2695,49 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .prog .inn{
     max-width:1080px;
   }
-  /* Transforma painel em grid 3 colunas + 2 linhas (cards em cima, textos embaixo) */
+  /* Painel = apenas os 3 cards em linha. Sábado maior (destaque visual) */
   .prog-dias-panel{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    grid-template-rows:auto 1fr;
-    column-gap:14px;
-    row-gap:14px;
-    align-items:stretch;
-  }
-  /* Cards dos dias ocupam row 1, uma coluna cada */
-  .prog-dias-grid{
-    display:contents;
-  }
-  .prog-dia-card[data-dia="sexta"]{grid-column:1; grid-row:1;}
-  .prog-dia-card[data-dia="sabado"]{grid-column:2; grid-row:1;}
-  .prog-dia-card[data-dia="domingo"]{grid-column:3; grid-row:1;}
-
-  /* Container de painéis ocupa row 2, mantém 3 colunas */
-  .prog-dias-panels{
-    grid-column:1 / -1;
-    grid-row:2;
     display:block;
-    grid-template-rows:none !important;
-    margin-top:0 !important;
+    padding:16px;
+  }
+  .prog-dias-grid{
+    display:grid;
+    grid-template-columns:1fr 1.5fr 1fr;
+    gap:10px;
+  }
+
+  /* Painéis de texto: fechados por default, acordeão como mobile, mas full-width */
+  .prog-dias-panels{
+    grid-template-rows:0fr;
+    margin-top:0;
+    transition:grid-template-rows .45s cubic-bezier(.2,.7,.3,1), margin-top .3s ease;
+  }
+  .prog-dias-panels.has-open{
+    grid-template-rows:1fr;
+    margin-top:14px;
   }
   .prog-dias-panels-inner{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    column-gap:14px;
-    align-items:stretch;
-    overflow:visible;
+    display:block;
   }
-  /* Todos os 3 painéis de texto visíveis ao mesmo tempo */
+  /* Só o painel do dia selecionado aparece (igual mobile) */
   .prog-dia-panel-txt{
-    display:flex !important;
-    flex-direction:column;
-    opacity:1 !important;
-    transform:none !important;
-    height:100%;
+    display:none;
+    opacity:0;
+    transform:translateY(-8px);
+    transition:opacity .3s ease, transform .3s ease;
   }
-  #pdPanel-sexta{grid-column:1}
-  #pdPanel-sabado{grid-column:2}
-  #pdPanel-domingo{grid-column:3}
-
-  /* Cards e painéis com altura igual entre irmãos */
-  .prog-dia-panel-txt > p,
-  .prog-dia-copy{
-    height:100%;
-    box-sizing:border-box;
-  }
-
-  /* Desabilita visual de "dia selecionado" que vem do toggle mobile */
-  .prog-dias-grid.has-open .prog-dia-card:not(.on){
+  .prog-dia-panel-txt.on{
+    display:block;
     opacity:1;
+    transform:translateY(0);
   }
-  .prog-dia-card{
-    cursor:default;
+
+  /* Cards interativos no desktop (como mobile) */
+  .prog-dia-card{cursor:pointer}
+  .prog-dias-grid.has-open .prog-dia-card:not(.on){
+    opacity:.62;
+    filter:saturate(.7);
   }
-  .prog-dia-card:active{transform:none}
-  .prog-dia-card:hover{transform:none !important}
 
   /* Hero mais compacto no desktop */
   .prog-hero-img-wrap{
@@ -2762,11 +2749,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
   .prog-dias-wrap{
     margin:0 0 16px;
-  }
-
-  /* Caixa dias mais compacta */
-  .prog-dias-panel{
-    padding:16px;
   }
 
   /* Lazer 4 colunas em vez de 2×2 no desktop */
@@ -3013,15 +2995,32 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-divider-txt,
 .prog-cta-txt{
   font-family:var(--fb);
-  font-size:.92rem;
-  font-weight:700;
-  letter-spacing:.06em;
-  color:var(--al);
+  font-size:1.05rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  color:var(--n);
   white-space:nowrap;
   opacity:1;
   text-transform:uppercase;
 }
-.prog-cta-txt{color:var(--al)}
+.prog-cta-txt{
+  color:var(--n);
+  background:linear-gradient(135deg,var(--a),var(--al));
+  padding:7px 16px;
+  border-radius:999px;
+  box-shadow:0 3px 12px rgba(212,160,74,.28);
+  font-size:.88rem;
+  letter-spacing:.12em;
+}
+.prog-divider-txt{
+  color:var(--n);
+  background:rgba(255,255,255,.78);
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid rgba(212,160,74,.42);
+  font-size:.84rem;
+  letter-spacing:.1em;
+}
 
 /* ══════════════════════════════════════════
    ALTERNATIVAS — hospedagem orgânica
@@ -3093,7 +3092,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .prog-alt-card--santanna{
   justify-content:center;
-  padding-top:22px;
+  padding-top:36px;
   border-color:rgba(188,42,42,.24);
   background:rgba(255,255,255,.92);
   box-shadow:0 4px 12px rgba(15,23,32,.08);
@@ -3164,24 +3163,24 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .prog-soldout-ribbon{
   position:absolute;
-  top:50%;
-  left:50%;
-  width:170%;
-  padding:8px 0 7px;
-  background:rgba(179,38,30,.28);
-  color:rgba(255,255,255,.78);
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+  padding:7px 0 6px;
+  background:rgba(179,38,30,.90);
+  color:#fff;
   font-family:var(--fb);
   font-size:.72rem;
   font-weight:900;
-  letter-spacing:.22em;
+  letter-spacing:.24em;
   line-height:1;
   text-align:center;
   text-transform:uppercase;
-  transform:translate(-50%,-50%) rotate(-18deg);
-  box-shadow:0 2px 8px rgba(179,38,30,.1);
+  transform:none;
+  border-radius:0;
+  box-shadow:0 2px 8px rgba(179,38,30,.22);
   z-index:3;
-  backdrop-filter:blur(1px);
-  -webkit-backdrop-filter:blur(1px);
 }
 
 @media(max-width:380px){
@@ -3191,7 +3190,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     padding:17px 7px 11px;
   }
   .prog-alt-card--santanna{
-    padding-top:29px;
+    padding-top:40px;
   }
   .prog-alt-texto-solto{
     font-size:.96rem;
@@ -3575,6 +3574,48 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   color:var(--im);
   line-height:1.55;
   margin:6px 0 0;
+}
+
+/* Modal alerta RSVP */
+.mo-box--alerta,
+.mo-box--confirma{
+  padding:28px 24px 22px;
+  max-width:440px;
+  width:100%;
+}
+@media(min-width:768px){
+  .mo-box--alerta,
+  .mo-box--confirma{
+    padding:34px 28px 26px;
+  }
+}
+.mo-alerta-body{
+  font-family:var(--fb);
+  font-size:.96rem;
+  line-height:1.65;
+  color:var(--i);
+  white-space:pre-line;
+  margin:4px 0 0;
+}
+.mo-confirma-body{
+  font-family:var(--fb);
+  font-size:.94rem;
+  line-height:1.75;
+  color:var(--i);
+  background:var(--p);
+  border:1px solid var(--st);
+  border-radius:12px;
+  padding:14px 16px;
+  margin-top:6px;
+}
+.mo-confirma-linha{
+  padding:3px 0;
+}
+.mo-confirma-linha strong{
+  color:var(--a);
+  font-weight:700;
+  letter-spacing:.02em;
+  margin-right:6px;
 }
 
 /* ══════════════════════════════════════════
@@ -4399,13 +4440,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
             <div class="prog-dayuse">
               <h3 class="prog-dayuse-ttl" id="reserva_dayuse_chamada"></h3>
 
-              <!-- Botão Reservar — TOPO -->
-              <button type="button" class="prog-reservar-btn" onclick="abrirReservar()">
-                <span class="prog-reservar-ico">📞</span>
-                <span>Reservar day use</span>
-                <span class="prog-reservar-arrow">→</span>
-              </button>
-
               <p class="prog-dayuse-txt" id="reserva_dayuse_convite"></p>
               <div class="prog-dayuse-info">
                 
@@ -4489,7 +4523,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <form id="rF" onsubmit="sR(event)">
     
     
-    <div class="fg"><label class="fl" id="rsvp_campo_nome"></label><input class="fi" name="nome" required placeholder="Seu nome completo"></div>
+    <div class="fg"><label class="fl" id="rsvp_campo_nome"></label><input class="fi" name="nome" id="rsvpNomeInput" required placeholder="Seu nome completo" onblur="if(this.value.trim())salvarNomeConvidado(this.value.trim())"></div>
     
     <div class="frow">
       <div class="fg"><label class="fl" id="rsvp_campo_adultos"></label><input class="fi" name="adultos" type="number" min="1" value="1"></div>
@@ -4684,6 +4718,38 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <p class="mo-reservar-aviso" id="reserva_marcela_aviso_modal"></p>
 
     <button class="btn btn-g btn-sm" style="width:100%;margin-top:10px" onclick="fecharReservar()">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL ALERTA RSVP (campos obrigatórios) -->
+<div class="mo" id="moAlerta">
+  <div class="mo-box mo-box--alerta">
+    <button class="mo-close" onclick="fecharAlertaRSVP()">✕</button>
+    <div class="mo-handle"></div>
+    <div class="mo-gh">
+      <div class="mo-gi">⚠️</div>
+      <div class="mo-gn">Falta preencher</div>
+    </div>
+    <p class="mo-alerta-body" id="moAlertaBody"></p>
+    <button class="btn btn-a" style="width:100%;margin-top:16px" onclick="fecharAlertaRSVP()">Entendi, voltar</button>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAÇÃO ANTES DE ENVIAR RSVP -->
+<div class="mo" id="moConfirmaRSVP">
+  <div class="mo-box mo-box--confirma">
+    <button class="mo-close" onclick="fecharConfirmaRSVP()">✕</button>
+    <div class="mo-handle"></div>
+    <div class="mo-gh">
+      <div class="mo-gi">💛</div>
+      <div class="mo-gn">Confirme suas informações</div>
+      <div class="mo-gd">Revise antes de enviar — você não poderá editar depois.</div>
+    </div>
+    <div class="mo-confirma-body" id="moConfirmaRSVPBody"></div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-g btn-sm" style="flex:1" onclick="fecharConfirmaRSVP()">Voltar editar</button>
+      <button class="btn btn-a btn-sm" style="flex:1.3" onclick="confirmarEEnviarRSVP()">Confirmar e enviar</button>
+    </div>
   </div>
 </div>
 
@@ -6202,11 +6268,30 @@ function onHospedagemChange(val){
 ══════════════════════════════════════════ */
 function sR(e){
   e.preventDefault();
-  var fd=new FormData(e.target);
+  var form=e.target;
+  var fd=new FormData(form);
   var d={type:'rsvp'};
   fd.forEach(function(v,k){d[k]=v;});
   if(!d.nome)d.nome=getNomeSalvo();
 
+  /* Validação de campos obrigatórios */
+  var faltando=[];
+  if(!(d.nome||'').trim())faltando.push('nome completo');
+  if(!d.adultos||Number(d.adultos)<1)faltando.push('quantidade de adultos (mínimo 1)');
+  if(!(d.participacao||'').trim())faltando.push('como vai participar do fim de semana');
+
+  if(faltando.length){
+    alertaRSVP('Antes de enviar, complete:\n\n• '+faltando.join('\n• '));
+    return;
+  }
+
+  /* Confirmação antes de enviar (popup tipo presentes) */
+  confirmarEnvioRSVP(d,function(){
+    _enviarRSVP(d,form);
+  });
+}
+
+function _enviarRSVP(d,form){
   /* Normalização: para santanna, força hospedagem_tipo='santanna' e nome_hotel fixo */
   if(d.participacao==='hospedagem_santanna'){
     d.hospedagem_tipo='santanna';
@@ -6214,7 +6299,6 @@ function sR(e){
   }else if(d.hospedagem_tipo==='sem'){
     d.nome_hotel='';
   }
-  /* Se day use/festa e não respondeu hospedagem_tipo, manter vazio */
 
   var sug=(d.sugestao_musica||'').trim();
   var msg=(d.mensagem||'').trim();
@@ -6229,8 +6313,87 @@ function sR(e){
   if(msg){
     enviar({type:'presente',presente:'Mensagem via RSVP',valor:0,mensagem:msg});
   }
-  document.getElementById('rF').style.display='none';
-  document.getElementById('rO').classList.add('on');
+  if(form)form.style.display='none';
+  var rO=document.getElementById('rO');
+  if(rO)rO.classList.add('on');
+}
+
+/* Alerta simples dentro do padrão do site */
+function alertaRSVP(texto){
+  var m=document.getElementById('moAlerta');
+  if(!m){
+    /* fallback */
+    alert(texto);
+    return;
+  }
+  var body=document.getElementById('moAlertaBody');
+  if(body)body.textContent=texto;
+  m.classList.add('on');
+  lockScroll();
+}
+function fecharAlertaRSVP(){
+  var m=document.getElementById('moAlerta');
+  if(m)m.classList.remove('on');
+  unlockScroll();
+}
+
+/* Modal de confirmação do RSVP — mostra resumo antes de enviar */
+var _rsvpPendente=null;
+var _rsvpCallback=null;
+function confirmarEnvioRSVP(d,callback){
+  _rsvpPendente=d;
+  _rsvpCallback=callback;
+
+  var m=document.getElementById('moConfirmaRSVP');
+  if(!m){
+    /* sem modal disponível: envia direto */
+    if(callback)callback();
+    return;
+  }
+
+  var body=document.getElementById('moConfirmaRSVPBody');
+  if(body){
+    var participacaoLabel=({
+      'hospedagem_santanna':"Hospedagem Sant'Anna + festa",
+      'dayuse':'Day use + festa',
+      'festa':'Somente festa de sábado'
+    })[d.participacao]||d.participacao;
+
+    var linhas=[];
+    linhas.push('<div class="mo-confirma-linha"><strong>Nome:</strong> '+_esc(d.nome)+'</div>');
+    linhas.push('<div class="mo-confirma-linha"><strong>Adultos:</strong> '+_esc(d.adultos)+'</div>');
+    if(Number(d.criancas||0)>0){
+      linhas.push('<div class="mo-confirma-linha"><strong>Crianças:</strong> '+_esc(d.criancas)+'</div>');
+    }
+    linhas.push('<div class="mo-confirma-linha"><strong>Participação:</strong> '+_esc(participacaoLabel)+'</div>');
+    if(d.hospedagem_tipo==='hotel' && d.nome_hotel){
+      linhas.push('<div class="mo-confirma-linha"><strong>Hospedagem:</strong> '+_esc(d.nome_hotel)+'</div>');
+    }
+    body.innerHTML=linhas.join('');
+  }
+
+  m.classList.add('on');
+  lockScroll();
+}
+function fecharConfirmaRSVP(){
+  var m=document.getElementById('moConfirmaRSVP');
+  if(m)m.classList.remove('on');
+  _rsvpPendente=null;
+  _rsvpCallback=null;
+  unlockScroll();
+}
+function confirmarEEnviarRSVP(){
+  if(_rsvpCallback){
+    var cb=_rsvpCallback;
+    _rsvpCallback=null;
+    cb();
+  }
+  fecharConfirmaRSVP();
+}
+function _esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
 }
 
 /* ══════════════════════════════════════════
@@ -6463,10 +6626,14 @@ function fecharHoteis(){
     document.addEventListener('DOMContentLoaded',function(){
       bindOverlay('moReservar',fecharReservar);
       bindOverlay('moHoteis',fecharHoteis);
+      bindOverlay('moAlerta',fecharAlertaRSVP);
+      bindOverlay('moConfirmaRSVP',fecharConfirmaRSVP);
     });
   }else{
     bindOverlay('moReservar',fecharReservar);
     bindOverlay('moHoteis',fecharHoteis);
+    bindOverlay('moAlerta',fecharAlertaRSVP);
+    bindOverlay('moConfirmaRSVP',fecharConfirmaRSVP);
   }
 })();
 
@@ -6532,8 +6699,8 @@ function toggleDia(d){
     sessionStorage.setItem('prog_sabado_glow_off','1');
   }catch(e){}
 
-  /* Scroll-to-top ao abrir dia — APENAS mobile (desktop usa grid 3 colunas) */
-  if(novo && window.innerWidth<768){
+  /* Scroll-to-top ao abrir dia — desktop e mobile (acordeão em ambos) */
+  if(novo){
     setTimeout(function(){
       var anchor=document.querySelector('.prog-dias-wrap')||document.querySelector('.prog-dias-panel');
       if(anchor){
