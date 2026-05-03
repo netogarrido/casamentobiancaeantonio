@@ -1999,10 +1999,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 /* ── Caixinhas do noivo artista ── */
 /* Grid compacto: cards não ocupam largura total no mobile, respiram no papel.
-   auto-fit deixa 1 coluna em mobile estreito (240px min) e 2-3 colunas em telas maiores. */
+   auto-fit deixa 1 coluna em mobile estreito (180px min) e 2-3 colunas em telas maiores.
+   Reduzido de 240-340px pra 180-260px — caixinhas mais estreitas. */
 .cx-cards{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(240px, 340px));
+  grid-template-columns:repeat(auto-fit, minmax(180px, 260px));
   gap:12px;
   justify-content:center;
   margin:18px auto 8px;
@@ -2104,18 +2105,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* Garante o mesmo grid compacto do .cx-cards pai — cards não ocupam full-width */
 .cx-noivo-dentro.tem-itens{
   display:grid !important;
-  grid-template-columns:repeat(auto-fit, minmax(240px, 340px));
+  grid-template-columns:repeat(auto-fit, minmax(180px, 260px));
   gap:12px;
   justify-content:center;
 }
     
 .cx-card{
   display:grid;
-  grid-template-columns:36px 1fr auto;
+  grid-template-columns:32px 1fr auto;
   grid-template-rows:auto auto auto; /* +1 linha pra .cx-desc */
-  column-gap:10px;
+  column-gap:9px;
   row-gap:2px;
-  padding:18px 20px;
+  padding:12px 14px;
   border-radius:var(--rs);
   cursor:pointer;
   transition:all .25s ease;
@@ -2129,8 +2130,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   grid-row:1/3;
   grid-column:1;
   display:flex;align-items:center;justify-content:center;
-  width:36px;height:36px;border-radius:50%;
-  font-size:1.1rem;
+  width:32px;height:32px;border-radius:50%;
+  font-size:1rem;
   align-self:center;
 }
 
@@ -2709,12 +2710,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
 }
 
-/* Cards de presente individuais */
+/* Cards de presente individuais — compactos: ícone + nome + valor (desc migra pro popup) */
 .g-card{
   display:flex;
   align-items:center;
-  gap:13px;
-  padding:14px 15px;
+  gap:11px;
+  padding:10px 12px;
   background:rgba(255,255,255,.82);
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
@@ -2730,11 +2731,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .g-card:hover{border-color:var(--a);transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,32,.12)}
 
-.g-ico{font-size:1.5rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:11px;flex-shrink:0}
+.g-ico{font-size:1.25rem;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:10px;flex-shrink:0}
 .g-inf{flex:1;min-width:0}
-.g-nm{font-family:var(--fh);font-size:1rem;font-weight:500;margin:0;line-height:1.2} /* P19: reset margem h4 */
+.g-nm{font-family:var(--fh);font-size:.98rem;font-weight:500;margin:0;line-height:1.2} /* P19: reset margem h4 */
 .g-desc{font-size:.78rem;color:var(--is);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.g-pr{font-size:.78rem;color:var(--a);font-weight:700;background:var(--ag);padding:5px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.g-pr{font-size:.76rem;color:var(--a);font-weight:700;background:var(--ag);padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 
 /* Bug 2 (novo) fix — mobile: valor em linha inferior (abaixo do nome) pra não cortar a 4ª caixinha.
    Em desktop o layout horizontal original é mantido. */
@@ -2744,21 +2745,21 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     background:transparent;
     padding:0;
     border-radius:0;
-    font-size:.82rem;
-    margin-top:4px;
+    font-size:.78rem;
+    margin-top:2px;
     align-self:flex-start;
   }
   .g-card{
     display:grid;
-    grid-template-columns:46px 1fr;
+    grid-template-columns:38px 1fr;
     grid-template-areas:"ico inf" "ico pr";
-    gap:2px 13px;
+    gap:1px 11px;
     align-items:start;
   }
   .g-card .g-ico{grid-area:ico;align-self:center}
   .g-card .g-inf{grid-area:inf;align-self:end}
   .g-card .g-pr{grid-area:pr;align-self:start;margin-top:0}
-  .g-nm{font-size:1.02rem;white-space:normal} /* nome pode quebrar se precisar, mas agora tem largura total */
+  .g-nm{font-size:.98rem;white-space:normal;line-height:1.2}
 }
   
 /* Bloco "valor livre" */
@@ -6100,7 +6101,9 @@ function renderCats(){
           openModal(gf);
         };
       })(gift);
-      card.innerHTML='<div class="g-ico">'+gift.i+'</div><div class="g-inf"><h4 class="g-nm">'+gift.n+'</h4><div class="g-desc">'+gift.d+'</div></div><div class="g-pr">'+gift.p+'</div>';
+      /* Card compacto: só ícone + nome + valor. Descrição migra pro popup (#mD).
+         Regra unificada com .cx-card: espessura menor pra caber mais itens no scroll. */
+      card.innerHTML='<div class="g-ico">'+gift.i+'</div><div class="g-inf"><h4 class="g-nm">'+gift.n+'</h4></div><div class="g-pr">'+gift.p+'</div>';
       panel.appendChild(card);
     });
     p.appendChild(panel);
@@ -6602,61 +6605,48 @@ function _toggleLetra(abrir){
   var cFora=document.getElementById('cxVestido');
   var cDentro=document.getElementById('cxNoivoDentro');
 
-  /* Âncora = .vestido-titulo. Está SEMPRE no fluxo, SEMPRE visível,
-     SEMPRE acima do pergaminho/lyr-stage. Não some, não muda de tamanho.
-     É a única referência confiável durante a transição. */
-  var ancora=sec.querySelector('.vestido-titulo')||sec;
+  var navOffset=78;
+
+  /* Helper: scroll instantâneo (sem smooth) pro topo de um elemento,
+     menos o offset do nav fixo. Usado ANTES da mudança de estado em ambos
+     os casos pra que a animação CSS role com o viewport já no lugar final. */
+  function _scrollInstantTo(el){
+    if(!el)return;
+    var htmlEl=document.documentElement;
+    var prev=htmlEl.style.scrollBehavior;
+    htmlEl.style.scrollBehavior='auto';
+    var top=el.getBoundingClientRect().top+window.scrollY-navOffset;
+    window.scrollTo(0,Math.max(0,top));
+    requestAnimationFrame(function(){htmlEl.style.scrollBehavior=prev||'';});
+  }
 
   if(abrir){
+    /* ABRIR: rola instantaneamente até o pergaminho (topo da letra que vai abrir)
+       ANTES de disparar a transição. Não precisa "centralizar" nada depois —
+       o usuário já está no começo da letra e lê rolando pra baixo. */
+    var pergAntes=document.getElementById('pergaminhoWrap');
+    _scrollInstantTo(pergAntes);
+
     b.classList.add('open');
     sec.classList.add('lyr-aberta');
     sec.classList.add('letra-foi-aberta');
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
-
-    /* Trava scroll durante a transição (0.8s) + folga */
-    _travarScrollDurante(ancora,1100);
-
-    /* Scroll contextual APÓS transição: leva topo da letra ao topo do viewport */
-    setTimeout(function(){
-      var navOffset=78;
-      var stage=document.querySelector('#lB .lyr-stage')||document.getElementById('lB');
-      if(stage){
-        var top=stage.getBoundingClientRect().top+window.scrollY-navOffset;
-        window.scrollTo({top:top,behavior:'smooth'});
-      }
-    },1150);
   }else{
     /* FECHAR — fix do "pulo":
-       O scroll do usuário está lá embaixo (lendo a letra). Se a gente só colapsar,
-       durante a animação o viewport fica sobre a seção Presentes (porque a letra
-       encurtou). Só depois o scrollTo corrige — daí o "pulo" visual.
+       Se a gente só colapsar, o viewport fica sobre a seção seguinte enquanto
+       a animação roda (porque a letra encurta). Só depois corrigiria — daí o pulo.
+       Solução: rola pro topo do pergaminho ANTES de colapsar. Quando a animação
+       roda, o viewport já está no lugar final e nada se move visualmente. */
+    var pergDepois=document.getElementById('pergaminhoWrap');
+    _scrollInstantTo(pergDepois);
 
-       Solução: reposiciona o scroll no pergaminho ANTES de colapsar, enquanto a
-       letra ainda está aberta. Aí quando a animação roda, o viewport já está
-       no lugar final. Nenhum pulo. */
-    var perg=document.getElementById('pergaminhoWrap');
-    var navOffset=78;
-    if(perg){
-      var prevBehav=document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior='auto';
-      /* Alvo: pergaminho alinhado ao topo (abaixo do nav) — posição final após colapso */
-      var alvoTop=perg.getBoundingClientRect().top+window.scrollY-navOffset;
-      window.scrollTo(0,alvoTop);
-      requestAnimationFrame(function(){
-        document.documentElement.style.scrollBehavior=prevBehav||'';
-      });
-    }
-    /* Agora que o scroll já está onde queremos, dispara o colapso */
     b.classList.remove('open');
     sec.classList.remove('lyr-aberta');
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
     trackEvento('letra_fechou','');
-
-    /* Trava scroll durante a transição pra não vazar um frame */
-    _travarScrollDurante(ancora,1100);
   }
 }
 
