@@ -8338,21 +8338,15 @@ document.addEventListener('DOMContentLoaded', function() {
   function watchDynamicElements(observer) {
     if (!window.MutationObserver) return;
 
-    var moBox = document.querySelector('.mo-box');
+    /* REMOVIDO: observação do .mo-box via MutationObserver.
+       Era uma otimização de performance (pausar animação de textura quando modal fechado)
+       que estava criando risco de loop de mutation → contribuindo pro travamento do modal.
+       A animação da textura é leve o suficiente pra rodar mesmo com modal fechado. */
     var playBtn = document.getElementById('playBtnEl');
-
-    if (!moBox && !playBtn) return;
+    if (!playBtn) return;
 
     var mutObs = new MutationObserver(function(mutations) {
       mutations.forEach(function(mut) {
-        if (mut.target === moBox) {
-          if (moBox.classList.contains('mo-box--textura')) {
-            observer.observe(moBox);
-          } else {
-            observer.unobserve(moBox);
-            moBox.classList.remove('anim-paused');
-          }
-        }
         if (mut.target === playBtn) {
           if (!playBtn.classList.contains('playing')) {
             playBtn.style.animationPlayState = '';
@@ -8361,8 +8355,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
 
-    if (moBox) mutObs.observe(moBox, { attributes: true, attributeFilter: ['class'] });
-    if (playBtn) mutObs.observe(playBtn, { attributes: true, attributeFilter: ['class'] });
+    mutObs.observe(playBtn, { attributes: true, attributeFilter: ['class'] });
   }
 
   initAnimObserver();
