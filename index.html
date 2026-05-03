@@ -196,9 +196,7 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   position:fixed;
   inset:0;
   z-index:1000;
-  background:rgba(15,23,32,0.98);
-  -webkit-backdrop-filter:blur(24px);
-  backdrop-filter:blur(24px);
+  background:#0F1720;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -208,6 +206,7 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   transition:opacity .35s ease, transform .35s ease;
   pointer-events:none;
   padding:env(safe-area-inset-top, 0px) 24px env(safe-area-inset-bottom, 0px);
+  overflow:hidden;
 }
 .nav-overlay.on{
   opacity:1;
@@ -215,15 +214,43 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   pointer-events:auto;
 }
 .nav-overlay[hidden]{display:none}
+
+/* Foto de fundo (hero_poster / hero_popup) cobrindo o overlay */
+.nav-overlay-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 30%;
+  opacity:.55;
+  z-index:0;
+  pointer-events:none;
+  user-select:none;
+}
+/* Scrim: gradiente navy por cima da foto pra garantir contraste dos links */
+.nav-overlay-scrim{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at center, rgba(15,23,32,.55) 0%, rgba(15,23,32,.82) 70%, rgba(15,23,32,.92) 100%),
+    linear-gradient(180deg, rgba(15,23,32,.45) 0%, rgba(15,23,32,.65) 50%, rgba(15,23,32,.75) 100%);
+}
+
 .nav-overlay-close{
   position:absolute;
   top:calc(14px + env(safe-area-inset-top, 0px));
   right:16px;
+  z-index:3;
   width:48px;
   height:48px;
   padding:0;
-  background:transparent;
-  border:1px solid rgba(212,160,74,0.28);
+  background:rgba(15,23,32,.55);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(212,160,74,0.42);
   border-radius:50%;
   color:var(--al);
   font-family:var(--fb);
@@ -232,11 +259,15 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   cursor:pointer;
   transition:background .2s, transform .15s, border-color .2s;
   -webkit-tap-highlight-color:transparent;
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
 }
-.nav-overlay-close:hover{background:rgba(212,160,74,0.08);border-color:var(--a)}
+.nav-overlay-close:hover{background:rgba(212,160,74,0.18);border-color:var(--a)}
 .nav-overlay-close:active{transform:scale(0.94)}
 .nav-overlay-close:focus-visible{outline:2px solid var(--al);outline-offset:2px}
+
 .nav-overlay-links{
+  position:relative;
+  z-index:2;
   display:flex;
   flex-direction:column;
   gap:6px;
@@ -262,11 +293,15 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   opacity:0;
   transform:translateY(10px);
   -webkit-tap-highlight-color:transparent;
+  /* Garantia de legibilidade contra qualquer frame da foto */
+  text-shadow:0 2px 14px rgba(15,23,32,.85), 0 1px 3px rgba(15,23,32,.9);
 }
 .nav-overlay-links a:active{transform:scale(0.98)}
 .nav-overlay-links a:hover,.nav-overlay-links a:focus-visible{
   color:var(--al);
-  background:rgba(212,160,74,0.06);
+  background:rgba(15,23,32,.5);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
   outline:none;
 }
 /* Stagger de entrada dos links quando overlay abre */
@@ -4381,6 +4416,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 <!-- Overlay do menu mobile -->
 <div class="nav-overlay" id="nav_overlay" role="dialog" aria-modal="true" aria-labelledby="nav_overlay_titulo" hidden>
+  <img class="nav-overlay-bg" id="nav_overlay_bg" alt="" aria-hidden="true"
+       src="https://netogarrido.github.io/casamentobiancaeantonio/img/hero_popup.jpg"
+       data-midia="hero_poster">
+  <div class="nav-overlay-scrim" aria-hidden="true"></div>
   <h2 id="nav_overlay_titulo" class="visually-hidden">Menu de navegação</h2>
   <button class="nav-overlay-close" type="button" aria-label="Fechar menu" onclick="fecharMenuHamb()">×</button>
   <nav class="nav-overlay-links" aria-label="Menu principal">
