@@ -2173,14 +2173,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card-top{display:contents;}
 .cx-inf-top{display:contents;}
 
-/* apoiar — linha 3, col 2+3 (bug #4: subido de .58rem pra .78rem + peso 700 + ouro sólido).
-   Refinamento designer-ux: ouro mais sóbrio pra não competir com o nome do gesto */
+/* apoiar — linha 3, col 2+3. 
+   Bug 4 (novo): reduzido pra CTA discreto; o nome do gesto deve dominar visualmente.
+   .68rem + weight 600 + ouro .70 (antes .82rem + 700 + ouro .82 chamava mais atenção que o nome) */
 .cx-apoiar{
   grid-row:3;grid-column:2/4;
   font-family:var(--fb);
-  font-size:.82rem;font-weight:700;letter-spacing:.12em;
-  color:rgba(212,160,74,.82);
-  margin-top:8px;
+  font-size:.68rem;font-weight:600;letter-spacing:.14em;
+  color:rgba(212,160,74,.72);
+  margin-top:6px;
   text-transform:uppercase;
 }
 .cx-apoiar::after{content:' →'}
@@ -2572,26 +2573,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   letter-spacing:.04em;
 }
 
-/* B15: subtítulo editorial da categoria — Cormorant italic, tom discreto pra não competir com o nome */
-.cat-desc{
-  margin:2px 0 1px;
-  font-family:var(--fh);
-  font-style:italic;
-  font-weight:400;
-  font-size:.64rem;
-  line-height:1.25;
-  color:rgba(30,24,16,.66);
-  letter-spacing:.01em;
-  max-width:100%;
-  overflow:hidden;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-}
-.cat-card.on .cat-desc{color:rgba(15,23,32,.72)}
-@media(min-width:480px){
-  .cat-desc{font-size:.78rem}
-}
+/* Bug 1 (novo) — CSS .cat-desc removido (subtítulos eliminados a pedido do usuário) */
 
 /* ── Expansão das subcategorias dentro da caixa-mãe ── */
 .cat-panels-wrap{
@@ -2750,9 +2732,34 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .g-ico{font-size:1.5rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:11px;flex-shrink:0}
 .g-inf{flex:1;min-width:0}
-.g-nm{font-family:var(--fh);font-size:1rem;font-weight:500;margin:0} /* P19: reset margem h4 */
+.g-nm{font-family:var(--fh);font-size:1rem;font-weight:500;margin:0;line-height:1.2} /* P19: reset margem h4 */
 .g-desc{font-size:.78rem;color:var(--is);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .g-pr{font-size:.78rem;color:var(--a);font-weight:700;background:var(--ag);padding:5px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+
+/* Bug 2 (novo) fix — mobile: valor em linha inferior (abaixo do nome) pra não cortar a 4ª caixinha.
+   Em desktop o layout horizontal original é mantido. */
+@media(max-width:639px){
+  .g-card{align-items:flex-start}
+  .g-card .g-pr{
+    background:transparent;
+    padding:0;
+    border-radius:0;
+    font-size:.82rem;
+    margin-top:4px;
+    align-self:flex-start;
+  }
+  .g-card{
+    display:grid;
+    grid-template-columns:46px 1fr;
+    grid-template-areas:"ico inf" "ico pr";
+    gap:2px 13px;
+    align-items:start;
+  }
+  .g-card .g-ico{grid-area:ico;align-self:center}
+  .g-card .g-inf{grid-area:inf;align-self:end}
+  .g-card .g-pr{grid-area:pr;align-self:start;margin-top:0}
+  .g-nm{font-size:1.02rem;white-space:normal} /* nome pode quebrar se precisar, mas agora tem largura total */
+}
   
 /* Bloco "valor livre" */
 .livre{
@@ -4963,15 +4970,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <!-- Alternativas inline (Ancona/Prado) removidas a pedido do usuário — telefones ficam no modal "Mais detalhes dos hotéis" -->
 
     <!-- Botão para ver hospedagens alternativas com mais detalhes (abre modal).
-         Texto+emoji vêm do Sheet conteudo via chave `hospedagem_btn_mais_detalhes`. -->
-    <button type="button" class="prog-hosp-btn" onclick="abrirHoteis()">
+         Texto+emoji vêm do Sheet conteudo via chave `hospedagem_btn_mais_detalhes`.
+         Bug 5 (novo): virou outline/branco — Day use é a opção preferencial agora. -->
+    <button type="button" class="prog-hosp-btn prog-hosp-btn--day" onclick="abrirHoteis()">
       <span id="hospedagem_btn_mais_detalhes">🏨 Mais detalhes dos hotéis</span>
       <span class="prog-hosp-btn-arrow">→</span>
     </button>
 
     <!-- Botão para redirecionar ao Day use.
-         Texto+emoji vêm do Sheet conteudo via chave `hospedagem_btn_day_use`. -->
-    <button type="button" class="prog-hosp-btn prog-hosp-btn--day" onclick="toggleVia('day')">
+         Texto+emoji vêm do Sheet conteudo via chave `hospedagem_btn_day_use`.
+         Bug 5 (novo): virou ouro forte (opção mais atrativa). -->
+    <button type="button" class="prog-hosp-btn" onclick="toggleVia('day')">
       <span id="hospedagem_btn_day_use">🍹 Conheça a melhor opção disponível</span>
       <span class="prog-hosp-btn-arrow">→</span>
     </button>
@@ -6062,15 +6071,11 @@ function renderCats(){
     var maxV=vals.length?Math.max.apply(null,vals):0;
     var rng=vals.length?'A partir de R$ '+minV.toLocaleString('pt-BR'):''; /* P22: antes era "R$ min – R$ max" que esmagava itens baixos */
     var img=CAT_IMGS[cid]||'';
-    /* B15: subtítulo editorial — lê do Sheet conteudo `categoria_<id>_descricao`; se vazio, oculta.
-       Inclui contagem automática "· N itens" pra dar escala. */
-    var descChave='categoria_'+cid+'_descricao';
-    var descTxt=(CONTEUDO&&CONTEUDO[descChave])?String(CONTEUDO[descChave]).trim():'';
-    var qtd=items.length;
-    var descHtml=descTxt?'<p class="cat-desc">'+descTxt+' · '+qtd+' '+(qtd===1?'item':'itens')+'</p>':'';
+    /* Bug 1 (novo) fix: subtítulos removidos — ficou visualmente ruim.
+       Mantém só título + range. */
     /* P19: <article> semântico + <h3> pra hierarquia SEO/LLM */
     var d=document.createElement('article');d.className='cat-card';d.dataset.c=cid;
-    d.innerHTML='<img src="'+img+'" alt="'+catNames[cid].replace(/^[^\w\s]+\s*/,'')+'" loading="lazy"><div class="cat-lbl"><h3 class="cat-nm">'+catNames[cid]+'</h3>'+descHtml+'<div class="cat-rng">'+rng+'</div></div>';
+    d.innerHTML='<img src="'+img+'" alt="'+catNames[cid].replace(/^[^\w\s]+\s*/,'')+'" loading="lazy"><div class="cat-lbl"><h3 class="cat-nm">'+catNames[cid]+'</h3><div class="cat-rng">'+rng+'</div></div>';
     d.onclick=function(){
       trackEvento('categoria_clicou',catNames[cid]);
       toggleCat(cid);
@@ -6912,28 +6917,48 @@ function openLightbox(img){
    MODAL PRESENTE
 ══════════════════════════════════════════ */
 function openModal(g){
-  curGift=g;
-  document.getElementById('mI2').textContent=g.i;
-  document.getElementById('mN').textContent=g.n;
-  document.getElementById('mP').textContent=g.p;
-  document.getElementById('mD').textContent=g.d||'';
-  var vcEl=document.getElementById('mo-valor-confirmacao');
-  if(vcEl)vcEl.textContent=g.v&&g.v>0?'R$ '+g.v.toLocaleString('pt-BR'):'Valor livre';
-  document.getElementById('mNm').value=getNomeSalvo();
-  document.getElementById('mMs').value='';
-  document.getElementById('mCt').textContent='0';
-  var labelNome=document.getElementById('modal_nome_label');
-  if(labelNome){labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';}
-  var moBox=document.querySelector('.mo-box');
-  if(moBox){
-    if(g.catId==='noivo_artista'){moBox.classList.add('mo-box--textura');}
-    else{moBox.classList.remove('mo-box--textura');}
+  /* Bug 3 fix: guards defensivos + isolamento de pushState pra evitar travamento
+     quando o clique dispara em meio a scroll smooth/animação. */
+  try{
+    if(!g){try{console.warn('[openModal] chamado sem gift');}catch(e){}return;}
+    curGift=g;
+    var _set=function(id,val){var el=document.getElementById(id);if(el)el.textContent=val;};
+    var _setVal=function(id,val){var el=document.getElementById(id);if(el)el.value=val;};
+    _set('mI2',g.i||'');
+    _set('mN',g.n||'');
+    _set('mP',g.p||'');
+    _set('mD',g.d||'');
+    var vcEl=document.getElementById('mo-valor-confirmacao');
+    if(vcEl)vcEl.textContent=g.v&&g.v>0?'R$ '+g.v.toLocaleString('pt-BR'):'Valor livre';
+    _setVal('mNm',getNomeSalvo());
+    _setVal('mMs','');
+    _set('mCt','0');
+    var labelNome=document.getElementById('modal_nome_label');
+    if(labelNome){labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';}
+    var moBox=document.querySelector('.mo-box');
+    if(moBox){
+      if(g.catId==='noivo_artista'){moBox.classList.add('mo-box--textura');}
+      else{moBox.classList.remove('mo-box--textura');}
+    }
+    var mF=document.getElementById('mF');if(mF)mF.style.display='block';
+    var tY=document.getElementById('tY');if(tY)tY.classList.remove('on');
+    var moEl=document.getElementById('mo');if(moEl)moEl.classList.add('on');
+    /* Cancela qualquer smooth scroll em curso antes de travar — evita deadlock
+       quando user clica em card logo após abrir categoria (toggleCat faz scroll smooth). */
+    try{
+      var _prevBehav=document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior='auto';
+      window.scrollTo(window.scrollX,window.scrollY);
+      requestAnimationFrame(function(){document.documentElement.style.scrollBehavior=_prevBehav||'';});
+    }catch(e){}
+    lockScroll();
+    /* Defere pushState pra fora do tick atual — evita conflito com scrollTo smooth em curso
+       e dispatch de eventos em cadeia que podem estar causando deadlock de renderização. */
+    setTimeout(function(){try{_pushOverlayState('modal_presente');}catch(e){}},0);
+  }catch(err){
+    try{console.error('[openModal] erro:',err);}catch(e){}
+    try{trackEvento('modal_erro','openModal:'+(err&&err.message||err));}catch(e){}
   }
-  document.getElementById('mF').style.display='block';
-  document.getElementById('tY').classList.remove('on');
-  document.getElementById('mo').classList.add('on');
-  lockScroll();
-  _pushOverlayState('modal_presente');
 }
 
 var oM=openModal;
