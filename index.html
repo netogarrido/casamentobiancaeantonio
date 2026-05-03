@@ -2561,19 +2561,21 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 /* Bug 1 (novo) — CSS .cat-desc removido (subtítulos eliminados a pedido do usuário) */
 
-/* ── Expansão das subcategorias dentro da caixa-mãe ── */
+/* ── Expansão das subcategorias dentro da caixa-mãe ──
+   Uso max-height em vez de grid-template-rows:0fr→1fr pra maior
+   compatibilidade com iOS Safari < 16 (suporte inconsistente dessa técnica).
+   max-height:3000px é folga — conteúdo real raramente passa de 1200px. */
 .cat-panels-wrap{
-  display:grid;
-  grid-template-rows:0fr;
-  transition:grid-template-rows .45s cubic-bezier(.4,0,.2,1), margin-top .3s ease;
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .45s cubic-bezier(.4,0,.2,1), margin-top .3s ease;
   margin-top:0;
 }
 .cat-panels-wrap.has-open{
-  grid-template-rows:1fr;
+  max-height:3000px;
   margin-top:14px;
 }
 .cat-panels-inner{
-  overflow:hidden;
   min-height:0;
 }
 .sub-panel{
