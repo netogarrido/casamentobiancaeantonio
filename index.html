@@ -1998,13 +1998,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 /* ── Caixinhas do noivo artista ── */
-/* Grid compacto: cards não ocupam largura total no mobile, respiram no papel.
-   auto-fit deixa 1 coluna em mobile estreito (180px min) e 2-3 colunas em telas maiores.
-   Reduzido de 240-340px pra 180-260px — caixinhas mais estreitas. */
+/* Grid compacto, horizontal. 3 colunas sempre (mobile e desktop) pra
+   3 caixinhas ficarem lado a lado, ocupando pouca altura vertical.
+   Cards rasos (chip-style): emoji + nome curto + valor, em linha única. */
 .cx-cards{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(180px, 260px));
-  gap:12px;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
   justify-content:center;
   margin:18px auto 8px;
   max-width:720px;
@@ -2102,62 +2102,67 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding-top:20px !important;
   margin-top:16px !important;
 }
-/* Garante o mesmo grid compacto do .cx-cards pai — cards não ocupam full-width */
+/* Garante o mesmo grid compacto do .cx-cards pai — 3 colunas horizontais */
 .cx-noivo-dentro.tem-itens{
   display:grid !important;
-  grid-template-columns:repeat(auto-fit, minmax(180px, 260px));
-  gap:12px;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
   justify-content:center;
 }
     
-/* Cards compactos — mesma densidade do .g-card (presentes).
-   Layout horizontal: ícone · nome (linha única) · valor (pill à direita).
-   Descrição ("Para apoiar a música · ...") migra pro popup — card fica limpo.
+/* Cards compactos — chip vertical: emoji topo, nome meio, valor embaixo.
+   3 cards por linha (grid 3 colunas), cada um estreito (~115px em mobile).
+   Descrição ("Para apoiar a música · ...") migra pro popup.
    "Apoiar" removido do card — o próprio clique já abre o modal. */
 .cx-card{
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:11px;
-  padding:10px 12px;
+  justify-content:center;
+  gap:6px;
+  padding:10px 8px 12px;
   border-radius:var(--rs);
   cursor:pointer;
   transition:all .25s ease;
   text-decoration:none;
   position:relative;
+  text-align:center;
+  min-height:100px;
 }
 
 .cx-ico{
   display:flex;align-items:center;justify-content:center;
-  width:38px;height:38px;
-  border-radius:10px;
-  font-size:1.25rem;
+  width:36px;height:36px;
+  border-radius:50%;
+  font-size:1.2rem;
   flex-shrink:0;
 }
 
-/* cx-inf-top (fallback via display:contents) — mas agora o card é flex flat */
+/* cx-card-top e cx-inf-top viram containers inline — display:contents permite
+   que nome/valor sigam o flex-direction:column do pai direto */
 .cx-card-top{display:contents;}
-.cx-inf-top{flex:1;min-width:0}
+.cx-inf-top{display:contents;}
 
 .cx-nm{
   font-family:var(--fh);
-  font-size:.98rem;
+  font-size:.82rem;
   font-weight:500;
   letter-spacing:.01em;
   text-transform:none;
   color:var(--i);
   line-height:1.2;
   margin:0;
+  max-width:100%;
 }
 
 .cx-valor{
-  font-family:var(--fb);
-  font-size:.76rem;font-weight:700;color:var(--a);
-  background:var(--ag);
-  padding:4px 10px;
-  border-radius:20px;
+  font-family:var(--fh);
+  font-size:.95rem;
+  font-weight:600;
+  color:var(--a);
   white-space:nowrap;
-  flex-shrink:0;
   letter-spacing:.01em;
+  margin-top:2px;
 }
 
 /* desc: mostrada SÓ no popup (#mD), nunca no card */
@@ -2193,16 +2198,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card--light:hover{border-color:var(--a);transform:translateY(-1px);box-shadow:0 6px 18px rgba(84,73,60,.08);}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
-/* Mobile: versão simplificada — mantém o layout flex do desktop.
-   Removido o grid-template-areas que pode causar tap-swallow em iOS Safari. */
+/* Mobile: caixinhas um pouco mais compactas pra não "pesar" dentro da letra */
 @media(max-width:639px){
   .cx-card{
-    padding:10px 12px;
-    gap:10px;
+    padding:9px 6px 10px;
+    min-height:92px;
+    gap:5px;
   }
-  .cx-ico{width:36px;height:36px;font-size:1.15rem}
-  .cx-nm{font-size:.96rem;line-height:1.2}
-  .cx-valor{font-size:.72rem;padding:3px 9px}
+  .cx-ico{width:32px;height:32px;font-size:1.05rem}
+  .cx-nm{font-size:.76rem;line-height:1.15}
+  .cx-valor{font-size:.88rem}
 }
 
 /* ──────────── PRESENTES ──────────── */
@@ -6608,18 +6613,31 @@ function _toggleLetra(abrir){
     if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
   }else{
-    /* FECHAR — fix do "pulo":
-       Se a gente só colapsar, o viewport fica sobre a seção seguinte enquanto
-       a animação roda (porque a letra encurta). Só depois corrigiria — daí o pulo.
-       Solução: rola pro topo do pergaminho ANTES de colapsar. Quando a animação
-       roda, o viewport já está no lugar final e nada se move visualmente. */
+    /* FECHAR — fix definitivo do "pulo":
+       
+       Problema anterior: chamava _scrollInstantTo(pergaminhoWrap) ANTES de remover
+       .lyr-aberta da seção. Mas com .lyr-aberta ativo, o CSS aplica display:none
+       no pergaminho. getBoundingClientRect() de display:none retorna {top:0},
+       então o scroll ia pro topo do site (bug visível).
+       
+       Fix: primeiro removemos .lyr-aberta (pergaminho volta a ter layout), aí
+       medimos o pergaminho real. Aí removemos .lyr-box.open (inicia animação
+       de colapso). Nessa ordem, o scroll está no lugar certo antes da animação. */
+    
+    /* 1. Re-exibe pergaminho (agora mensurável) */
+    sec.classList.remove('lyr-aberta');
+    
+    /* 2. Agora que pergaminho tem layout, calcula e aplica scroll instantâneo */
     var pergDepois=document.getElementById('pergaminhoWrap');
     _scrollInstantTo(pergDepois);
-
+    
+    /* 3. Inicia animação de colapso da letra (já com scroll no lugar final) */
     b.classList.remove('open');
-    sec.classList.remove('lyr-aberta');
+    
+    /* 4. Esconde caixinhas internas / re-mostra externas */
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
+    
     trackEvento('letra_fechou','');
   }
 }
