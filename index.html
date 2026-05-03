@@ -141,6 +141,10 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:12px 16px;transition:all .4s}
 .nav.sc{background:rgba(15,23,32,.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 2px 16px rgba(0,0,0,.12)}
+/* P18: quando modal/lightbox aberto (body.scroll-locked), desliga backdrop-filter do nav.
+   Evita empilhamento de 2 blurs em iPhone 11/12, que derruba fps do scroll do modal. */
+body.scroll-locked .nav,
+body.scroll-locked .nav.sc{backdrop-filter:none;-webkit-backdrop-filter:none}
 
 .nav-in{max-width:560px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
 @media(min-width:1280px){
@@ -1155,7 +1159,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding-bottom:var(--pad);
 }
 
-/* Título — editorial, leve, arejado */
+/* Título — editorial, leve, arejado. Cor: creme sussurro (dentro da paleta ouro/navy/creme) */
 .vestido-titulo{
   font-family:var(--fh);
   font-weight:400;
@@ -1163,17 +1167,32 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-size:clamp(2.6rem,9vw,3.7rem);
   line-height:1.1;
   text-align:center;
-  color:var(--is);
+  color:rgba(250,244,232,.72); /* era var(--is) #8A8070 (cinza fora da paleta) */
   margin:0 auto 18px;
   letter-spacing:.005em;
   position:relative;
   z-index:1;
   padding-top:32px;
+  text-shadow:0 2px 12px rgba(15,23,32,.28); /* contraste editorial sobre fundo escuro */
 }
 .vestido-titulo i{
   font-style:italic;
   font-weight:300;
   color:var(--a);
+}
+
+/* Parágrafo de apresentação do Vestido — contextualiza pra convidado que não conhece a história */
+.vestido-intro{
+  font-family:var(--fb);
+  font-size:clamp(.98rem,2.4vw,1.08rem);
+  line-height:1.55;
+  text-align:center;
+  color:rgba(250,244,232,.85);
+  max-width:520px;
+  margin:0 auto 28px;
+  padding:0 16px;
+  letter-spacing:.005em;
+  font-weight:400;
 }
   
 #presentes_titulo{
@@ -1452,16 +1471,28 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .player-meta{min-width:0;line-height:1}
 .player-title{
   font-family:var(--fb);
-  font-size:.66rem;
+  font-size:.95rem; /* era .66rem (~10.5px, ilegível pra tio); agora ~15px */
   font-style:normal;
-  font-weight:600;
-  letter-spacing:.16em;
-  
-  color:rgba(250,244,232,.78);
-  white-space:nowrap;
+  font-weight:500;
+  letter-spacing:.04em; /* era .16em; reduz espaçamento exagerado */
+
+  color:rgba(250,244,232,.92); /* era .78; melhora contraste */
+  white-space:normal; /* era nowrap; permite 2 linhas */
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
   overflow:hidden;
-  text-overflow:ellipsis;
-  line-height:1;
+  line-height:1.2;
+}
+.player-artist{
+  font-family:var(--fh);
+  font-style:italic;
+  font-size:.82rem;
+  font-weight:400;
+  color:rgba(250,244,232,.72);
+  letter-spacing:.02em;
+  margin-top:4px;
+  line-height:1.15;
 }
 .player-sub{display:none}
 
@@ -2480,6 +2511,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   letter-spacing:.06em;
   color:var(--n);
   line-height:1.2;
+  margin:0; /* P19: reset quando h3 herda margem default de heading */
 }
 
 .cat-rng{
@@ -2647,7 +2679,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .g-ico{font-size:1.5rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:var(--ag);border-radius:11px;flex-shrink:0}
 .g-inf{flex:1;min-width:0}
-.g-nm{font-family:var(--fh);font-size:1rem;font-weight:500}
+.g-nm{font-family:var(--fh);font-size:1rem;font-weight:500;margin:0} /* P19: reset margem h4 */
 .g-desc{font-size:.78rem;color:var(--is);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .g-pr{font-size:.78rem;color:var(--a);font-weight:700;background:var(--ag);padding:5px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0}
   
@@ -4385,6 +4417,19 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .mo-gp{font-size:.92rem;color:var(--a);font-weight:600;margin-top:3px}
 .mo-gd{font-size:.78rem;color:var(--im);margin-top:6px;line-height:1.5}
 .mo-steps{margin-bottom:20px}
+/* P14: .mo-hint substitui mo-steps com 1 linha informativa compacta */
+.mo-hint{
+  font-family:var(--fb);
+  font-size:.88rem;
+  color:var(--im);
+  line-height:1.5;
+  text-align:center;
+  margin:8px 0 18px;
+  padding:10px 14px;
+  background:rgba(212,160,74,.08);
+  border-radius:10px;
+  border-left:2px solid rgba(212,160,74,.4);
+}
 .mo-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
 .mo-step-n{width:26px;height:26px;border-radius:50%;background:var(--a);color:var(--n);font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mo-step-t{font-size:.8rem;color:var(--i);line-height:1.5;padding-top:3px}
@@ -4448,8 +4493,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 </head>
 <body>
 <div class="toast" id="toast"></div>
-<!-- Áudio: src preenchido pelo JS via Sheets -->
-<audio id="bgMusic" preload="auto" loop><source src="" type="audio/mp4" id="audioSrc"></audio>
+<!-- Áudio: src preenchido pelo JS via Sheets. preload="none" = não baixa 3.4MB antes do primeiro play -->
+<audio id="bgMusic" preload="none" loop><source src="" type="audio/mp4" id="audioSrc"></audio>
 
 <!-- LIGHTBOX CARROSSEL -->
 <div class="lightbox" id="lightbox">
@@ -4609,7 +4654,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 <!-- VESTIDO VESTIDO -->
 <section class="vestido" id="vestido"><div class="inn">
-  <h2 class="vestido-titulo" id="historia_titulo"></h2>
+  <h2 class="vestido-titulo" id="historia_titulo">Vestido<span class="visually-hidden"> — a música que o Antonio compôs pra Bianca</span></h2>
+
+  <!-- Parágrafo de apresentação: contextualiza a seção pra quem não conhece a história -->
+  <p class="vestido-intro" id="vestido_intro">O Antonio compôs esta música pra Bianca. Aperte o play, leia a letra, e — se quiser — apoie a gravação.</p>
 
   <!-- A1: Player sobe — serve de título visual com nome da música -->
  <!-- Player — título visual de seção com scrubber de áudio -->
@@ -4619,7 +4667,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </button>
     <div class="player-info">
       <div class="player-meta">
-        <div class="player-title" id="musica_titulo"></div>
+        <div class="player-title" id="musica_titulo">Vestido</div>
+        <div class="player-artist" id="musica_artista_player">por Antonio</div>
       </div>
       
 <div class="player-scrub">
@@ -4636,20 +4685,20 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
   <!-- Texto de abertura -->
 <div class="vestido-quote" id="historia_texto_abertura_wrap" role="button" tabindex="0" onclick="abrirLetra()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirLetra()}">
-  <span id="historia_texto_abertura"></span><span class="vestido-quote-close">&#x201D;</span>
-  <cite id="musica_artista"></cite>
+  <span id="historia_texto_abertura">Um trecho da letra que o Antonio escreveu pra Bianca…</span><span class="vestido-quote-close">&#x201D;</span>
+  <cite id="musica_artista">Antonio</cite>
 </div>
 
   <!-- Fotos polaroid — principal + 2 sobrepostas; demais só no carrossel -->
 <div class="vestido-photos" id="vestidoPhotos">
   <div class="vestido-foto-principal-wrap">
-    <img src="" data-midia="vestido_foto_principal" alt="" onclick="openCarousel('vestido',0)">
- <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)"><span id="fotos_vestido"></span></div>
+    <img src="" data-midia="vestido_foto_principal" alt="Bianca com o vestido de noiva" onclick="openCarousel('vestido',0)">
+ <div class="vestido-badge" id="vestidoBadge" onclick="openCarousel('vestido',0)"><span id="fotos_vestido">📷 ver todas</span></div>
   </div>
-  <img src="" alt="" id="vestidoSlot1" class="vestido-polaroid">
-  <img src="" alt="" id="vestidoSlot2" class="vestido-polaroid">
-  <img src="" alt="" id="vestidoSlot3" class="vestido-polaroid">
-  <img src="" alt="" id="vestidoSlot4" class="vestido-polaroid">
+  <img src="" alt="Foto do vestido de Bianca" id="vestidoSlot1" class="vestido-polaroid">
+  <img src="" alt="Foto do vestido de Bianca" id="vestidoSlot2" class="vestido-polaroid">
+  <img src="" alt="Foto do vestido de Bianca" id="vestidoSlot3" class="vestido-polaroid">
+  <img src="" alt="Foto do vestido de Bianca" id="vestidoSlot4" class="vestido-polaroid">
 </div>
 
 
@@ -4692,7 +4741,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <div class="cx-cards" id="cxVestido"></div>
 
 <div class="vestido-seta-presentes-wrap" id="vestidoSetaPresentesWrap">
-  <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')"><span id="vestido_seta_presentes_txt"></span></a>
+  <a href="#presentes" id="vestido_seta_presentes" class="btn btn-g btn-sm" onclick="trackEvento('cta_faixa_clicou','vestido_seta_presentes')"><span id="vestido_seta_presentes_txt">Nossa lista de presentes ↓</span></a>
 </div>
 
 </div></section>
@@ -4704,7 +4753,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 <!-- Hero da seção presentes -->
   <div class="pres-hero" onclick="openCarousel('presentes',0)">
     <div class="pres-polaroid-wrap">
-      <img src="" data-midia="presentes_hero" alt="" id="presHeroImg">
+      <img src="" data-midia="presentes_hero" alt="Lista de presentes de Bianca e Antonio" id="presHeroImg">
     </div>
   <div class="pres-hero-overlay">
   <h2 id="presentes_titulo"></h2>
@@ -5089,9 +5138,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
         <div class="mo-gp" id="mP" style="display:none"></div>
         <div class="mo-gd" id="mD"></div>
       </div>
-      <div class="mo-steps">
-        <div class="mo-step"><div class="mo-step-n">1</div><div class="mo-step-t" id="modal_step_1">Confirme seu nome e deixe um recado.</div></div>
-        <div class="mo-step"><div class="mo-step-n">2</div><div class="mo-step-t" id="modal_step_2">Clique para enviar sua mensagem e abrir o Pix.</div></div>
+      <!-- P14: removido mo-steps (2 passos numerados fantasma que confundiam tio idoso). Substituído por 1 linha informativa. -->
+      <div class="mo-hint" id="modal_hint">
+        <span id="modal_step_1">Seu nome já está preenchido. Se quiser, deixe uma mensagem — ou clique para abrir o Pix.</span>
+        <span id="modal_step_2" style="display:none"></span>
       </div>
       <div class="mo-fg">
         <label class="mo-fl" id="modal_nome_label">Seu nome</label>
@@ -5715,11 +5765,28 @@ var au=document.getElementById('bgMusic');
     }
     syncPlayerUI();
   });
+
+  /* P8: feedback em rede ruim — áudio estava falhando em silêncio.
+     Play-btn toggla visual mas nada toca → tio fica achando que travou.
+     Agora: toast explicando + reset do play-btn. */
+  var _audioFeedbackShown=false;
+  function _mostrarErroAudio(motivo){
+    if(_audioFeedbackShown)return;
+    _audioFeedbackShown=true;
+    setTimeout(function(){_audioFeedbackShown=false;},8000); /* permite nova msg após 8s */
+    try{toast('Música indisponível no momento');}catch(e){}
+    try{au.pause();}catch(e){}
+    syncPlayerUI();
+    try{trackEvento('musica_erro',motivo||'desconhecido');}catch(e){}
+  }
+  au.addEventListener('error',function(){_mostrarErroAudio('error');});
+  au.addEventListener('stalled',function(){_mostrarErroAudio('stalled');});
+  au.addEventListener('abort',function(){_mostrarErroAudio('abort');});
   
   var src=document.getElementById('audioSrc');
   if(au&&src&&MIDIAS.vestido_audio){
     src.src=MIDIAS.vestido_audio;
-    au.load();
+    /* sem au.load() — deixa o browser baixar só no primeiro play (evita 3.4MB de download desnecessário) */
   }
   if(MIDIAS.vestido_textura){
     var styleTag=document.getElementById('dynStyle')||document.createElement('style');
@@ -5929,10 +5996,11 @@ function renderCats(){
     var vals=items.map(function(g){return g.v;}).filter(function(v){return v>0;});
     var minV=vals.length?Math.min.apply(null,vals):0;
     var maxV=vals.length?Math.max.apply(null,vals):0;
-    var rng=vals.length?'R$ '+minV.toLocaleString('pt-BR')+' – R$ '+maxV.toLocaleString('pt-BR'):'';
+    var rng=vals.length?'A partir de R$ '+minV.toLocaleString('pt-BR'):''; /* P22: antes era "R$ min – R$ max" que esmagava itens baixos */
     var img=CAT_IMGS[cid]||'';
-    var d=document.createElement('div');d.className='cat-card';d.dataset.c=cid;
-    d.innerHTML='<img src="'+img+'" alt="'+catNames[cid]+'" loading="lazy"><div class="cat-lbl"><div class="cat-nm">'+catNames[cid]+'</div><div class="cat-rng">'+rng+'</div></div>';
+    /* P19: <article> semântico + <h3> pra hierarquia SEO/LLM */
+    var d=document.createElement('article');d.className='cat-card';d.dataset.c=cid;
+    d.innerHTML='<img src="'+img+'" alt="'+catNames[cid].replace(/^[^\w\s]+\s*/,'')+'" loading="lazy"><div class="cat-lbl"><h3 class="cat-nm">'+catNames[cid]+'</h3><div class="cat-rng">'+rng+'</div></div>';
     d.onclick=function(){
       trackEvento('categoria_clicou',catNames[cid]);
       toggleCat(cid);
@@ -5944,14 +6012,15 @@ function renderCats(){
     if(!GIFTS[cid])return;
     var panel=document.createElement('div');panel.className='sub-panel';panel.id='sp-'+cid;
     GIFTS[cid].forEach(function(gift){
-      var card=document.createElement('div');card.className='g-card';
+      /* P19: article + h4 pros items (filho semântico da categoria h3) */
+      var card=document.createElement('article');card.className='g-card';
       (function(gf){
         card.onclick=function(){
-          trackEvento('presente_modal_abriu',gf.n+' — '+gf.p);
+          trackEvento('presente_modal_abriu',(gf.catId||'?')+' | '+gf.n+' — '+gf.p);
           openModal(gf);
         };
       })(gift);
-      card.innerHTML='<div class="g-ico">'+gift.i+'</div><div class="g-inf"><div class="g-nm">'+gift.n+'</div><div class="g-desc">'+gift.d+'</div></div><div class="g-pr">'+gift.p+'</div>';
+      card.innerHTML='<div class="g-ico">'+gift.i+'</div><div class="g-inf"><h4 class="g-nm">'+gift.n+'</h4><div class="g-desc">'+gift.d+'</div></div><div class="g-pr">'+gift.p+'</div>';
       panel.appendChild(card);
     });
     p.appendChild(panel);
@@ -5990,7 +6059,7 @@ function _buildCxCard(cx,variant){
   card.className='cx-card cx-card--'+variant;
   (function(g){
     card.onclick=function(){
-      trackEvento('presente_modal_abriu',g.n+' — '+g.p);
+      trackEvento('presente_modal_abriu',(g.catId||'?')+' | '+g.n+' — '+g.p);
       openModal(g);
     };
   })(cx);
@@ -6239,7 +6308,10 @@ function handleStart(){
   var _tSim=window._popupAbertoTs?(Date.now()-window._popupAbertoTs):0;
   trackEvento('popup_stage_um_sim','com_musica=sim&tempo_ms='+_tSim);
   playHeroVideo();
-  au.play().then(function(){syncPlayerUI();}).catch(function(){});
+  au.play().then(function(){syncPlayerUI();}).catch(function(err){
+    /* P8: se falhar (rede/codec/autoplay policy), mostra feedback em vez de silenciar */
+    _mostrarErroAudio('play_rejected');
+  });
   hP('sim');
   initVestidoSwap();
   initSecaoObserver();
@@ -6281,7 +6353,8 @@ function hP(motivo){
 
 function tM(){
   if(au.paused){
-    au.play();
+    var _p=au.play();
+    if(_p&&_p.catch){_p.catch(function(){_mostrarErroAudio('play_rejected_tM');});}
     trackEvento('musica_play','');
   }else{
     au.pause();
@@ -6574,6 +6647,7 @@ function openCarousel(album,idx){
   lboxRender();
   document.getElementById('lightbox').classList.add('on');
   lockScroll();
+  _pushOverlayState('lightbox');
 }
 
 function lboxPreload(src){
@@ -6671,7 +6745,59 @@ function lboxNav(dir){
 function closeLightbox(){
   document.getElementById('lightbox').classList.remove('on');
   unlockScroll();
+  _popOverlayIfPushed();
 }
+
+/* P7: popstate handler global — back button fecha modal/lightbox em vez de sair do site
+   Padrão: pushState ao abrir (sentinela _kiroOverlay), popstate fecha o topo da pilha.
+   Ignora navegação normal (hash anchors) quando não há overlay aberto. */
+var _backStackDepth=0;
+function _pushOverlayState(tipo){
+  try{
+    _backStackDepth++;
+    history.pushState({_kiroOverlay:tipo,depth:_backStackDepth},'');
+  }catch(e){}
+}
+function _popOverlayIfPushed(){
+  if(_backStackDepth>0){
+    _backStackDepth--;
+    try{history.back();}catch(e){}
+  }
+}
+window.addEventListener('popstate',function(e){
+  /* Fecha overlays abertos do topo pra baixo */
+  var lb=document.getElementById('lightbox');
+  var mo=document.getElementById('mo');
+  var moH=document.getElementById('moHoteis');
+  var moR=document.getElementById('moReservar');
+  if(lb&&lb.classList.contains('on')){
+    lb.classList.remove('on');
+    unlockScroll();
+    if(_backStackDepth>0)_backStackDepth--;
+    return;
+  }
+  if(mo&&mo.classList.contains('on')){
+    mo.classList.remove('on');
+    unlockScroll();
+    _presenteEnviando=false;
+    var _btn=document.getElementById('modal_btn_enviar');
+    if(_btn)_btn.disabled=false;
+    if(_backStackDepth>0)_backStackDepth--;
+    return;
+  }
+  if(moH&&moH.classList.contains('on')){
+    moH.classList.remove('on');
+    unlockScroll();
+    if(_backStackDepth>0)_backStackDepth--;
+    return;
+  }
+  if(moR&&moR.classList.contains('on')){
+    moR.classList.remove('on');
+    unlockScroll();
+    if(_backStackDepth>0)_backStackDepth--;
+    return;
+  }
+});
 
 document.getElementById('lightbox').addEventListener('click',function(e){
   if(e.target===this)closeLightbox();
@@ -6732,6 +6858,7 @@ function openModal(g){
   document.getElementById('tY').classList.remove('on');
   document.getElementById('mo').classList.add('on');
   lockScroll();
+  _pushOverlayState('modal_presente');
 }
 
 var oM=openModal;
@@ -6740,28 +6867,76 @@ function cM(){
   if(curGift){
     var ty=document.getElementById('tY');
     if(!ty||!ty.classList.contains('on')){
-      trackEvento('presente_modal_fechou_sem_pagar',curGift.n+' — '+curGift.p);
+      /* P21: inclui catId no detalhe */
+      trackEvento('presente_modal_fechou_sem_pagar',(curGift.catId||'?')+' | '+curGift.n+' — '+curGift.p);
     }
   }
+  /* Libera lock ao fechar modal (se o usuário fechou sem confirmar) */
+  _presenteEnviando=false;
+  var _btn=document.getElementById('modal_btn_enviar');
+  if(_btn)_btn.disabled=false;
   document.getElementById('mo').classList.remove('on');
   unlockScroll();
+  _popOverlayIfPushed();
 }
 
+var _presenteEnviando=false;
 function sAP(){
   var nm=document.getElementById('mNm').value.trim();
   var ms=document.getElementById('mMs').value.trim();
   if(!curGift)return;
-  trackEvento('presente_pix_abriu',curGift.n+' — '+curGift.p);
+  /* P6: lock contra duplo-clique + guard window */
+  if(_presenteEnviando)return;
+  _presenteEnviando=true;
+  var btn=document.getElementById('modal_btn_enviar');
+  if(btn)btn.disabled=true;
+  /* Timeout defensivo — destrava em 5s caso algo trave */
+  setTimeout(function(){_presenteEnviando=false;if(btn)btn.disabled=false;},5000);
+
+  /* P21: inclui catId no detalhe pra distinguir valor_livre/apoiar_musica/categoria */
+  var detalhe=(curGift.catId||'?')+' | '+curGift.n+' — '+curGift.p;
+  trackEvento('presente_pix_abriu',detalhe);
   enviar({
     type:'presente',
     nome:nm,
     presente:curGift.n,
+    categoria:curGift.catId||'',
     valor:curGift.v||0,
     mensagem:ms
   });
+
+  /* P5 MVP: abre Nubank SÍNCRONO (dentro do clique) pra evitar popup blocker iOS Safari.
+     setTimeout de 300ms era o problema — fora do gesto direto o Safari bloqueia. */
+  var abriu=null;
+  if(curGift.l){
+    try{abriu=window.open(curGift.l,'_blank','noopener,noreferrer');}catch(e){abriu=null;}
+  }
+
   document.getElementById('mF').style.display='none';
-  document.getElementById('tY').classList.add('on');
-  if(curGift.l){setTimeout(function(){window.open(curGift.l,'_blank');},300);}
+  var ty=document.getElementById('tY');
+  ty.classList.add('on');
+
+  /* Link-fallback visível no #tY se popup bloqueado (abriu===null) ou se curGift.l vazio */
+  var fb=document.getElementById('tY_pix_fallback');
+  if(!fb){
+    fb=document.createElement('a');
+    fb.id='tY_pix_fallback';
+    fb.className='btn btn-a btn-sm';
+    fb.style.cssText='display:none;margin:14px auto 0;max-width:320px;width:100%';
+    fb.target='_blank';
+    fb.rel='noopener noreferrer';
+    fb.textContent='Abrir o Pix';
+    var fecharBtn=ty.querySelector('button');
+    if(fecharBtn&&fecharBtn.parentNode)fecharBtn.parentNode.insertBefore(fb,fecharBtn);
+    else ty.appendChild(fb);
+  }
+  if(curGift.l && !abriu){
+    fb.href=curGift.l;
+    fb.style.display='inline-block';
+    fb.textContent='Se o Pix não abriu, toque aqui';
+  }else{
+    fb.style.display='none';
+  }
 }
 
 document.getElementById('mo').addEventListener('click',function(e){if(e.target===this)cM();});
