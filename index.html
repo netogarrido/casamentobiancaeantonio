@@ -6012,11 +6012,10 @@ function applyPresentes(rows){
     var tipo=r.tipo;var catId=r.categoria_id;
     var ordem=r.ordem;
     var pixKey=catId+'_'+String(Math.round(Number(ordem)||0));
-    /* P4: lê o link PIX da coluna do Sheet como fonte primária;
+    /* P4: lê o link PIX da coluna `link_pix` do Sheet como fonte primária;
        fallback pro dicionário hardcoded se coluna vazia.
        Remove a falha silenciosa quando noivos adicionam item novo ou mudam ordem. */
     var linkFromSheet=String(
-      r['Link pix (hardcoded no html)']||
       r.link_pix||
       r.pix||
       r.link||
