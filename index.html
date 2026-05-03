@@ -149,6 +149,153 @@ input,textarea,select{font-family:inherit;border:none;outline:none;background:no
   .nav-lk a{padding:8px 10px;font-size:.62rem;letter-spacing:.04em}
 }
 
+/* ══════════════════════════════════════════
+   NAV HAMBURGER (mobile ≤480px)
+   ══════════════════════════════════════════ */
+.nav-hamb{
+  display:none;
+  width:48px;
+  height:48px;
+  padding:0;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  color:var(--al);
+  border-radius:8px;
+  transition:background .2s, transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-hamb:active{transform:scale(0.94)}
+.nav-hamb:focus-visible{outline:2px solid var(--al);outline-offset:2px}
+.nav-hamb-i{
+  display:block;
+  width:22px;
+  height:2px;
+  background:var(--al);
+  border-radius:2px;
+  transition:transform .3s ease, opacity .2s ease;
+}
+/* Hamburger só aparece em mobile ≤480px */
+@media(max-width:480px){
+  .nav-hamb{display:flex}
+  .nav-lk{display:none}
+}
+/* Estado aberto: ícone vira X */
+.nav-hamb[aria-expanded="true"] .nav-hamb-i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamb[aria-expanded="true"] .nav-hamb-i:nth-child(2){opacity:0}
+.nav-hamb[aria-expanded="true"] .nav-hamb-i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ══════════════════════════════════════════
+   NAV OVERLAY (menu full-screen mobile)
+   ══════════════════════════════════════════ */
+.nav-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(15,23,32,0.98);
+  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(24px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transform:scale(1.02);
+  transition:opacity .35s ease, transform .35s ease;
+  pointer-events:none;
+  padding:env(safe-area-inset-top, 0px) 24px env(safe-area-inset-bottom, 0px);
+}
+.nav-overlay.on{
+  opacity:1;
+  transform:scale(1);
+  pointer-events:auto;
+}
+.nav-overlay[hidden]{display:none}
+.nav-overlay-close{
+  position:absolute;
+  top:calc(14px + env(safe-area-inset-top, 0px));
+  right:16px;
+  width:48px;
+  height:48px;
+  padding:0;
+  background:transparent;
+  border:1px solid rgba(212,160,74,0.28);
+  border-radius:50%;
+  color:var(--al);
+  font-family:var(--fb);
+  font-size:1.6rem;
+  line-height:1;
+  cursor:pointer;
+  transition:background .2s, transform .15s, border-color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-overlay-close:hover{background:rgba(212,160,74,0.08);border-color:var(--a)}
+.nav-overlay-close:active{transform:scale(0.94)}
+.nav-overlay-close:focus-visible{outline:2px solid var(--al);outline-offset:2px}
+.nav-overlay-links{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  align-items:stretch;
+  width:100%;
+  max-width:360px;
+}
+.nav-overlay-links a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:56px;
+  padding:14px 20px;
+  font-family:var(--fh);
+  font-size:1.75rem;
+  font-weight:400;
+  color:var(--p);
+  text-decoration:none;
+  text-align:center;
+  letter-spacing:.01em;
+  border-radius:14px;
+  transition:color .2s, background .2s, transform .15s;
+  opacity:0;
+  transform:translateY(10px);
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-overlay-links a:active{transform:scale(0.98)}
+.nav-overlay-links a:hover,.nav-overlay-links a:focus-visible{
+  color:var(--al);
+  background:rgba(212,160,74,0.06);
+  outline:none;
+}
+/* Stagger de entrada dos links quando overlay abre */
+.nav-overlay.on .nav-overlay-links a{opacity:1;transform:translateY(0);transition:opacity .4s ease, transform .4s ease, color .2s, background .2s}
+.nav-overlay.on .nav-overlay-links a:nth-child(1){transition-delay:.08s}
+.nav-overlay.on .nav-overlay-links a:nth-child(2){transition-delay:.13s}
+.nav-overlay.on .nav-overlay-links a:nth-child(3){transition-delay:.18s}
+.nav-overlay.on .nav-overlay-links a:nth-child(4){transition-delay:.23s}
+.nav-overlay.on .nav-overlay-links a:nth-child(5){transition-delay:.28s}
+.nav-overlay.on .nav-overlay-links a:nth-child(6){transition-delay:.33s}
+
+/* Reduced-motion: sem animação */
+@media (prefers-reduced-motion: reduce){
+  .nav-overlay,.nav-overlay-links a{transition:none !important;transform:none !important}
+}
+
+/* Helper a11y — visually hidden (pro H2 do overlay) */
+.visually-hidden{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--fb);font-weight:600;font-size:.74rem;letter-spacing:.04em;text-transform:none;padding:15px 32px;border-radius:50px;transition:all .3s;text-decoration:none;-webkit-tap-highlight-color:transparent}
   
@@ -4154,19 +4301,41 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 </div>
 
 <!-- NAV -->
-<nav class="nav" id="nav">
+<nav class="nav" id="nav" aria-label="Navegação principal">
   <div class="nav-in">
-    <a href="#hero" class="nav-logo" id="nav_logo"></a>
+    <a href="#hero" class="nav-logo" id="nav_logo" aria-label="Bianca & Antonio — voltar ao início">B&amp;A</a>
 
-<div class="nav-lk">
-      <a href="#presentes" id="nav_presentes"></a>
-      <a href="#rsvp" id="nav_rsvp"></a>
-      <a href="#prog" id="nav_prog"></a>
-      <a href="#faq" id="nav_faq"></a>
+    <div class="nav-lk">
+      <a href="#presentes" id="nav_presentes">Presentes</a>
+      <a href="#rsvp" id="nav_rsvp">RSVP</a>
+      <a href="#prog" id="nav_prog">Programação</a>
+      <a href="#faq" id="nav_faq">FAQ</a>
     </div>
-    
+
+    <!-- Hamburger (só mobile ≤480) -->
+    <button class="nav-hamb" id="nav_hamb" type="button"
+            aria-label="Abrir menu" aria-expanded="false" aria-controls="nav_overlay"
+            onclick="abrirMenuHamb()">
+      <span class="nav-hamb-i" aria-hidden="true"></span>
+      <span class="nav-hamb-i" aria-hidden="true"></span>
+      <span class="nav-hamb-i" aria-hidden="true"></span>
+    </button>
   </div>
 </nav>
+
+<!-- Overlay do menu mobile -->
+<div class="nav-overlay" id="nav_overlay" role="dialog" aria-modal="true" aria-labelledby="nav_overlay_titulo" hidden>
+  <h2 id="nav_overlay_titulo" class="visually-hidden">Menu de navegação</h2>
+  <button class="nav-overlay-close" type="button" aria-label="Fechar menu" onclick="fecharMenuHamb()">×</button>
+  <nav class="nav-overlay-links" aria-label="Menu principal">
+    <a href="#rsvp" id="nav_menu_rsvp">Confirmar presença</a>
+    <a href="#prog" id="nav_menu_programacao">Programação</a>
+    <a href="#presentes" id="nav_menu_presentes">Presentes</a>
+    <a href="#vestido" id="nav_menu_vestido">Vestido Vestido</a>
+    <a href="#traje" id="nav_menu_traje">O que vestir</a>
+    <a href="#faq" id="nav_menu_faq">Dúvidas</a>
+  </nav>
+</div>
 
 <!-- HERO: vídeo em card quadrado + texto ao lado -->
 <section class="hero" id="hero">
@@ -4190,15 +4359,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </div>
     <!-- texto -->
     <div class="hero-text">
-      <h1 id="hero_nomes"></h1>
-      <div class="hero-date" id="hero_data"></div>
-      <div class="hero-local" id="hero_local"></div>
+      <h1 id="hero_nomes">Bianca &amp; Antonio</h1>
+      <div class="hero-date" id="hero_data">23 a 25 de outubro de 2026</div>
+      <div class="hero-local" id="hero_local">Sant'Anna Fazenda Hotel — Amparo/SP</div>
       <div class="hero-cd-lbl" id="hero_countdown_rotulo"></div>
       <div class="cd" id="cd">
-        <div class="cd-i"><span class="cd-n" id="cdD">---</span><span class="cd-l" id="hero_countdown_dias"></span></div>
-        <div class="cd-i"><span class="cd-n" id="cdH">--</span><span class="cd-l" id="hero_countdown_horas"></span></div>
-        <div class="cd-i"><span class="cd-n" id="cdM">--</span><span class="cd-l" id="hero_countdown_min"></span></div>
-        <div class="cd-i"><span class="cd-n" id="cdS">--</span><span class="cd-l" id="hero_countdown_seg"></span></div>
+        <div class="cd-i"><span class="cd-n" id="cdD">---</span><span class="cd-l" id="hero_countdown_dias">Dias</span></div>
+        <div class="cd-i"><span class="cd-n" id="cdH">--</span><span class="cd-l" id="hero_countdown_horas">Hrs.</span></div>
+        <div class="cd-i"><span class="cd-n" id="cdM">--</span><span class="cd-l" id="hero_countdown_min">Min.</span></div>
+        <div class="cd-i"><span class="cd-n" id="cdS">--</span><span class="cd-l" id="hero_countdown_seg">Seg.</span></div>
      </div>
 <div class="hero-ctas">
 <a href="#rsvp" class="btn btn-a" id="hero_cta_primario"></a>
@@ -6535,6 +6704,53 @@ function navScrollTo(e){
   smoothScrollTo(targetId);
 }
 
+/* ══════════════════════════════════════════
+   NAV HAMBURGER (menu mobile full-screen)
+══════════════════════════════════════════ */
+var _navHambAberto=false;
+function abrirMenuHamb(){
+  if(_navHambAberto)return;
+  var ov=document.getElementById('nav_overlay');
+  var btn=document.getElementById('nav_hamb');
+  if(!ov||!btn)return;
+  ov.hidden=false;
+  /* força reflow pra transition pegar */
+  void ov.offsetWidth;
+  ov.classList.add('on');
+  btn.setAttribute('aria-expanded','true');
+  btn.setAttribute('aria-label','Fechar menu');
+  try{lockScroll();}catch(e){}
+  _navHambAberto=true;
+  /* foco no primeiro link após transição */
+  setTimeout(function(){
+    var first=ov.querySelector('.nav-overlay-links a');
+    if(first)first.focus();
+  },400);
+  trackEvento('nav_hamburger_abriu','');
+}
+function fecharMenuHamb(){
+  if(!_navHambAberto)return;
+  var ov=document.getElementById('nav_overlay');
+  var btn=document.getElementById('nav_hamb');
+  if(!ov||!btn)return;
+  ov.classList.remove('on');
+  btn.setAttribute('aria-expanded','false');
+  btn.setAttribute('aria-label','Abrir menu');
+  try{unlockScroll();}catch(e){}
+  _navHambAberto=false;
+  /* esconde do DOM após transição */
+  setTimeout(function(){
+    if(!_navHambAberto)ov.hidden=true;
+  },400);
+  /* devolve foco ao botão hamburger */
+  try{btn.focus();}catch(e){}
+  trackEvento('nav_hamburger_fechou','');
+}
+function toggleMenuHamb(){
+  if(_navHambAberto)fecharMenuHamb();
+  else abrirMenuHamb();
+}
+
 document.addEventListener('DOMContentLoaded',function(){
 document.querySelectorAll('.nav-lk a').forEach(function(a){
     a.addEventListener('click',function(e){
@@ -6568,6 +6784,33 @@ document.querySelectorAll('.nav-lk a').forEach(function(a){
       trackEvento(evName,id||href);
     });
   });
+
+  /* ── Hamburger overlay — bindings ── */
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && _navHambAberto){fecharMenuHamb();}
+  });
+  /* trackear clique em item do menu + fechar overlay.
+     Ordem: calcula target → fecha overlay (unlockScroll restaura Y original) → smooth scroll pro target.
+     Isso evita conflito entre unlockScroll e smoothScrollTo simultâneos. */
+  document.querySelectorAll('.nav-overlay-links a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var href=a.getAttribute('href')||'';
+      var destino=href.replace('#','').trim()||'desconhecido';
+      var targetId=destino;
+      trackEvento('nav_menu_'+destino+'_clicou','');
+      fecharMenuHamb();
+      /* após fecharMenuHamb, unlockScroll volta ao Y inicial. Aguardar próximo frame pra aplicar smooth scroll limpo */
+      setTimeout(function(){smoothScrollTo(targetId);},50);
+    });
+  });
+  /* clique no fundo do overlay (fora dos links/botão fechar) fecha */
+  var overlayEl=document.getElementById('nav_overlay');
+  if(overlayEl){
+    overlayEl.addEventListener('click',function(e){
+      if(e.target===overlayEl){fecharMenuHamb();}
+    });
+  }
 });
 
 (function(){
