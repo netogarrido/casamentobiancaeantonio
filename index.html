@@ -6832,56 +6832,12 @@ function closeLightbox(){
   _popOverlayIfPushed();
 }
 
-/* P7: popstate handler global — back button fecha modal/lightbox em vez de sair do site
-   Padrão: pushState ao abrir (sentinela _kiroOverlay), popstate fecha o topo da pilha.
-   Ignora navegação normal (hash anchors) quando não há overlay aberto. */
+/* P7 DESATIVADO: sistema popstate/pushState estava causando travamento ao abrir
+   modais de presente (caixinhas). Revertido à V5. Back button do mobile volta a
+   navegar normal (sair do site) — trade-off aceitável; modal fecha com X/ESC/overlay. */
 var _backStackDepth=0;
-function _pushOverlayState(tipo){
-  try{
-    _backStackDepth++;
-    history.pushState({_kiroOverlay:tipo,depth:_backStackDepth},'');
-  }catch(e){}
-}
-function _popOverlayIfPushed(){
-  if(_backStackDepth>0){
-    _backStackDepth--;
-    try{history.back();}catch(e){}
-  }
-}
-window.addEventListener('popstate',function(e){
-  /* Fecha overlays abertos do topo pra baixo */
-  var lb=document.getElementById('lightbox');
-  var mo=document.getElementById('mo');
-  var moH=document.getElementById('moHoteis');
-  var moR=document.getElementById('moReservar');
-  if(lb&&lb.classList.contains('on')){
-    lb.classList.remove('on');
-    unlockScroll();
-    if(_backStackDepth>0)_backStackDepth--;
-    return;
-  }
-  if(mo&&mo.classList.contains('on')){
-    mo.classList.remove('on');
-    unlockScroll();
-    _presenteEnviando=false;
-    var _btn=document.getElementById('modal_btn_enviar');
-    if(_btn)_btn.disabled=false;
-    if(_backStackDepth>0)_backStackDepth--;
-    return;
-  }
-  if(moH&&moH.classList.contains('on')){
-    moH.classList.remove('on');
-    unlockScroll();
-    if(_backStackDepth>0)_backStackDepth--;
-    return;
-  }
-  if(moR&&moR.classList.contains('on')){
-    moR.classList.remove('on');
-    unlockScroll();
-    if(_backStackDepth>0)_backStackDepth--;
-    return;
-  }
-});
+function _pushOverlayState(tipo){/* noop — mantido como stub pra retrocompatibilidade */}
+function _popOverlayIfPushed(){/* noop — mantido como stub pra retrocompatibilidade */}
 
 document.getElementById('lightbox').addEventListener('click',function(e){
   if(e.target===this)closeLightbox();
@@ -6921,48 +6877,32 @@ function openLightbox(img){
    MODAL PRESENTE
 ══════════════════════════════════════════ */
 function openModal(g){
-  /* Bug 3 fix: guards defensivos + isolamento de pushState pra evitar travamento
-     quando o clique dispara em meio a scroll smooth/animação. */
-  try{
-    if(!g){try{console.warn('[openModal] chamado sem gift');}catch(e){}return;}
-    curGift=g;
-    var _set=function(id,val){var el=document.getElementById(id);if(el)el.textContent=val;};
-    var _setVal=function(id,val){var el=document.getElementById(id);if(el)el.value=val;};
-    _set('mI2',g.i||'');
-    _set('mN',g.n||'');
-    _set('mP',g.p||'');
-    _set('mD',g.d||'');
-    var vcEl=document.getElementById('mo-valor-confirmacao');
-    if(vcEl)vcEl.textContent=g.v&&g.v>0?'R$ '+g.v.toLocaleString('pt-BR'):'Valor livre';
-    _setVal('mNm',getNomeSalvo());
-    _setVal('mMs','');
-    _set('mCt','0');
-    var labelNome=document.getElementById('modal_nome_label');
-    if(labelNome){labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';}
-    var moBox=document.querySelector('.mo-box');
-    if(moBox){
-      if(g.catId==='noivo_artista'){moBox.classList.add('mo-box--textura');}
-      else{moBox.classList.remove('mo-box--textura');}
-    }
-    var mF=document.getElementById('mF');if(mF)mF.style.display='block';
-    var tY=document.getElementById('tY');if(tY)tY.classList.remove('on');
-    var moEl=document.getElementById('mo');if(moEl)moEl.classList.add('on');
-    /* Cancela qualquer smooth scroll em curso antes de travar — evita deadlock
-       quando user clica em card logo após abrir categoria (toggleCat faz scroll smooth). */
-    try{
-      var _prevBehav=document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior='auto';
-      window.scrollTo(window.scrollX,window.scrollY);
-      requestAnimationFrame(function(){document.documentElement.style.scrollBehavior=_prevBehav||'';});
-    }catch(e){}
-    lockScroll();
-    /* Defere pushState pra fora do tick atual — evita conflito com scrollTo smooth em curso
-       e dispatch de eventos em cadeia que podem estar causando deadlock de renderização. */
-    setTimeout(function(){try{_pushOverlayState('modal_presente');}catch(e){}},0);
-  }catch(err){
-    try{console.error('[openModal] erro:',err);}catch(e){}
-    try{trackEvento('modal_erro','openModal:'+(err&&err.message||err));}catch(e){}
+  /* Voltamos à versão V5 (simples, testada, funcional).
+     O sistema popstate/pushState anterior estava causando travamento do site.
+     Back button no mobile agora leva pra página anterior (comportamento padrão),
+     o que é aceitável — modal fecha com ESC, clique no X, ou overlay. */
+  if(!g)return;
+  curGift=g;
+  document.getElementById('mI2').textContent=g.i||'';
+  document.getElementById('mN').textContent=g.n||'';
+  document.getElementById('mP').textContent=g.p||'';
+  document.getElementById('mD').textContent=g.d||'';
+  var vcEl=document.getElementById('mo-valor-confirmacao');
+  if(vcEl)vcEl.textContent=g.v&&g.v>0?'R$ '+g.v.toLocaleString('pt-BR'):'Valor livre';
+  document.getElementById('mNm').value=getNomeSalvo();
+  document.getElementById('mMs').value='';
+  document.getElementById('mCt').textContent='0';
+  var labelNome=document.getElementById('modal_nome_label');
+  if(labelNome){labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';}
+  var moBox=document.querySelector('.mo-box');
+  if(moBox){
+    if(g.catId==='noivo_artista'){moBox.classList.add('mo-box--textura');}
+    else{moBox.classList.remove('mo-box--textura');}
   }
+  document.getElementById('mF').style.display='block';
+  document.getElementById('tY').classList.remove('on');
+  document.getElementById('mo').classList.add('on');
+  lockScroll();
 }
 
 var oM=openModal;
@@ -6981,7 +6921,6 @@ function cM(){
   if(_btn)_btn.disabled=false;
   document.getElementById('mo').classList.remove('on');
   unlockScroll();
-  _popOverlayIfPushed();
 }
 
 var _presenteEnviando=false;
