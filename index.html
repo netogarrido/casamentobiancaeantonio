@@ -3393,6 +3393,32 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   box-shadow:0 4px 12px rgba(15,23,32,.08);
 }
 
+/* Cards alternativos (Ancona/Prado) inline abaixo do Sant'Anna — Pacote 3 B6 */
+.prog-alt-grid--alternativas{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:14px;
+}
+.prog-alt-card--alt{
+  min-height:112px;
+  padding:16px 10px 12px;
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(212,160,74,.22);
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.prog-alt-card--alt:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 18px rgba(15,23,32,.14);
+  border-color:var(--a);
+}
+.prog-alt-card--alt:active{transform:translateY(0)}
+.prog-alt-card--alt:focus-visible{outline:2px solid var(--al);outline-offset:2px}
+@media(max-width:380px){
+  .prog-alt-grid--alternativas{gap:8px}
+  .prog-alt-card--alt{min-height:104px;padding:14px 8px 10px}
+}
+
 .prog-alt-card h4{
   font-family:var(--fh);
   font-size:clamp(1rem,4vw,1.16rem);
@@ -4757,23 +4783,37 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 <!-- HOSPEDAGEM -->
 <div class="prog-via-panel prog-via-panel--hosp" id="vPanel-hosp">
   <div class="prog-alt-wrap">
-    <p class="prog-alt-title" id="hotel_opcoes"></p>
+    <p class="prog-alt-title" id="hotel_opcoes">Onde se hospedar</p>
 
     <div class="prog-alt-grid prog-alt-grid--hosp">
       <div class="prog-alt-card prog-alt-card--santanna" role="button" tabindex="0" data-copy-id="reserva_marcela_whatsapp" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
-        <div class="prog-soldout-ribbon" id="hotel_santana_esgotado"></div>
-        <h4 id="hotel_santana_nome"></h4>
+        <div class="prog-soldout-ribbon" id="hotel_santana_esgotado">Esgotado</div>
+        <h4 id="hotel_santana_nome">Sant'Anna Fazenda Hotel</h4>
         <p>Hotel do casamento</p>
-        <span class="prog-phone-number" id="reserva_marcela_whatsapp"></span>
+        <span class="prog-phone-number" id="reserva_marcela_whatsapp">(19) 97157-5937</span>
       </div>
 
-      <p class="prog-alt-texto-solto" id="reserva_santanna_texto"></p>
+      <p class="prog-alt-texto-solto" id="reserva_santanna_texto">As acomodações do Sant'Anna já estão esgotadas. Veja abaixo as opções próximas para curtir a festa conosco.</p>
     </div>
 
-    <!-- Botão para ver hospedagens alternativas (abre modal) -->
+    <!-- Alternativas inline: Ancona e Prado (B6 consolidado Pacote 3) -->
+    <div class="prog-alt-grid prog-alt-grid--alternativas">
+      <div class="prog-alt-card prog-alt-card--alt" role="button" tabindex="0" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
+        <h4 id="hotel_ancona_nome_inline">Hotel Ancona</h4>
+        <p>~20 min do Sant'Anna</p>
+        <span class="prog-phone-number" id="hotel_ancona_contato">(19) 98924-7095</span>
+      </div>
+      <div class="prog-alt-card prog-alt-card--alt" role="button" tabindex="0" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
+        <h4 id="hotel_prado_nome_inline">Hotel Prado</h4>
+        <p>~20 min do Sant'Anna</p>
+        <span class="prog-phone-number" id="hotel_prado_contato">(19) 99974-1994</span>
+      </div>
+    </div>
+
+    <!-- Botão para ver hospedagens alternativas com mais detalhes (abre modal) -->
     <button type="button" class="prog-hosp-btn" onclick="abrirHoteis()">
       <span class="prog-hosp-btn-ico">🏨</span>
-      <span>Ver hospedagens alternativas</span>
+      <span>Mais detalhes dos hotéis</span>
       <span class="prog-hosp-btn-arrow">→</span>
     </button>
 
@@ -5260,7 +5300,7 @@ function salvarNomeConvidado(nome){
 /* ══════════════════════════════════════════
    ANALYTICS — ENVIO CENTRALIZADO
 ══════════════════════════════════════════ */
-function enviar(payload){
+function enviar(payload, onSuccess, onError){
   payload.convidado_id=getConvidadoId();
   payload.sessao_id=getSessaoId();
   payload.nome=payload.nome||getNomeSalvo();
@@ -5269,7 +5309,13 @@ function enviar(payload){
     method:'POST',mode:'no-cors',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload)
-  }).catch(function(){});
+  }).then(function(){
+    /* mode:'no-cors' → response é opaque mas request chegou ao servidor.
+       Network errors caem no .catch abaixo. */
+    if(typeof onSuccess==='function')onSuccess();
+  }).catch(function(err){
+    if(typeof onError==='function')onError(err);
+  });
 }
 
 /* ── Evento pontual ── */
@@ -6781,17 +6827,31 @@ function _enviarRSVP(d,form){
   delete d.sugestao_musica;
   delete d.mensagem;
   trackEvento('rsvp_enviou',d.participacao||'');
-  enviar(d);
-  if(sug){
-    trackEvento('sugestao_musica_enviou',sug);
-    enviar({type:'sugestao_musica',musica:sug});
-  }
-  if(msg){
-    enviar({type:'presente',presente:'Mensagem via RSVP',valor:0,mensagem:msg});
-  }
-  if(form)form.style.display='none';
-  var rO=document.getElementById('rO');
-  if(rO)rO.classList.add('on');
+
+  var btnSubmit=form?form.querySelector('button[type="submit"]'):null;
+
+  enviar(d, function onSuccessRSVP(){
+    /* Request chegou ao servidor — mostra tela de sucesso + envia complementos */
+    if(sug){
+      trackEvento('sugestao_musica_enviou',sug);
+      enviar({type:'sugestao_musica',musica:sug});
+    }
+    if(msg){
+      enviar({type:'presente',presente:'Mensagem via RSVP',valor:0,mensagem:msg});
+    }
+    if(form)form.style.display='none';
+    var rO=document.getElementById('rO');
+    if(rO)rO.classList.add('on');
+    _rsvpEmEnvio=false;
+  }, function onErrorRSVP(){
+    /* Network error — libera submit e avisa convidado */
+    _rsvpEmEnvio=false;
+    if(btnSubmit){
+      btnSubmit.disabled=false;
+      btnSubmit.textContent=btnSubmit.dataset.originalText||'Enviar confirmação';
+    }
+    alertaRSVP('Sua confirmação pode não ter sido recebida — verifique sua conexão e envie novamente.');
+  });
 }
 
 /* Alerta simples dentro do padrão do site */
