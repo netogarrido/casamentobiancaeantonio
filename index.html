@@ -2783,14 +2783,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-family:var(--fh);
   font-weight:500;
   font-style:normal;
-  font-size:clamp(2.8rem,10vw,4rem);
-  line-height:1.05;
+  font-size:clamp(2.4rem,8vw,3.5rem);
+  line-height:1.08;
   color:#FAF4E8;
   letter-spacing:-.01em;
   margin:0;
+  /* Text-shadow editorial pra garantir contraste sobre a foto noturna em qualquer frame */
+  text-shadow:0 2px 14px rgba(15,23,32,.55), 0 1px 2px rgba(15,23,32,.7);
 }
 @media(min-width:520px){
-  .prog-hero-title h2{font-size:clamp(2.8rem,5vw,4rem)}
+  .prog-hero-title h2{font-size:clamp(2.6rem,4.2vw,3.75rem)}
 }
 
   
@@ -4759,15 +4761,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 
 <!-- PROGRAMAÇÃO DO FIM DE SEMANA -->
-<section class="prog" id="programacao">
+<section class="prog" id="programacao" aria-labelledby="programacao_label">
 
   <!-- Hero horizontal: foto hotel + título sobreposto + fade azul -->
   <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
     <div class="prog-hero-img-wrap">
-      <img src="" data-midia="foto_hotel_hero" alt="Sant'Anna Fazenda Hotel" id="progHeroImg" loading="lazy" decoding="async" width="1600" height="900">
+      <img data-midia="foto_hotel_hero" alt="Sant'Anna Fazenda Hotel" id="progHeroImg" loading="lazy" decoding="async" width="1600" height="900">
     </div>
     <div class="prog-hero-title">
-      <h2 id="programacao_label"></h2>
+      <h2 id="programacao_label">Programação do fim de semana</h2>
     </div>
     <div class="prog-hero-badge" id="progHeroBadge" onclick="event.stopPropagation();openCarousel('programacao',0)"><span id="fotos_programacao_mirror"></span></div>
   </div>
