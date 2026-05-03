@@ -419,19 +419,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   display:block;
 }
 
-/* linha nome + texto popup */
+/* linha nome + texto popup — parágrafo contínuo (não flex) pra fluxo natural de palavras centralizadas sem gap visual */
 .popup-nome-linha{
   display:none;
-  flex-wrap:wrap;
-  align-items:baseline;
-  justify-content:center;
-  gap:0 .35em;
+  text-align:center;
   opacity:0;
-  margin-top:0;
+  margin:0;
+  padding:0;
+  line-height:1.55;
   transition:opacity .4s ease, margin .4s ease;
 }
 .popup-nome-linha.vis{
-  display:flex;
+  display:block;
   opacity:1;
   margin-top:10px;
   margin-bottom:14px;
@@ -446,8 +445,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   color:var(--al);
   letter-spacing:.02em;
   text-shadow:0 1px 10px rgba(0,0,0,.35);
-  white-space:nowrap;
-  flex-shrink:0;
+  /* vocativo entra no fluxo inline do parágrafo */
+  display:inline;
+  /* space natural entre vocativo e texto é controlado pelo whitespace do HTML */
 }
 
 #popup_texto{
@@ -4381,9 +4381,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
    <h2 id="popup_titulo">Bianca e Antonio</h2>
    <p id="popup_aviso_player">convidam para seu casamento.</p>
 
-<div class="popup-nome-linha" id="popupNomeLinha">
-     <span class="popup-nome-preview" id="popupNomePreviewUm"></span><span id="popup_texto"></span>
-   </div>
+<p class="popup-nome-linha" id="popupNomeLinha">
+     <span class="popup-nome-preview" id="popupNomePreviewUm"></span> <span id="popup_texto"></span>
+   </p>
    
 <div class="popup-btns">
      <button class="btn btn-g" id="popup_botao_secundario" onclick="handleSkip()"></button>
@@ -4861,6 +4861,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <option value="festa" id="rsvp_opcao_festa"></option>
   </select>
   <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none"></p>
+  <!-- Sugestão pra quem ainda não escolheu: leva ao Day use dentro de Programação -->
+  <button type="button" class="rsvp-cta-opcoes" id="rsvp_cta_opcoes" onclick="irVerOpcoesDayUse()">
+    <span>Veja as opções abaixo</span>
+    <span class="rsvp-cta-opcoes-arrow" aria-hidden="true">↓</span>
+  </button>
 </div>
 
 <!-- Pergunta condicional: hospedagem próxima (só para day use / festa) -->
