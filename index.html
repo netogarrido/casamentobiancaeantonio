@@ -1976,9 +1976,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-family:var(--fh);
   font-size:1.18rem;
   font-style:italic;
-  font-weight:300;
+  font-weight:500; /* era 300 — peso maior pra italic longo não cansar vista cansada (tio-velho P1) */
   color:var(--i);
-  line-height:34px;
+  line-height:1.7; /* era 34px fixo — proporcional fica melhor em mobile */
   text-align:left;
   white-space:pre-line;
   padding:0 26px 0 58px;
@@ -1998,7 +1998,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 /* ── Caixinhas do noivo artista ── */
-.cx-cards{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+/* Grid compacto: cards não ocupam largura total no mobile, respiram no papel.
+   auto-fit deixa 1 coluna em mobile estreito (240px min) e 2-3 colunas em telas maiores. */
+.cx-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 340px));
+  gap:12px;
+  justify-content:center;
+  margin:18px auto 8px;
+  max-width:720px;
+}
 
 @media(min-width:768px){
   .vestido .inn{
@@ -2092,8 +2101,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding-top:20px !important;
   margin-top:16px !important;
 }
+/* Garante o mesmo grid compacto do .cx-cards pai — cards não ocupam full-width */
 .cx-noivo-dentro.tem-itens{
-  display:flex;
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 340px));
+  gap:12px;
+  justify-content:center;
 }
     
 .cx-card{
@@ -2142,43 +2155,60 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   letter-spacing:.01em;
 }
 
-/* desc: "Gesto simbólico · ..." — agora visível em linha 2, col 2-3 */
+/* desc: "Gesto simbólico · ..." — visível nos cards de presente, oculta nos caixinha noivo_artista (compacto) */
 .cx-desc{
   grid-row:2;grid-column:2/4;
   font-family:var(--fb);
-  font-size:.78rem;
+  font-size:.82rem;
   font-style:italic;
-  font-weight:400;
-  color:rgba(30,24,16,.68);
-  line-height:1.35;
+  font-weight:500;
+  color:rgba(30,24,16,.74);
+  line-height:1.4;
   margin-top:4px;
   display:block;
 }
+/* Ocultar desc no variant dark (caixinhas noivo_artista): mostra subtítulo só no modal */
+.cx-card--dark .cx-desc{display:none;}
 .cx-sep{display:none;}
 .cx-card-top{display:contents;}
 .cx-inf-top{display:contents;}
 
-/* apoiar — linha 3, col 2+3 (bug #4: subido de .58rem pra .78rem + peso 700 + ouro sólido) */
+/* apoiar — linha 3, col 2+3 (bug #4: subido de .58rem pra .78rem + peso 700 + ouro sólido).
+   Refinamento designer-ux: ouro mais sóbrio pra não competir com o nome do gesto */
 .cx-apoiar{
   grid-row:3;grid-column:2/4;
   font-family:var(--fb);
-  font-size:.82rem;font-weight:700;letter-spacing:.14em;
-  color:var(--a);
+  font-size:.82rem;font-weight:700;letter-spacing:.12em;
+  color:rgba(212,160,74,.82);
   margin-top:8px;
   text-transform:uppercase;
 }
 .cx-apoiar::after{content:' →'}
-
-/* Variante dark (dentro da letra/pergaminho) — precisa se sobressair sobre textura de caderno */
+/* No variant dark (sem desc), apoiar sobe pra linha 2 pra manter card compacto */
+.cx-card--dark .cx-apoiar{grid-row:2;margin-top:2px;}
 .cx-card--dark{
-  background:#fff; /* branco sólido pra destacar sobre o bege do caderno */
-  border:1.5px solid var(--a); /* borda ouro forte pra sobressair */
-  box-shadow:0 6px 22px rgba(15,23,32,.18), 0 2px 6px rgba(15,23,32,.12); /* sombra maior pra levantar visualmente */
-  position:relative;
-  z-index:2; /* fica acima de pseudo-elementos de textura */
+  /* reset grid pra 2 linhas (sem row pra desc) */
+  grid-template-rows:auto auto;
 }
-.cx-card--dark:hover{border-color:var(--a);transform:translateY(-2px);box-shadow:0 10px 28px rgba(15,23,32,.24), 0 3px 8px rgba(15,23,32,.14);}
-.cx-card--dark .cx-ico{background:rgba(212,160,74,.12);border:1px solid rgba(212,160,74,.48);}
+
+/* Variante dark (dentro da letra/pergaminho) — precisa se sobressair sobre textura de caderno.
+   Refinamento designer-ux: fundo creme levíssimo + sombra sutil (não parecer tile de e-commerce).
+   Largura compacta: card não ocupa a linha inteira, deixa respirar no papel. */
+.cx-card--dark{
+  background:#FDFAF3; /* creme levíssimo em vez de branco puro */
+  border:1px solid rgba(212,160,74,.55); /* borda ouro presente mas não dura */
+  box-shadow:0 3px 10px rgba(30,24,16,.10); /* sombra única suave */
+  position:relative;
+  z-index:2;
+  /* grid reset já feito acima: 2 linhas */
+  grid-template-rows:auto auto;
+}
+.cx-card--dark:hover{
+  border-color:var(--a);
+  transform:translateY(-1px);
+  box-shadow:0 5px 14px rgba(30,24,16,.14);
+}
+.cx-card--dark .cx-ico{background:rgba(212,160,74,.10);border:1px solid rgba(212,160,74,.38);}
 
 /* Variante light */
 .cx-card--light{
@@ -4432,7 +4462,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .mo-gi{font-size:2rem;margin-bottom:8px}
 .mo-gn{font-family:var(--fh);font-size:1.25rem;font-weight:500}
 .mo-gp{font-size:.92rem;color:var(--a);font-weight:600;margin-top:3px}
-.mo-gd{font-size:.78rem;color:var(--im);margin-top:6px;line-height:1.5}
+.mo-gd{
+  font-family:var(--fh);
+  font-size:.92rem;
+  font-style:italic;
+  font-weight:500;
+  color:rgba(30,24,16,.76);
+  margin-top:8px;
+  line-height:1.45;
+  letter-spacing:.005em;
+}
 .mo-steps{margin-bottom:20px}
 /* P14: .mo-hint substitui mo-steps com 1 linha informativa compacta */
 .mo-hint{
@@ -5140,9 +5179,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
         <div class="mo-gp" id="mP" style="display:none"></div>
         <div class="mo-gd" id="mD"></div>
       </div>
-      <!-- P14: removido mo-steps (2 passos numerados fantasma que confundiam tio idoso). Substituído por 1 linha informativa. -->
-      <div class="mo-hint" id="modal_hint">
-        <span id="modal_step_1">Seu nome já está preenchido. Se quiser, deixe uma mensagem — ou clique para abrir o Pix.</span>
+      <!-- P14 revisto: mo-hint removido a pedido do usuário. Subtítulo "Gesto simbólico · ..."
+           das caixinhas noivo_artista é aplicado dinamicamente no #mD via openModal. -->
+      <div class="mo-hint" id="modal_hint" style="display:none">
+        <span id="modal_step_1"></span>
         <span id="modal_step_2" style="display:none"></span>
       </div>
       <div class="mo-fg">
@@ -6093,6 +6133,8 @@ function _buildCxCard(cx,variant){
       openModal(g);
     };
   })(cx);
+  /* Card compacto: só emoji + nome + valor + Apoiar.
+     Descrição ("Gesto simbólico · ...") migra pro popup como subtítulo. */
   card.innerHTML=
     '<div class="cx-card-top">'+
       '<div class="cx-ico">'+cx.i+'</div>'+
@@ -6101,8 +6143,6 @@ function _buildCxCard(cx,variant){
         '<div class="cx-valor">'+cx.p+'</div>'+
       '</div>'+
     '</div>'+
-    '<div class="cx-desc">'+cx.d+'</div>'+
-    '<div class="cx-sep"></div>'+
     '<div class="cx-apoiar">Apoiar</div>';
   return card;
 }
