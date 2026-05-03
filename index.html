@@ -3504,31 +3504,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   box-shadow:0 4px 12px rgba(15,23,32,.08);
 }
 
-/* Cards alternativos (Ancona/Prado) inline abaixo do Sant'Anna — Pacote 3 B6 */
-.prog-alt-grid--alternativas{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:14px;
-}
-.prog-alt-card--alt{
-  min-height:112px;
-  padding:16px 10px 12px;
-  background:rgba(255,255,255,.88);
-  border:1px solid rgba(212,160,74,.22);
-  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-}
-.prog-alt-card--alt:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 18px rgba(15,23,32,.14);
-  border-color:var(--a);
-}
-.prog-alt-card--alt:active{transform:translateY(0)}
-.prog-alt-card--alt:focus-visible{outline:2px solid var(--al);outline-offset:2px}
-@media(max-width:380px){
-  .prog-alt-grid--alternativas{gap:8px}
-  .prog-alt-card--alt{min-height:104px;padding:14px 8px 10px}
-}
+/* (Cards alternativos Ancona/Prado inline foram removidos — agora só no modal "Mais detalhes dos hotéis") */
 
 .prog-alt-card h4{
   font-family:var(--fh);
@@ -4927,31 +4903,19 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <p class="prog-alt-texto-solto" id="reserva_santanna_texto">As acomodações do Sant'Anna já estão esgotadas. Veja abaixo as opções próximas para curtir a festa conosco.</p>
     </div>
 
-    <!-- Alternativas inline: Ancona e Prado (B6 consolidado Pacote 3) -->
-    <div class="prog-alt-grid prog-alt-grid--alternativas">
-      <div class="prog-alt-card prog-alt-card--alt" role="button" tabindex="0" data-copy-id="hotel_ancona_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
-        <h4 id="hotel_ancona_nome_inline">Hotel Ancona</h4>
-        <p>~20 min do Sant'Anna</p>
-        <span class="prog-phone-number" id="hotel_ancona_contato">(19) 98924-7095</span>
-      </div>
-      <div class="prog-alt-card prog-alt-card--alt" role="button" tabindex="0" data-copy-id="hotel_prado_contato" onclick="copiarTelefoneHotel(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();copiarTelefoneHotel(this);}">
-        <h4 id="hotel_prado_nome_inline">Hotel Prado</h4>
-        <p>~20 min do Sant'Anna</p>
-        <span class="prog-phone-number" id="hotel_prado_contato">(19) 99974-1994</span>
-      </div>
-    </div>
+    <!-- Alternativas inline (Ancona/Prado) removidas a pedido do usuário — telefones ficam no modal "Mais detalhes dos hotéis" -->
 
-    <!-- Botão para ver hospedagens alternativas com mais detalhes (abre modal) -->
+    <!-- Botão para ver hospedagens alternativas com mais detalhes (abre modal).
+         Texto+emoji vêm do Sheet conteudo via chave `hospedagem_btn_mais_detalhes`. -->
     <button type="button" class="prog-hosp-btn" onclick="abrirHoteis()">
-      <span class="prog-hosp-btn-ico">🏨</span>
-      <span>Mais detalhes dos hotéis</span>
+      <span id="hospedagem_btn_mais_detalhes">🏨 Mais detalhes dos hotéis</span>
       <span class="prog-hosp-btn-arrow">→</span>
     </button>
 
-    <!-- Botão para redirecionar ao Day use -->
+    <!-- Botão para redirecionar ao Day use.
+         Texto+emoji vêm do Sheet conteudo via chave `hospedagem_btn_day_use`. -->
     <button type="button" class="prog-hosp-btn prog-hosp-btn--day" onclick="toggleVia('day')">
-      <span class="prog-hosp-btn-ico">🍹</span>
-      <span>Conheça a melhor opção disponível</span>
+      <span id="hospedagem_btn_day_use">🍹 Conheça a melhor opção disponível</span>
       <span class="prog-hosp-btn-arrow">→</span>
     </button>
   </div>
