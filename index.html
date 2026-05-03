@@ -5627,6 +5627,8 @@ function validarNomePopup(){
     erro.classList.add('vis');
     input.focus();
     setTimeout(function(){input.classList.remove('erro');},400);
+    /* B5 — registrar tentativa de submeter com nome vazio */
+    trackEvento('popup_nome_erro_validacao','vazio');
     return false;
   }
   input.classList.remove('erro');
@@ -5639,7 +5641,7 @@ function handleZero(){
   if(!validarNomePopup())return;
   var nome=getNomePopup();
   salvarNomeConvidado(nome);
-  trackEvento('popup_nome_informou','');
+  trackEvento('popup_stage_zero_entrar','len='+nome.length);
   avancarParaStageUm();
 }
 
@@ -5708,10 +5710,10 @@ function handleStart(){
   }
   salvarNomeConvidado(nome);
   registrarEntrada(nome,true);
-  trackEvento('popup_entrou','');
+  trackEvento('popup_stage_um_sim','');
   playHeroVideo();
   au.play().then(function(){syncPlayerUI();}).catch(function(){});
-  hP();
+  hP('sim');
   initVestidoSwap();
   initSecaoObserver();
   initInatividade();
@@ -5729,15 +5731,17 @@ function handleSkip(){
   }
   salvarNomeConvidado(nome);
   registrarEntrada(nome,false);
-  trackEvento('popup_pulou','');
+  trackEvento('popup_stage_um_nao','');
   playHeroVideo();
-  hP();
+  hP('nao');
   initVestidoSwap();
   initSecaoObserver();
   initInatividade();
 }
 
-function hP(){
+function hP(motivo){
+  var tempoMs=window._popupAbertoTs?(Date.now()-window._popupAbertoTs):0;
+  trackEvento('popup_fechou','motivo='+(motivo||'desconhecido')+'&tempo_ms='+tempoMs);
   _visitaInicio=Date.now();
   document.getElementById('popup').classList.add('off');
   document.getElementById('mini').classList.add('vis');
@@ -7174,6 +7178,22 @@ document.addEventListener('DOMContentLoaded',function(){
   loadAll();
 
 var nomeSalvo=getNomeSalvo();
+  /* B1 — marcar abertura do popup e emitir evento com stage inicial */
+  window._popupAbertoTs=Date.now();
+  trackEvento('popup_abriu', nomeSalvo ? 'stage_um_retornante' : 'stage_zero_novo');
+
+  /* B4 — trackear preenchimento do nome uma vez por sessão (só comprimento, não o nome) */
+  var popupNomeInp=document.getElementById('popup_nome');
+  if(popupNomeInp){
+    popupNomeInp.addEventListener('blur',function(){
+      var v=(popupNomeInp.value||'').trim();
+      if(v && !popupNomeInp._tracked){
+        popupNomeInp._tracked=true;
+        trackEvento('popup_nome_preenchido','len='+v.length);
+      }
+    });
+  }
+
   if(nomeSalvo){
     var rsvpNome=document.querySelector('#rF input[name="nome"]');
     if(rsvpNome&&!rsvpNome.value)rsvpNome.value=nomeSalvo;
