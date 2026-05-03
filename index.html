@@ -3409,32 +3409,35 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   transform:translateY(0);
 }
 
-/* link "veja a estrutura do hotel" */
+/* link "veja a estrutura do hotel" — secundário, abaixo do CTA principal Reservar */
 .prog-via-link{
   display:flex;
   align-items:center;
   justify-content:center;
   gap:8px;
   width:100%;
-  margin:14px 0 4px;
-  padding:13px 16px;
+  margin:0 0 6px;
+  padding:12px 16px;
   background:transparent;
-  border:1.5px dashed rgba(212,160,74,.65);
+  border:1px dashed rgba(212,160,74,.45);
   border-radius:12px;
-  color:var(--n);
+  color:var(--im);
   font-family:var(--fh);
-  font-size:.98rem;
-  font-weight:500;
+  font-style:italic;
+  font-size:.95rem;
+  font-weight:400;
+  letter-spacing:.01em;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  transition:background .22s ease, border-color .22s ease, transform .22s ease;
+  transition:background .22s ease, border-color .22s ease, color .22s ease, transform .22s ease;
 }
 .prog-via-link:hover{
-  background:rgba(212,160,74,.10);
+  background:rgba(212,160,74,.08);
   border-color:var(--a);
+  color:var(--n);
   transform:translateY(-1px);
 }
-.prog-via-link span{font-size:1.05rem}
+.prog-via-link span{font-size:1rem}
 
 /* ══════════════════════════════════════════
    DIVISORES TIPOGRÁFICOS
@@ -3885,8 +3888,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-hosp-btn-arrow{font-size:1rem;margin-left:2px}
 
 .prog-reservar-btn--base{
-  margin-top:18px;
-  margin-bottom:0;
+  /* Reservar agora vem primeiro (ação principal). Respiro amplo antes do link secundário. */
+  margin-top:22px;
+  margin-bottom:20px;
 }
 
 .prog-hosp-btn--day{
@@ -5009,15 +5013,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
                 <div class="pdu-i"><span>📌</span><span id="dayuse_reserva"></span></div>
               </div>
 
-              <button type="button" class="prog-via-link" onclick="scrollToLazer()">
-                <span>👇</span> Veja a estrutura do hotel
-              </button>
-
-              <!-- Botão Reservar — BASE -->
+              <!-- Botão Reservar — BASE (ação principal, primeiro) -->
               <button type="button" class="prog-reservar-btn prog-reservar-btn--base" onclick="abrirReservar()">
                 <span class="prog-reservar-ico">📞</span>
                 <span>Reservar day use</span>
                 <span class="prog-reservar-arrow">→</span>
+              </button>
+
+              <!-- Link secundário pra estrutura do hotel (depois do CTA principal) -->
+              <button type="button" class="prog-via-link" onclick="scrollToLazer()">
+                <span>👇</span> Veja a estrutura do hotel
               </button>
             </div>
           </div>
@@ -6609,41 +6614,50 @@ function _toggleLetra(abrir){
     if(cFora)cFora.style.display='none';
     if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
+
+    /* Trava scroll durante a transição (0.8s) + folga */
+    _travarScrollDurante(ancora,1100);
+
+    /* Scroll contextual APÓS transição: leva topo da letra ao topo do viewport */
+    setTimeout(function(){
+      var navOffset=78;
+      var stage=document.querySelector('#lB .lyr-stage')||document.getElementById('lB');
+      if(stage){
+        var top=stage.getBoundingClientRect().top+window.scrollY-navOffset;
+        window.scrollTo({top:top,behavior:'smooth'});
+      }
+    },1150);
   }else{
+    /* FECHAR — fix do "pulo":
+       O scroll do usuário está lá embaixo (lendo a letra). Se a gente só colapsar,
+       durante a animação o viewport fica sobre a seção Presentes (porque a letra
+       encurtou). Só depois o scrollTo corrige — daí o "pulo" visual.
+
+       Solução: reposiciona o scroll no pergaminho ANTES de colapsar, enquanto a
+       letra ainda está aberta. Aí quando a animação roda, o viewport já está
+       no lugar final. Nenhum pulo. */
+    var perg=document.getElementById('pergaminhoWrap');
+    var navOffset=78;
+    if(perg){
+      var prevBehav=document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior='auto';
+      /* Alvo: pergaminho alinhado ao topo (abaixo do nav) — posição final após colapso */
+      var alvoTop=perg.getBoundingClientRect().top+window.scrollY-navOffset;
+      window.scrollTo(0,alvoTop);
+      requestAnimationFrame(function(){
+        document.documentElement.style.scrollBehavior=prevBehav||'';
+      });
+    }
+    /* Agora que o scroll já está onde queremos, dispara o colapso */
     b.classList.remove('open');
     sec.classList.remove('lyr-aberta');
     if(cDentro)cDentro.style.display='none';
     if(cFora)cFora.style.display='';
     trackEvento('letra_fechou','');
+
+    /* Trava scroll durante a transição pra não vazar um frame */
+    _travarScrollDurante(ancora,1100);
   }
-
-  /* Trava durante a transição (0.8s) + folga. Bug #7: aumentado pra 1100ms 
-     porque o scroll contextual (setTimeout 1000) estava entrando antes do lock terminar,
-     causando "pulo" visual pra Presentes antes de retornar ao pergaminho. */
-  _travarScrollDurante(ancora,1100);
-
-  /* Após transição: scroll contextual (após lock terminar em 1100ms) */
-  setTimeout(function(){
-    var navOffset=78;
-    if(abrir){
-      /* Abrir: levar topo da letra para o topo do viewport (abaixo do nav) */
-      var stage=document.querySelector('#lB .lyr-stage')||document.getElementById('lB');
-      if(stage){
-        var top=stage.getBoundingClientRect().top+window.scrollY-navOffset;
-        /* Usa 'auto' (instant) em vez de 'smooth' no fechar pra evitar que o scroll
-           suave percorra visualmente a seção Presentes antes de assentar. */
-        window.scrollTo({top:top,behavior:'smooth'});
-      }
-    }else{
-      /* Fechar: mostrar pergaminho fechado + 3 caixinhas de apoio.
-         Bug #7: 'auto' evita o scroll-smooth atravessar visualmente a Presentes. */
-      var perg=document.getElementById('pergaminhoWrap');
-      if(perg){
-        var top=perg.getBoundingClientRect().top+window.scrollY-navOffset;
-        window.scrollTo({top:top,behavior:'auto'});
-      }
-    }
-  },1150);
 }
 
 /* Popula o pergaminho a partir das chaves musica_titulo + musica_trecho */
