@@ -2193,29 +2193,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card--light:hover{border-color:var(--a);transform:translateY(-1px);box-shadow:0 6px 18px rgba(84,73,60,.08);}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
-/* Mobile: empilha nome e valor (igual ao .g-card) pra evitar quebrar nome grande */
+/* Mobile: versão simplificada — mantém o layout flex do desktop.
+   Removido o grid-template-areas que pode causar tap-swallow em iOS Safari. */
 @media(max-width:639px){
   .cx-card{
-    display:grid;
-    grid-template-columns:38px 1fr;
-    grid-template-areas:"ico inf" "ico val";
-    column-gap:11px;
-    row-gap:1px;
-    align-items:start;
+    padding:10px 12px;
+    gap:10px;
   }
-  .cx-card .cx-ico{grid-area:ico;align-self:center}
-  .cx-card .cx-inf-top{grid-area:inf;align-self:end;display:block}
-  .cx-card .cx-valor{
-    grid-area:val;
-    align-self:start;
-    background:transparent;
-    padding:0;
-    border-radius:0;
-    font-size:.78rem;
-    margin-top:0;
-    font-family:var(--fh);
-    font-weight:600;
-  }
+  .cx-ico{width:36px;height:36px;font-size:1.15rem}
+  .cx-nm{font-size:.96rem;line-height:1.2}
+  .cx-valor{font-size:.72rem;padding:3px 9px}
 }
 
 /* ──────────── PRESENTES ──────────── */
@@ -2735,29 +2722,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .g-desc{font-size:.78rem;color:var(--is);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .g-pr{font-size:.76rem;color:var(--a);font-weight:700;background:var(--ag);padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 
-/* Bug 2 (novo) fix — mobile: valor em linha inferior (abaixo do nome) pra não cortar a 4ª caixinha.
-   Em desktop o layout horizontal original é mantido. */
+/* Bug 2 (novo) fix — mobile: versão simplificada pra não arriscar bugs de tap em iOS.
+   Mantém o layout flex do desktop; se o nome quebra em 2 linhas, tudo bem.
+   O importante é que o card continue clicável sem tap-swallow. */
 @media(max-width:639px){
-  .g-card{align-items:flex-start}
-  .g-card .g-pr{
-    background:transparent;
-    padding:0;
-    border-radius:0;
-    font-size:.78rem;
-    margin-top:2px;
-    align-self:flex-start;
-  }
   .g-card{
-    display:grid;
-    grid-template-columns:38px 1fr;
-    grid-template-areas:"ico inf" "ico pr";
-    gap:1px 11px;
-    align-items:start;
+    padding:10px 12px;
+    gap:10px;
   }
-  .g-card .g-ico{grid-area:ico;align-self:center}
-  .g-card .g-inf{grid-area:inf;align-self:end}
-  .g-card .g-pr{grid-area:pr;align-self:start;margin-top:0}
-  .g-nm{font-size:.98rem;white-space:normal;line-height:1.2}
+  .g-ico{width:36px;height:36px;font-size:1.15rem}
+  .g-nm{font-size:.96rem;white-space:normal;line-height:1.2}
+  .g-pr{font-size:.72rem;padding:3px 9px}
 }
   
 /* Bloco "valor livre" */
