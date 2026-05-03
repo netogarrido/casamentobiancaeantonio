@@ -4142,6 +4142,40 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-radius:6px;
   margin-top:8px;
 }
+/* CTA sutil — sugestão de olhar as opções quando ainda não escolheu participação */
+.rsvp-cta-opcoes{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+  padding:10px 16px;
+  background:transparent;
+  border:1px solid rgba(212,160,74,.38);
+  border-radius:50px;
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:.98rem;
+  color:var(--a);
+  cursor:pointer;
+  transition:background .2s, border-color .2s, transform .15s, color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.rsvp-cta-opcoes:hover{
+  background:rgba(212,160,74,.08);
+  border-color:var(--a);
+  color:var(--i);
+  transform:translateY(-1px);
+}
+.rsvp-cta-opcoes:active{transform:translateY(0)}
+.rsvp-cta-opcoes:focus-visible{outline:2px solid var(--al);outline-offset:2px}
+.rsvp-cta-opcoes-arrow{
+  font-family:var(--fb);
+  font-weight:400;
+  transform:translateY(1px);
+  transition:transform .2s;
+}
+.rsvp-cta-opcoes:hover .rsvp-cta-opcoes-arrow{transform:translateY(3px)}
 .rsvp-radios{
   display:flex;
   flex-direction:column;
@@ -6637,6 +6671,7 @@ function onParticiplacaoChange(val){
   var hotelWrap=document.getElementById('rsvp_nome_hotel_wrap');
   var hotelInput=document.getElementById('rsvp_nome_hotel_input');
   var avisoDay=document.getElementById('rsvp_dayuse_aviso');
+  var btnOpcoes=document.getElementById('rsvp_cta_opcoes');
 
   /* Reset do bloco secundário sempre que muda participação */
   document.querySelectorAll('input[name="hospedagem_tipo"]').forEach(function(r){r.checked=false;});
@@ -6648,11 +6683,28 @@ function onParticiplacaoChange(val){
     avisoDay.style.display=(val==='dayuse')?'block':'none';
   }
 
+  /* Botão "Veja as opções abaixo": só quando ainda não escolheu nada */
+  if(btnOpcoes){
+    btnOpcoes.style.display=(val==='')?'inline-flex':'none';
+  }
+
   /* Pergunta condicional hospedagem: day use ou festa */
   if(val==='dayuse' || val==='festa'){
     if(hospWrap)hospWrap.style.display='block';
   }else{
     if(hospWrap)hospWrap.style.display='none';
+  }
+}
+
+/* Leva o usuário direto ao Day use dentro da seção Programação */
+function irVerOpcoesDayUse(){
+  try{trackEvento('rsvp_cta_opcoes_clicou','vazio');}catch(e){}
+  if(typeof abrirDayUseDaProgramacao==='function'){
+    abrirDayUseDaProgramacao();
+  } else {
+    /* fallback: scroll manual */
+    if(typeof smoothScrollTo==='function')smoothScrollTo('programacao');
+    else location.hash='#programacao';
   }
 }
 
