@@ -961,7 +961,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   transition:opacity 1.1s ease;
 }
 .hero.hero-video-started .hero-bg video,
-.hero.hero-video-started .hero-bg img{
+.hero.hero-video-started .hero-bg img,
+.hero-bg img{ /* img estática fica visível imediatamente (não precisa esperar "start" de vídeo) */
   opacity:1;
 }
 /* gradiente sobre o fundo */
@@ -4609,12 +4610,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 <!-- HERO: vídeo em card quadrado + texto ao lado -->
 <section class="hero" id="hero">
-  <!-- fundo desfocado full-bleed -->
+  <!-- fundo desfocado full-bleed — usa IMG estática (poster) em vez de <video> pra evitar 2 decoders simultâneos em iOS antigo (economia de ~12MB de tráfego se Safari iOS não compartilhar cache entre tags) -->
   <div class="hero-bg" aria-hidden="true">
-
-    <video muted loop playsinline data-midia-bg="hero_video" data-midia-fallback="popup_bg_hero" onerror="heroVideoFallbackBg(this)"></video>
-    <img class="hero-bg-fallback" id="heroBgFallback" alt="" hidden>
-    
+    <img class="hero-bg-fallback" id="heroBgFallback" data-midia="hero_poster" alt="">
   </div>
   <div class="hero-inner">
     <!-- vídeo em quadrado -->
@@ -5716,14 +5714,7 @@ function applyMidia(rows){
         imgMain.hidden = false;
         if(vMain) vMain.style.display = 'none';
       }
-      /* Vídeo de fundo (full-bleed) */
-      var imgBg = document.getElementById('heroBgFallback');
-      var vBg = document.querySelector('[data-midia-bg="hero_video"]');
-      if(imgBg && fallbackSrc){
-        imgBg.src = fallbackSrc;
-        imgBg.hidden = false;
-        if(vBg) vBg.style.display = 'none';
-      }
+      /* Fundo full-bleed agora é <img> direto (data-midia="hero_poster"), não precisa de fallback aqui */
       /* Sinal visual pro hero saber que já está "pronto" sem video */
       var hero = document.getElementById('hero');
       if(hero) hero.classList.add('hero-video-started');
@@ -7413,7 +7404,7 @@ document.querySelectorAll('.nav-lk a').forEach(function(a){
   var ticking=false;
   var navEl=null;
   var linksEl=null;
-  var secs=['presentes','rsvp','hosp','faq'];
+  var secs=['vestido','presentes','programacao','rsvp','traje','faq']; /* atualizado: 'hosp' não existe, faltavam 'vestido'/'programacao'/'traje' */
   window.addEventListener('scroll',function(){
     if(ticking)return;
     ticking=true;
