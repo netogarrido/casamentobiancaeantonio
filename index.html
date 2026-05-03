@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0F1720">
 <meta id="title_link" property="og:title" content="Convite para o casamento de Bianca & Antonio">
 <meta id="description_link" property="og:description" content="23 a 25 de Outubro de 2026 - Estamos muito felizes em celebrar esse momento com vocês.">
@@ -175,7 +175,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.22);
   border-radius:12px;
-  font-size:.92rem;
+  font-size:16px;
   color:#fff;
   font-family:var(--fb);
   text-align:center;
@@ -409,15 +409,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .popup-bg img:first-child{
     margin-left:0;
   }
-  /* FIX desktop: popup card maior */
-  .popup-c{
+  /* FIX desktop: popup card maior — especificidade aumentada para vencer regra base que aparece depois */
+  .popup .popup-c{
     max-width:420px;
     padding:36px 32px 28px;
   }
-  .popup-c h2{
+  .popup .popup-c h2{
     font-size:2.3rem;
   }
-  .popup-c p{
+  .popup .popup-c p{
     font-size:1.15rem;
   }
 }
@@ -3822,12 +3822,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .fg{margin-bottom:16px}
 .fl{font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--a);margin-bottom:6px;display:block}
-.fi{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:1rem;color:var(--i);transition:border-color .2s;min-height:48px}
+.fi{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);transition:border-color .2s;min-height:48px}
 .fi::placeholder{color:rgba(30,24,16,.35)}.fi:focus{border-color:var(--a);outline:none}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.fsel{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:1rem;color:var(--i);min-height:48px}
+.fsel{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);min-height:48px}
 .fsel option{background:#fff;color:var(--i)}
-.fta{width:100%;min-height:72px;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:1rem;color:var(--i);resize:none;line-height:1.5}
+.fta{width:100%;min-height:72px;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);resize:none;line-height:1.5}
 .fta::placeholder{color:rgba(30,24,16,.35)}.fta:focus{border-color:var(--a);outline:none}
 .rsvp-note{font-size:.78rem;color:var(--is);margin-top:8px;line-height:1.55}
   
@@ -3973,9 +3973,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .mo-step-t{font-size:.8rem;color:var(--i);line-height:1.5;padding-top:3px}
 .mo-fg{margin-bottom:10px}
 .mo-fl{font-size:.56rem;font-weight:600;letter-spacing:.14em;color:var(--is);margin-bottom:5px;display:block}
-.mo-fi{width:100%;padding:12px 13px;background:#fff;border:1.5px solid var(--st);border-radius:var(--rs);font-size:.84rem;color:var(--i)}
+.mo-fi{width:100%;padding:12px 13px;background:#fff;border:1.5px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i)}
 .mo-fi::placeholder{color:var(--is)}.mo-fi:focus{border-color:var(--a);outline:none}
-.mo-fta{width:100%;min-height:70px;padding:12px 13px;background:#fff;border:1.5px solid var(--st);border-radius:var(--rs);font-size:.84rem;color:var(--i);resize:none;line-height:1.5}
+.mo-fta{width:100%;min-height:70px;padding:12px 13px;background:#fff;border:1.5px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);resize:none;line-height:1.5}
 .mo-fta::placeholder{color:var(--is)}.mo-fta:focus{border-color:var(--a);outline:none}
 .mo-cnt{text-align:right;font-size:.56rem;color:var(--is);margin-top:3px}
 .mo-btns{display:flex;flex-direction:column;gap:8px;margin-top:18px}
@@ -4048,7 +4048,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 <!-- POPUP -->
 <div class="popup" id="popup">
   <div class="popup-bg">
-  <img class="popup-bg-fallback" id="popupBgFallback" alt="" aria-hidden="true">
+  <img class="popup-bg-fallback" id="popupBgFallback" src="https://netogarrido.github.io/casamentobiancaeantonio/img/hero_popup.jpg" alt="" aria-hidden="true">
   <div class="popup-track" id="popupTrack">
     <img data-midia-lazy="popup_bg_1" alt="">
     <img data-midia-lazy="popup_bg_2" alt="">
@@ -4060,29 +4060,31 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
   <!-- STAGE 0: coleta de nome -->
  <div class="popup-c popup-c--zero" id="popupStageZero">
-   <h2 id="popup_nome_titulo"></h2>
+   <h2 id="popup_nome_titulo">Seja bem-vindo(a),</h2>
    <div class="popup-nome-wrap">
     <input
        class="popup-nome-input"
        id="popup_nome"
        type="text"
        autocomplete="name"
+       autocapitalize="words"
        autocorrect="off"
        spellcheck="false"
+       maxlength="60"
        placeholder="Seu nome completo"
      >
      <div class="popup-nome-erro" id="popup_nome_erro"></div>
      
    </div>
    <div class="popup-btns">
-     <button class="btn btn-a" id="popup_botao_zero" onclick="handleZero()"></button>
+     <button class="btn btn-a" id="popup_botao_zero" onclick="handleZero()">Entrar</button>
    </div>
  </div>
 
 <!-- STAGE 1: popup original (música sim/não) -->
  <div class="popup-c popup-c--um" id="popupStageUm" style="display:none">
-   <h2 id="popup_titulo"></h2>
-   <p id="popup_aviso_player"></p>
+   <h2 id="popup_titulo">Bianca e Antonio</h2>
+   <p id="popup_aviso_player">convidam para seu casamento.</p>
 
 <div class="popup-nome-linha" id="popupNomeLinha">
      <span class="popup-nome-preview" id="popupNomePreviewUm"></span><span id="popup_texto"></span>
@@ -4523,7 +4525,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <form id="rF" onsubmit="sR(event)">
     
     
-    <div class="fg"><label class="fl" id="rsvp_campo_nome"></label><input class="fi" name="nome" id="rsvpNomeInput" required placeholder="Seu nome completo" onblur="if(this.value.trim())salvarNomeConvidado(this.value.trim())"></div>
+    <div class="fg"><label class="fl" id="rsvp_campo_nome"></label><input class="fi" name="nome" id="rsvpNomeInput" required maxlength="60" autocapitalize="words" autocomplete="name" placeholder="Seu nome completo" onblur="if(this.value.trim())salvarNomeConvidado(this.value.trim())"></div>
     
     <div class="frow">
       <div class="fg"><label class="fl" id="rsvp_campo_adultos"></label><input class="fi" name="adultos" type="number" min="1" value="1"></div>
@@ -5128,13 +5130,19 @@ function fetchSheet(tabName){
    LOAD ALL
 ══════════════════════════════════════════ */
 function loadAll(){
-  Promise.all([
+  var abas=['configuracoes','midia','conteudo','presentes','perguntas'];
+  Promise.allSettled([
     fetchSheet('configuracoes'),
     fetchSheet('midia'),
     fetchSheet('conteudo'),
     fetchSheet('presentes'),
     fetchSheet('perguntas')
-  ]).then(function(res){
+  ]).then(function(results){
+    var res=results.map(function(r,i){
+      if(r.status==='fulfilled')return r.value;
+      console.warn('Sheet "'+abas[i]+'" falhou:',r.reason);
+      return [];
+    });
     applyConfiguracoes(res[0]);
     tick();
     if(countdownInterval)clearInterval(countdownInterval);
@@ -5149,7 +5157,7 @@ function loadAll(){
       if(_viaAtiva===null){toggleVia('day',{skipScroll:true});}
     },300);
   }).catch(function(e){
-    console.warn('Sheets load error:',e);
+    console.warn('Sheets load fatal error:',e);
   });
 }
 
@@ -5594,8 +5602,9 @@ function atualizarPreviewNome(val){
   var linha=document.getElementById('popupNomeLinha');
   if(!preview||!linha)return;
   var nome=(val||'').trim();
+  var primeiro=nome.split(/\s+/)[0]||nome;
   if(nome){
-    preview.textContent=nome+',';
+    preview.textContent=primeiro+',';
     linha.classList.add('vis');
   }else{
     preview.textContent='';
@@ -5640,11 +5649,12 @@ function avancarParaStageUm(){
   if(z)z.style.display='none';
   if(u)u.style.display='';
   var nome=getNomePopup()||getNomeSalvo();
+  var primeiro=(nome||'').split(/\s+/)[0]||nome;
   var alvo=document.getElementById('popupNomePreviewUm');
   var linha=document.getElementById('popupNomeLinha');
   if(alvo){
     if(nome){
-      alvo.textContent=nome+', ';
+      alvo.textContent=primeiro+', ';
       if(linha)linha.classList.add('vis');
     }else{
       alvo.textContent='';
@@ -5659,7 +5669,20 @@ function voltarParaStageZero(){
   if(z)z.style.display='';
   if(u)u.style.display='none';
   var inp=document.getElementById('popup_nome');
-  if(inp){inp.focus();inp.select();}
+  if(inp){
+    /* Garantir que o valor visível existe: se input está vazio mas localStorage tem nome, preencher */
+    var nomeAtual=(inp.value||'').trim();
+    if(!nomeAtual){
+      var salvo=getNomeSalvo();
+      if(salvo)inp.value=salvo;
+    }
+    /* requestAnimationFrame garante que display:'' pintou antes de focar/selecionar */
+    requestAnimationFrame(function(){
+      inp.focus();
+      inp.select();
+    });
+  }
+  trackEvento('popup_editar_nome','');
 }
 
 function pularParaStageUmSeNomeSalvo(){
