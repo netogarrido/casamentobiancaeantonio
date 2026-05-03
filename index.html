@@ -1264,57 +1264,71 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   text-align:inherit;
   font:inherit;
   color:inherit;
+  /* Papel creme com pauta horizontal discreta, margem lateral dourada, dobra central sutil */
   background:
-    /* fibras finas — orientação 1 */
-    repeating-linear-gradient(92deg,
-      rgba(156,122,63,.045) 0 1px,
-      transparent 1px 3px,
-      rgba(156,122,63,.025) 3px 4px,
-      transparent 4px 9px),
-    /* fibras finas — orientação 2 */
-    repeating-linear-gradient(178deg,
-      rgba(120,90,50,.035) 0 1px,
-      transparent 1px 5px,
-      rgba(156,122,63,.022) 5px 6px,
-      transparent 6px 11px),
-    /* manchinhas envelhecidas */
-    radial-gradient(circle at 22% 28%, rgba(156,122,63,.10) 0%, transparent 14%),
-    radial-gradient(circle at 78% 72%, rgba(120,90,50,.08) 0%, transparent 16%),
-    radial-gradient(circle at 88% 18%, rgba(156,122,63,.06) 0%, transparent 11%),
-    /* base creme */
-    linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 55%,#F1E5C8 100%);
-  border:1.5px solid rgba(156,122,63,.34);
+    /* dobra central horizontal — linha muito leve */
+    linear-gradient(180deg,
+      transparent 49.5%,
+      rgba(156,122,63,.12) 49.9%,
+      rgba(156,122,63,.16) 50%,
+      rgba(156,122,63,.12) 50.1%,
+      transparent 50.5%),
+    /* pauta horizontal — linhas finas a cada 34px */
+    repeating-linear-gradient(180deg,
+      transparent 0 33px,
+      rgba(120,90,50,.10) 33px 34px),
+    /* base creme uniforme */
+    linear-gradient(180deg,#FEFBF5 0%,#FBF6EC 100%);
+  border:1px solid rgba(156,122,63,.22);
   border-top:none;
-  border-radius:0 0 14px 14px;
+  border-radius:0 0 10px 10px;
   box-shadow:
-    0 14px 36px rgba(84,73,60,.16),
-    inset 0 1px 0 rgba(255,255,255,.7),
-    inset 0 -2px 0 rgba(156,122,63,.10);
+    0 10px 28px rgba(84,73,60,.12),
+    0 2px 6px rgba(84,73,60,.08),
+    inset 0 1px 0 rgba(255,255,255,.8);
   animation:pergaminhoUnfurl .9s cubic-bezier(.22,.7,.28,1) both;
   overflow:hidden;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
+}
+
+/* Margem esquerda vertical dourada (linha de caderno) */
+.pergaminho::before{
+  content:'';
+  position:absolute;
+  left:44px;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:linear-gradient(180deg,
+    rgba(212,160,74,0) 0%,
+    rgba(212,160,74,.55) 8%,
+    rgba(212,160,74,.55) 92%,
+    rgba(212,160,74,0) 100%);
+  pointer-events:none;
+  z-index:1;
 }
   
 .pergaminho:active{
   transform:scale(.992);
 }
 
-/* borda superior — mesmo acabamento da letra aberta */
+/* borda superior — filete suave (dobra superior da carta) */
 .pergaminho-borda-topo{
-  height:16px;
-  background:
-    linear-gradient(180deg,
-      rgba(156,122,63,.26) 0%,
-      rgba(156,122,63,.10) 55%,
-      transparent 100%);
-  border-bottom:1px solid rgba(156,122,63,.30);
+  height:10px;
+  background:linear-gradient(180deg,
+    rgba(156,122,63,.14) 0%,
+    rgba(156,122,63,.04) 70%,
+    transparent 100%);
+  border-bottom:1px solid rgba(156,122,63,.20);
   position:relative;
+  z-index:2;
 }
 
 .pergaminho-corpo{
   position:relative;
-  padding:26px 26px 88px;
+  padding:26px 26px 88px 58px;
+  z-index:2;
 }
 
 .pergaminho-titulo{
@@ -1325,9 +1339,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   letter-spacing:.04em;
   text-transform:none;
   color:#9C7A3F;
-  text-align:center;
+  text-align:left;
   margin-bottom:22px;
   position:relative;
+  z-index:2;
 }
   
 .pergaminho-titulo::after{
@@ -1335,9 +1350,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   display:block;
   width:46px;
   height:1px;
-  background:linear-gradient(90deg,transparent,#9C7A3F,transparent);
+  background:linear-gradient(90deg,#9C7A3F,transparent);
   opacity:.7;
-  margin:10px auto 0;
+  margin:10px 0 0;
 }
 
 .pergaminho-trecho{
@@ -1346,10 +1361,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-style:italic;
   font-weight:300;
   color:var(--i);
-  line-height:1.85;
-  text-align:center;
+  line-height:34px;
+  text-align:left;
   white-space:pre-line;
   letter-spacing:.005em;
+  position:relative;
+  z-index:2;
 }
 
 /* fade que esmaece o final do trecho — convida a abrir */
@@ -1358,14 +1375,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   left:0;
   right:0;
   bottom:0;
-  height:150px;
+  height:120px;
   pointer-events:none;
   background:linear-gradient(180deg,
-    rgba(254,251,245,0) 0%,
-    rgba(254,251,245,.35) 18%,
-    rgba(250,244,232,.72) 42%,
-    rgba(245,233,205,.92) 70%,
-    #F1E5C8 100%);
+    rgba(251,246,236,0) 0%,
+    rgba(251,246,236,.45) 25%,
+    rgba(251,246,236,.85) 60%,
+    #FBF6EC 100%);
+  z-index:3;
 }
   
 /* convite a abrir — discreto, dentro do pergaminho */
@@ -1461,68 +1478,66 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .lyr-stage{
   position:relative;
   padding:0;
-  border-radius:0 0 14px 14px;
+  border-radius:0 0 10px 10px;
   overflow:hidden;
+  /* Mesmo visual de caderno+carta do pergaminho fechado */
   background:
-    /* fibras finas — orientação 1 */
-    repeating-linear-gradient(92deg,
-      rgba(156,122,63,.045) 0 1px,
-      transparent 1px 3px,
-      rgba(156,122,63,.025) 3px 4px,
-      transparent 4px 9px),
-    /* fibras finas — orientação 2 */
-    repeating-linear-gradient(178deg,
-      rgba(120,90,50,.035) 0 1px,
-      transparent 1px 5px,
-      rgba(156,122,63,.022) 5px 6px,
-      transparent 6px 11px),
-    /* manchinhas envelhecidas — distribuídas para coluna alta */
-    radial-gradient(circle at 18% 12%, rgba(156,122,63,.10) 0%, transparent 11%),
-    radial-gradient(circle at 84% 28%, rgba(120,90,50,.08) 0%, transparent 13%),
-    radial-gradient(circle at 12% 58%, rgba(156,122,63,.07) 0%, transparent 12%),
-    radial-gradient(circle at 88% 76%, rgba(120,90,50,.08) 0%, transparent 14%),
-    radial-gradient(circle at 28% 92%, rgba(156,122,63,.06) 0%, transparent 11%),
-    /* base creme */
-    linear-gradient(180deg,#FEFBF5 0%,#FAF4E8 55%,#F1E5C8 100%);
-  border:1.5px solid rgba(156,122,63,.34);
+    /* dobra central horizontal */
+    linear-gradient(180deg,
+      transparent 49.5%,
+      rgba(156,122,63,.10) 49.9%,
+      rgba(156,122,63,.14) 50%,
+      rgba(156,122,63,.10) 50.1%,
+      transparent 50.5%),
+    /* pauta horizontal fina */
+    repeating-linear-gradient(180deg,
+      transparent 0 33px,
+      rgba(120,90,50,.08) 33px 34px),
+    /* base creme uniforme */
+    linear-gradient(180deg,#FEFBF5 0%,#FBF6EC 100%);
+  border:1px solid rgba(156,122,63,.22);
   border-top:none;
   box-shadow:
-    0 14px 36px rgba(84,73,60,.16),
-    inset 0 1px 0 rgba(255,255,255,.7),
-    inset 0 -2px 0 rgba(156,122,63,.10);
+    0 10px 28px rgba(84,73,60,.12),
+    0 2px 6px rgba(84,73,60,.08),
+    inset 0 1px 0 rgba(255,255,255,.8);
 }
 
+/* Margem esquerda dourada (linha de caderno) */
 .lyr-stage::before{
   content:'';
-  display:block;
-  height:16px;
-  background:
-    linear-gradient(180deg,
-      rgba(156,122,63,.26) 0%,
-      rgba(156,122,63,.10) 55%,
-      transparent 100%);
-  border-bottom:1px solid rgba(156,122,63,.30);
-  position:relative;
+  position:absolute;
+  left:44px;
+  top:10px;
+  bottom:0;
+  width:1px;
+  background:linear-gradient(180deg,
+    rgba(212,160,74,0) 0%,
+    rgba(212,160,74,.55) 4%,
+    rgba(212,160,74,.55) 96%,
+    rgba(212,160,74,0) 100%);
+  pointer-events:none;
   z-index:1;
 }
 
+/* borda superior — filete suave */
 .lyr-stage::after{
   content:'';
   position:absolute;
+  left:0;right:0;top:0;
+  height:10px;
+  background:linear-gradient(180deg,
+    rgba(156,122,63,.14) 0%,
+    rgba(156,122,63,.04) 70%,
+    transparent 100%);
+  border-bottom:1px solid rgba(156,122,63,.20);
   pointer-events:none;
-  inset:16px 0 0;
-  z-index:0;
-  background:
-    radial-gradient(ellipse 88% 38% at 50% 8%, rgba(156,122,63,.08), transparent 64%),
-    radial-gradient(ellipse 72% 32% at 16% 90%, rgba(120,90,50,.05), transparent 70%),
-    radial-gradient(ellipse 76% 34% at 88% 70%, rgba(156,122,63,.06), transparent 68%);
-  mix-blend-mode:multiply;
-  opacity:.9;
+  z-index:2;
 }
 
 .lyr-titulo{
   position:relative;
-  z-index:1;
+  z-index:2;
   font-family:var(--fh);
   font-size:1.05rem;
   font-weight:500;
@@ -1530,8 +1545,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   letter-spacing:.04em;
   text-transform:none;
   color:#9C7A3F;
-  text-align:center;
-  margin:28px auto 22px;
+  text-align:left;
+  margin:28px 26px 22px 58px;
 }
 
 .lyr-titulo::after{
@@ -1539,9 +1554,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   display:block;
   width:46px;
   height:1px;
-  background:linear-gradient(90deg,transparent,#9C7A3F,transparent);
+  background:linear-gradient(90deg,#9C7A3F,transparent);
   opacity:.7;
-  margin:10px auto 0;
+  margin:10px 0 0;
 }
 
 /* X dentro da mesma caixa do pergaminho aberto */
@@ -1590,16 +1605,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   
 .lyr-text{
   position:relative;
-  z-index:1;
+  z-index:2;
   font-family:var(--fh);
   font-size:1.18rem;
   font-style:italic;
   font-weight:300;
   color:var(--i);
-  line-height:1.85;
-  text-align:center;
+  line-height:34px;
+  text-align:left;
   white-space:pre-line;
-  padding:0 26px;
+  padding:0 26px 0 58px;
   letter-spacing:.005em;
 }
 
@@ -1629,7 +1644,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
   .vestido-titulo{grid-column:1/-1}
 
-  /* Coluna esquerda — player + fotos empilhados */
+  /* COLUNA ESQUERDA — player (row 2) + fotos (row 3) */
   .vestido .inn > .player.player--story{
     grid-column:1;
     grid-row:2;
@@ -1638,44 +1653,44 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
   .vestido .inn > .vestido-photos{
     grid-column:1;
-    grid-row:2;
+    grid-row:3;
     align-self:start;
-    margin-top:96px;
+    margin-top:8px;
     padding:8px 0 24px;
   }
 
-  /* Coluna direita — quote + pergaminho empilhados */
-.vestido .inn > .vestido-quote{
-    grid-column:1;
+  /* COLUNA DIREITA — quote (row 2) + pergaminho (row 3) */
+  .vestido .inn > .vestido-quote{
+    grid-column:2;
     grid-row:2;
     align-self:start;
-    margin-top:78px;
-    margin-bottom:0;
+    margin-top:0;
+    margin-bottom:16px;
     font-size:1.04rem;
-    max-width:360px;
+    max-width:none;
     padding:14px 16px 12px;
   }
   .vestido .inn > .pergaminho-wrap{
     grid-column:2;
-    grid-row:2;
+    grid-row:3;
     align-self:start;
-    margin-top:140px;
+    margin-top:0;
     max-width:none;
   }
 
-  /* Linha 3+: letra, CTA e seta — full width MAS com .lyr-stage limitado pra leitura */
+  /* Linha 4+: letra aberta, CTA, caixinhas, seta — full width */
   .vestido .inn > .lyr-box{
-    grid-column:1/-1;
-    grid-row:3;
-  }
-  
-.vestido .inn > .cx-cards#cxVestido{
     grid-column:1/-1;
     grid-row:4;
   }
-  .vestido .inn > .vestido-seta-presentes-wrap{
+  
+  .vestido .inn > .cx-cards#cxVestido{
     grid-column:1/-1;
     grid-row:5;
+  }
+  .vestido .inn > .vestido-seta-presentes-wrap{
+    grid-column:1/-1;
+    grid-row:6;
   }
 
   /* CRÍTICO: letra aberta em coluna estreita centralizada — mesma estética do pergaminho */
@@ -5834,6 +5849,26 @@ function _toggleLetra(abrir){
 
   /* Trava durante a transição (0.8s) + folga */
   _travarScrollDurante(ancora,950);
+
+  /* Após transição: scroll contextual */
+  setTimeout(function(){
+    var navOffset=78;
+    if(abrir){
+      /* Abrir: levar topo da letra para o topo do viewport (abaixo do nav) */
+      var stage=document.querySelector('#lB .lyr-stage')||document.getElementById('lB');
+      if(stage){
+        var top=stage.getBoundingClientRect().top+window.scrollY-navOffset;
+        window.scrollTo({top:top,behavior:'smooth'});
+      }
+    }else{
+      /* Fechar: mostrar pergaminho fechado + 3 caixinhas de apoio */
+      var perg=document.getElementById('pergaminhoWrap');
+      if(perg){
+        var top=perg.getBoundingClientRect().top+window.scrollY-navOffset;
+        window.scrollTo({top:top,behavior:'smooth'});
+      }
+    }
+  },1000);
 }
 
 /* Popula o pergaminho a partir das chaves musica_titulo + musica_trecho */
