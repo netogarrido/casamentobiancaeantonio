@@ -2851,6 +2851,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     0 0 22px rgba(212,160,74,.45),
     0 8px 24px rgba(212,160,74,.28);
 }
+/* Acento editorial — barra dourada fina embaixo do dia ativo (designer-ux Pacote 3) */
+.prog-dia-card.on::before{
+  content:'';
+  position:absolute;
+  bottom:5px;
+  left:28%;
+  right:28%;
+  height:2px;
+  background:var(--a);
+  border-radius:2px;
+  opacity:.85;
+}
 .prog-dia-card .dow{
   position:relative;
   z-index:2;
@@ -2926,34 +2938,44 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .prog-dia-copy p{
   margin:0;
 }
+/* CTA que leva ao Day use — ouro dormente editorial (designer-ux 2C, Pacote 3).
+   Ouro forte fica reservado ao submit RSVP como CTA primário único. */
 .prog-dia-cta{
   display:flex;
   align-items:center;
   justify-content:center;
   width:100%;
   margin-top:4px;
-  padding:13px 16px;
+  padding:12px 16px;
   border-radius:12px;
-  background:linear-gradient(135deg,var(--a),var(--al));
-  color:var(--n);
-  font-family:var(--fb);
-  font-size:.92rem;
-  font-weight:600;
-  letter-spacing:.04em;
-  box-shadow:0 5px 18px rgba(212,160,74,.28);
-  transition:transform .22s ease, box-shadow .22s ease;
+  background:transparent;
+  color:var(--a);
+  border:1px solid rgba(212,160,74,.42);
+  font-family:var(--fh);
+  font-style:italic;
+  font-size:1rem;
+  font-weight:400;
+  letter-spacing:.02em;
+  transition:transform .22s ease, background .22s ease, border-color .22s ease, color .22s ease;
   -webkit-tap-highlight-color:transparent;
+  cursor:pointer;
 }
 .prog-dia-cta::after{
   content:' ↓';
   font-family:var(--fb);
+  font-style:normal;
   font-size:.9rem;
-  font-weight:700;
+  font-weight:400;
+  margin-left:4px;
+  transition:transform .22s ease;
 }
 .prog-dia-cta:hover{
   transform:translateY(-1px);
-  box-shadow:0 8px 24px rgba(212,160,74,.38);
+  background:rgba(212,160,74,.08);
+  border-color:var(--a);
+  color:var(--i);
 }
+.prog-dia-cta:hover::after{transform:translateY(2px)}
 .prog-dia-cta:active{
   transform:scale(.98);
 }
@@ -2990,14 +3012,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .prog .inn{
     max-width:1080px;
   }
-  /* Painel = apenas os 3 cards em linha. Sábado maior (destaque visual) */
+  /* Painel = apenas os 3 cards em linha. Larguras IGUAIS, ativo destacado por acento editorial (designer-ux Top#2, Pacote 3) */
   .prog-dias-panel{
     display:block;
     padding:16px;
   }
   .prog-dias-grid{
     display:grid;
-    grid-template-columns:1fr 1.5fr 1fr;
+    grid-template-columns:1fr 1fr 1fr;
     gap:10px;
   }
 
@@ -3387,7 +3409,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 .prog-alt-card--santanna{
   justify-content:center;
-  padding-top:36px;
+  padding-top:18px;
   border-color:rgba(188,42,42,.24);
   background:rgba(255,255,255,.92);
   box-shadow:0 4px 12px rgba(15,23,32,.08);
@@ -3482,26 +3504,29 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:4;
 }
 
+/* Ribbon "ESGOTADO" — chip compacto editorial (designer-ux Top#1, Pacote 3) */
 .prog-soldout-ribbon{
   position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  width:100%;
-  padding:7px 0 6px;
+  top:10px;
+  right:10px;
+  left:auto;
+  width:auto;
+  max-width:140px;
+  padding:4px 10px 3px;
   background:rgba(179,38,30,.90);
   color:#fff;
   font-family:var(--fb);
-  font-size:.72rem;
-  font-weight:900;
-  letter-spacing:.24em;
+  font-size:.62rem;
+  font-weight:800;
+  letter-spacing:.18em;
   line-height:1;
   text-align:center;
   text-transform:uppercase;
   transform:none;
-  border-radius:0;
-  box-shadow:0 2px 8px rgba(179,38,30,.22);
+  border-radius:4px;
+  box-shadow:0 2px 6px rgba(179,38,30,.28);
   z-index:3;
+  pointer-events:none;
 }
 
 @media(max-width:380px){
@@ -3511,7 +3536,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     padding:17px 7px 11px;
   }
   .prog-alt-card--santanna{
-    padding-top:40px;
+    padding-top:18px;
   }
   .prog-alt-texto-solto{
     font-size:.96rem;
@@ -4148,7 +4173,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .fsel{width:100%;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);min-height:48px}
 .fsel option{background:#fff;color:var(--i)}
-.fta{width:100%;min-height:72px;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);resize:none;line-height:1.5}
+.fta{width:100%;min-height:110px;padding:14px 14px;background:#fff;border:1px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);resize:none;line-height:1.5}
 .fta::placeholder{color:rgba(30,24,16,.35)}.fta:focus{border-color:var(--a);outline:none}
 .rsvp-note{font-size:.78rem;color:var(--is);margin-top:8px;line-height:1.55}
   
@@ -4314,7 +4339,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
   
 .mo-box > *{position:relative;z-index:1}
-.mo-close{position:absolute;top:12px;right:16px;font-size:1.2rem;color:var(--is);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--sm);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .25s}
+.mo-close{position:absolute;top:12px;right:16px;z-index:10;font-size:1.2rem;color:var(--is);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--sm);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .25s}
 .mo-close:hover{background:var(--st)}
 .mo-handle{width:32px;height:4px;border-radius:4px;background:var(--st);margin:0 auto 20px}
 .mo-gh{text-align:center;margin-bottom:22px}
@@ -4704,7 +4729,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   <!-- Hero horizontal: foto hotel + título sobreposto + fade azul -->
   <div class="prog-hero-wrap" onclick="openCarousel('programacao',0)">
     <div class="prog-hero-img-wrap">
-      <img src="" data-midia="foto_hotel_hero" alt="" id="progHeroImg">
+      <img src="" data-midia="foto_hotel_hero" alt="Sant'Anna Fazenda Hotel" id="progHeroImg" loading="lazy" decoding="async" width="1600" height="900">
     </div>
     <div class="prog-hero-title">
       <h2 id="programacao_label"></h2>
@@ -6950,6 +6975,35 @@ function _esc(s){
    COUNTDOWN
 ══════════════════════════════════════════ */
 var countdownInterval=null;
+var _heroInViewport=true; /* assume visível até observer disparar */
+
+/* Observer que pausa o countdown quando o hero sai do viewport (Pacote 3 B12 — performance) */
+function initCountdownObserver(){
+  if(!('IntersectionObserver' in window))return;
+  var heroEl=document.getElementById('hero');
+  if(!heroEl)return;
+  try{
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        _heroInViewport=e.isIntersecting;
+        if(e.isIntersecting){
+          /* hero voltou — garantir que interval está rodando */
+          if(!countdownInterval){
+            tick();
+            countdownInterval=setInterval(tick,1000);
+          }
+        }else{
+          /* hero fora de viewport — pausa o tick pra não atualizar DOM invisível */
+          if(countdownInterval){
+            clearInterval(countdownInterval);
+            countdownInterval=null;
+          }
+        }
+      });
+    },{threshold:0});
+    obs.observe(heroEl);
+  }catch(e){}
+}
 
 function tick(){
   var enabled=CFG_BOOL('countdown_enabled',true);
@@ -7888,6 +7942,9 @@ var nomeSalvo=getNomeSalvo();
 
   /* Animação glow no card Sábado até primeiro clique (apenas esta sessão) */
   initSabadoGlow();
+
+  /* Pacote 3 B12 — pausar countdown quando hero sai de viewport */
+  initCountdownObserver();
 });
 
 function initSabadoGlow(){
