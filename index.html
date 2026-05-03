@@ -893,9 +893,65 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cd-i{text-align:center}
 .cd-n{font-family:var(--fh);font-size:2.4rem;font-weight:400;color:var(--al);line-height:1;display:block;animation:glow 2.5s ease-in-out infinite}
 .cd-l{font-size:.66rem;letter-spacing:.14em;color:rgba(250,244,232,.55);margin-top:4px;display:block;font-weight:700}
-.hero-ctas{display:flex;flex-direction:column;gap:8px;align-items:center}
-@media(min-width:900px){.hero-ctas{align-items:flex-start}}
+.hero-ctas{display:flex;flex-direction:column;gap:14px;align-items:center;margin-top:18px}
+@media(min-width:900px){.hero-ctas{align-items:flex-start;gap:16px;margin-top:24px}}
 .hero-cd-lbl{font-size:.62rem;letter-spacing:.15em;color:rgba(250,244,232,.45);margin-bottom:4px}
+
+/* CTAs dormentes do hero — permanecem sem texto (ativo=nao no Sheets).
+   Quando ativados (applyConteudo preenche o texto), aparecem em estética editorial refinada. */
+#hero_cta_primario,
+#hero_cta_secundario{
+  /* Se texto vazio, largura 0 = invisível. Ao preencher, o conteúdo tipo "botao" do Sheets aparece polido */
+  min-width:0;
+  font-family:var(--fb);
+  font-weight:500;
+  letter-spacing:.05em;
+  text-transform:none;
+  padding:14px 34px;
+  min-height:48px;
+  border-radius:50px;
+  transition:transform .3s, box-shadow .3s, background .3s, border-color .3s;
+}
+/* Primário (CTA ouro sóbrio, tom de selo editorial, não SaaS) */
+#hero_cta_primario{
+  background:linear-gradient(135deg,var(--a),var(--al));
+  color:var(--n);
+  box-shadow:0 3px 16px rgba(212,160,74,.24);
+  border:1px solid rgba(212,160,74,.3);
+}
+#hero_cta_primario:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(212,160,74,.38);
+  background:linear-gradient(135deg,var(--al),var(--ap));
+}
+#hero_cta_primario:active{transform:translateY(0);box-shadow:0 2px 8px rgba(212,160,74,.28)}
+#hero_cta_primario:focus-visible{outline:2px solid var(--al);outline-offset:3px}
+/* Secundário (outline fino ouro, texto editorial) */
+#hero_cta_secundario{
+  background:transparent;
+  color:var(--al);
+  border:1px solid rgba(212,160,74,.42);
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:.95rem;
+  letter-spacing:.02em;
+}
+#hero_cta_secundario:hover{
+  background:rgba(212,160,74,.06);
+  border-color:var(--a);
+  color:var(--ap);
+  transform:translateY(-1px);
+}
+#hero_cta_secundario:active{transform:translateY(0);background:rgba(212,160,74,.1)}
+#hero_cta_secundario:focus-visible{outline:2px solid var(--al);outline-offset:3px}
+/* Quando vazio (ativo=nao no Sheets), não ocupa espaço visual */
+#hero_cta_primario:empty,
+#hero_cta_secundario:empty{padding:0;border:none;background:transparent;box-shadow:none;min-height:0}
+@media(max-width:480px){
+  #hero_cta_primario,
+  #hero_cta_secundario{width:100%;max-width:300px;justify-content:center}
+}
 
 /* seta da entrada do hero — mantém redonda */
 #hero_cta_terciario{
