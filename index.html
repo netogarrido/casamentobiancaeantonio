@@ -5651,18 +5651,35 @@ function registrarSaida(motivo){
     convidado_id:getConvidadoId(),
     sessao_id:getSessaoId(),
     nome:getNomeSalvo(),
+    motivo:motivo||'desconhecido',
     tempo_total_seg:tempo,
     scroll_max_pct:_scrollMax,
     secoes_visitadas:_secoesVistas.join(', '),
     audio_pct_ouvido:audioPct,
     timestamp:new Date().toISOString()
   };
-  fetch(SU,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  }).catch(function(){});
+  /* Em pagehide/visibilitychange=hidden, fetch pode ser abortado antes de completar.
+     sendBeacon é assíncrono-garantido: o browser se compromete a enviar mesmo que
+     a aba feche. Fallback: fetch com keepalive:true (Safari iOS 11.3+). */
+  var body=JSON.stringify(payload);
+  var enviado=false;
+  try{
+    if(navigator.sendBeacon){
+      var blob=new Blob([body],{type:'application/json'});
+      enviado=navigator.sendBeacon(SU,blob);
+    }
+  }catch(e){}
+  if(!enviado){
+    try{
+      fetch(SU,{
+        method:'POST',
+        mode:'no-cors',
+        keepalive:true,
+        headers:{'Content-Type':'application/json'},
+        body:body
+      }).catch(function(){});
+    }catch(e){}
+  }
 }
 
 window.addEventListener('pagehide',function(){registrarSaida('pagehide');});
