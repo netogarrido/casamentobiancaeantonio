@@ -4484,40 +4484,40 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-radius:6px;
   margin-top:8px;
 }
-/* CTA sutil — sugestão de olhar as opções quando ainda não escolheu participação */
+/* Pílula "Veja o detalhe das opções" — ouro dormente, centralizada, sempre visível.
+   Abre modal onboard discreto (#moRsvpOnboard) com resumo das 3 formas de participar.
+   Substitui o antigo "Veja as opções abaixo ↓" (linkava Programação). */
+.rsvp-cta-opcoes-wrap{
+  display:flex;
+  justify-content:center;
+  margin-top:14px;
+}
 .rsvp-cta-opcoes{
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  margin-top:10px;
-  padding:10px 16px;
-  background:transparent;
-  border:1px solid rgba(212,160,74,.38);
+  justify-content:center;
+  min-height:44px;
+  padding:11px 22px;
+  background:rgba(212,160,74,.06);
+  border:1.5px solid var(--a);
   border-radius:50px;
   font-family:var(--fh);
   font-style:italic;
-  font-weight:400;
-  font-size:.98rem;
-  color:var(--a);
+  font-weight:500;
+  font-size:1rem;
+  color:#9C7A3F;
   cursor:pointer;
-  transition:background .2s, border-color .2s, transform .15s, color .2s;
+  transition:background .22s, border-color .22s, transform .15s, color .22s, box-shadow .22s;
   -webkit-tap-highlight-color:transparent;
 }
 .rsvp-cta-opcoes:hover{
-  background:rgba(212,160,74,.08);
-  border-color:var(--a);
+  background:rgba(212,160,74,.14);
   color:var(--i);
   transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(212,160,74,.22);
 }
-.rsvp-cta-opcoes:active{transform:translateY(0)}
-.rsvp-cta-opcoes:focus-visible{outline:2px solid var(--al);outline-offset:2px}
-.rsvp-cta-opcoes-arrow{
-  font-family:var(--fb);
-  font-weight:400;
-  transform:translateY(1px);
-  transition:transform .2s;
-}
-.rsvp-cta-opcoes:hover .rsvp-cta-opcoes-arrow{transform:translateY(3px)}
+.rsvp-cta-opcoes:active{transform:translateY(0);box-shadow:none}
+.rsvp-cta-opcoes:focus-visible{outline:2px solid var(--al);outline-offset:3px}
 .rsvp-radios{
   display:flex;
   flex-direction:column;
@@ -4553,6 +4553,168 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .rsvp-radio:has(input:checked){
   background:rgba(212,160,74,.06);
   border-color:var(--a);
+}
+
+/* ══════════════════════════════════════════
+   MODAL ONBOARD RSVP — discreto, creme translúcido
+   Aparece 1x/sessão quando convidado chega ao RSVP sem
+   ter passado por Programação+Presentes (ex: via hamburger).
+   Convida a conhecer as 3 formas de participar antes de
+   preencher — não-bloqueante conceitualmente (fecha fácil),
+   bloqueante visualmente (pausa o form até ter ciência).
+   ══════════════════════════════════════════ */
+.mo-rsvp-onboard{
+  position:fixed;
+  inset:0;
+  z-index:2100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  /* Overlay creme translúcido — editorial, não agressivo como modais navy */
+  background:rgba(254,251,245,.82);
+  -webkit-backdrop-filter:blur(6px) saturate(1.05);
+  backdrop-filter:blur(6px) saturate(1.05);
+  opacity:0;
+  transition:opacity .28s ease;
+}
+.mo-rsvp-onboard.on{
+  display:flex;
+  opacity:1;
+}
+.mo-rsvp-onboard-box{
+  position:relative;
+  width:100%;
+  max-width:440px;
+  background:var(--p);
+  border:1px solid rgba(212,160,74,.45);
+  border-radius:18px;
+  padding:30px 26px 24px;
+  box-shadow:0 18px 52px rgba(15,23,32,.14), 0 2px 8px rgba(15,23,32,.06);
+  transform:translateY(10px);
+  opacity:0;
+  transition:transform .32s ease, opacity .28s ease;
+  /* respira a safe-area em iPhone quando scroll do modal for necessário */
+  max-height:90svh;
+  max-height:90vh;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.mo-rsvp-onboard.on .mo-rsvp-onboard-box{
+  transform:translateY(0);
+  opacity:1;
+}
+.mo-rsvp-onboard-close{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:36px;
+  height:36px;
+  padding:0;
+  background:transparent;
+  border:none;
+  border-radius:50%;
+  color:var(--im);
+  font-family:var(--fb);
+  font-size:1.4rem;
+  line-height:1;
+  cursor:pointer;
+  transition:background .2s, color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mo-rsvp-onboard-close:hover{
+  background:rgba(212,160,74,.12);
+  color:var(--i);
+}
+.mo-rsvp-onboard-close:focus-visible{
+  outline:2px solid var(--al);
+  outline-offset:2px;
+}
+.mo-rsvp-onboard-titulo{
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:400;
+  font-size:1.45rem;
+  line-height:1.25;
+  color:var(--i);
+  margin:2px 30px 10px 0;
+  letter-spacing:.005em;
+}
+.mo-rsvp-onboard-texto{
+  font-family:var(--fb);
+  font-size:.95rem;
+  font-weight:400;
+  line-height:1.6;
+  color:var(--im);
+  margin:0 0 18px;
+}
+.mo-rsvp-onboard-opcoes{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:0 0 22px;
+  padding:0;
+  list-style:none;
+}
+.mo-rsvp-onboard-opcao{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:11px 14px;
+  background:rgba(212,160,74,.08);
+  border:1px solid rgba(212,160,74,.22);
+  border-radius:10px;
+  font-family:var(--fb);
+  font-size:.92rem;
+  line-height:1.5;
+  color:var(--i);
+}
+.mo-rsvp-onboard-opcao::before{
+  content:"";
+  display:inline-block;
+  flex:0 0 auto;
+  width:6px;
+  height:6px;
+  margin-top:8px;
+  border-radius:50%;
+  background:var(--a);
+}
+.mo-rsvp-onboard-botao{
+  display:block;
+  width:100%;
+  min-height:48px;
+  padding:13px 22px;
+  background:linear-gradient(135deg,var(--a),var(--al));
+  color:var(--n);
+  border:none;
+  border-radius:50px;
+  font-family:var(--fb);
+  font-weight:700;
+  font-size:.82rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+  box-shadow:0 3px 14px rgba(212,160,74,.26);
+  transition:transform .2s, box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mo-rsvp-onboard-botao:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(212,160,74,.36);
+}
+.mo-rsvp-onboard-botao:active{
+  transform:translateY(0);
+  box-shadow:0 2px 8px rgba(212,160,74,.22);
+}
+.mo-rsvp-onboard-botao:focus-visible{
+  outline:2px solid var(--al);
+  outline-offset:3px;
+}
+@media (prefers-reduced-motion:reduce){
+  .mo-rsvp-onboard,
+  .mo-rsvp-onboard-box{transition:none !important}
+  .mo-rsvp-onboard.on .mo-rsvp-onboard-box{transform:none}
 }
 
 /* ──────────── TRAJE (PRETO) ──────────── */
@@ -5426,11 +5588,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <option value="festa" id="rsvp_opcao_festa">Somente festa de sábado</option>
   </select>
   <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none">O day use tem vagas limitadas e precisa ser reservado antecipadamente com a Marcela, mediante pagamento de 20% de sinal e sujeito à lotação.</p>
-  <!-- Sugestão pra quem ainda não escolheu: leva ao Day use dentro de Programação -->
-  <button type="button" class="rsvp-cta-opcoes" id="rsvp_cta_opcoes" onclick="irVerOpcoesDayUse()">
-    <span>Veja as opções abaixo</span>
-    <span class="rsvp-cta-opcoes-arrow" aria-hidden="true">↓</span>
-  </button>
+  <!-- Pílula ouro dormente sempre visível — abre modal onboard com as 3 formas de participar -->
+  <div class="rsvp-cta-opcoes-wrap">
+    <button type="button" class="rsvp-cta-opcoes" id="rsvp_cta_opcoes" onclick="abrirRsvpOnboard('cta_clicou')">
+      <span id="rsvp_detalhes">Veja o detalhe das opções aqui.</span>
+    </button>
+  </div>
 </div>
 
 <!-- Pergunta condicional: hospedagem próxima (só para day use / festa) -->
@@ -5636,6 +5799,23 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </div>
     <p class="mo-alerta-body" id="moAlertaBody"></p>
     <button class="btn btn-a" style="width:100%;margin-top:16px" onclick="fecharAlertaRSVP()">Entendi, voltar</button>
+  </div>
+</div>
+
+<!-- MODAL ONBOARD RSVP — discreto, creme translúcido. Aparece 1x/sessão quando
+     convidado chega ao RSVP sem ter passado por Programação+Presentes.
+     Conteúdo vem da aba `conteudo` do Sheets (chaves rsvp_popup_*). -->
+<div class="mo-rsvp-onboard" id="moRsvpOnboard" role="dialog" aria-modal="true" aria-labelledby="rsvp_popup_titulo" aria-hidden="true">
+  <div class="mo-rsvp-onboard-box">
+    <button class="mo-rsvp-onboard-close" type="button" aria-label="Fechar" onclick="fecharRsvpOnboard('close_btn')">×</button>
+    <h3 class="mo-rsvp-onboard-titulo" id="rsvp_popup_titulo">Antes de confirmar, conheça as opções</h3>
+    <p class="mo-rsvp-onboard-texto" id="rsvp_popup_texto">Preparamos o fim de semana em três formatos para acolher cada convidado do jeito certo. Dê uma olhada antes de preencher.</p>
+    <ul class="mo-rsvp-onboard-opcoes">
+      <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_hospedagem">Hospedagem Sant'Anna — já esgotado, veja alternativas próximas</li>
+      <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_dayuse">Day use sábado — R$ 530 por adulto, reserva com a Marcela</li>
+      <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_festa">Somente festa — a partir das 20h de sábado</li>
+    </ul>
+    <button class="mo-rsvp-onboard-botao" type="button" id="rsvp_popup_botao" onclick="fecharRsvpOnboard('entendi')">Entendi, vou conferir</button>
   </div>
 </div>
 
@@ -6258,6 +6438,18 @@ function aplicarFlagsUI(){
     if(mini)mini.style.display='none';
   }
 }
+
+  /* Helper leitura de conteúdo com fallback. Lê de CONTEUDO (populado por applyConteudo)
+     e devolve fallback se a chave não existe ou está vazia. */
+  function TXT(chave, fallback){
+    try{
+      if(CONTEUDO && typeof CONTEUDO[chave]==='string'){
+        var v=CONTEUDO[chave].trim();
+        if(v)return v;
+      }
+    }catch(e){}
+    return fallback||'';
+  }
 
   /* ══════════════════════════════════════════
    APPLY CONTEUDO
@@ -7460,7 +7652,6 @@ function onParticiplacaoChange(val){
   var hotelWrap=document.getElementById('rsvp_nome_hotel_wrap');
   var hotelInput=document.getElementById('rsvp_nome_hotel_input');
   var avisoDay=document.getElementById('rsvp_dayuse_aviso');
-  var btnOpcoes=document.getElementById('rsvp_cta_opcoes');
 
   /* Reset do bloco secundário sempre que muda participação */
   document.querySelectorAll('input[name="hospedagem_tipo"]').forEach(function(r){r.checked=false;});
@@ -7470,11 +7661,6 @@ function onParticiplacaoChange(val){
   /* Aviso Day use: só quando escolhe day use */
   if(avisoDay){
     avisoDay.style.display=(val==='dayuse')?'block':'none';
-  }
-
-  /* Botão "Veja as opções abaixo": só quando ainda não escolheu nada */
-  if(btnOpcoes){
-    btnOpcoes.style.display=(val==='')?'inline-flex':'none';
   }
 
   /* Pergunta condicional hospedagem: day use ou festa */
@@ -7495,6 +7681,178 @@ function irVerOpcoesDayUse(){
     if(typeof smoothScrollTo==='function')smoothScrollTo('programacao');
     else location.hash='#programacao';
   }
+}
+
+/* ══════════════════════════════════════════
+   RSVP — MODAL ONBOARD + AUTO-TRIGGER
+   Aparece 1x por sessão quando o convidado chega ao RSVP sem
+   ter visitado Programação E Presentes (jornada desacompanhada).
+   Clique na pílula "Veja o detalhe das opções" também abre.
+   Fecha com: botão "Entendi", X, clique fora, ESC.
+   ══════════════════════════════════════════ */
+var _rsvpOnboardJaApareceu=false;
+var _rsvpOrigem='';           /* 'hamburger' | 'hero_cta' | 'rodape_cta' | 'scroll' | '' */
+var _secoesVisitadas={};      /* { programacao:true, presentes:true, ... } */
+
+/* Marca origem ao clicar no link RSVP do hamburger ou em CTAs. Chamada
+   via listener instalado em initRsvpOnboardTracking(). */
+function _marcarOrigemRsvp(origem){
+  _rsvpOrigem=origem||'scroll';
+  try{sessionStorage.setItem('rsvp_origem', _rsvpOrigem);}catch(e){}
+}
+
+/* Deve mostrar o onboard agora?
+   Regra: não apareceu ainda nesta sessão + origem veio de navegação direta
+   (hamburger / hero_cta / rodape_cta) + não visitou Programação+Presentes. */
+function _deveMostrarRsvpOnboard(){
+  if(_rsvpOnboardJaApareceu)return false;
+  try{
+    if(sessionStorage.getItem('rsvp_onboard_visto')==='1')return false;
+  }catch(e){}
+  var origemDireta = (_rsvpOrigem==='hamburger'||_rsvpOrigem==='hero_cta'||_rsvpOrigem==='rodape_cta');
+  if(!origemDireta)return false;
+  /* Se já viu programação OU presentes, provavelmente está informado.
+     Critério estrito: exige AMBAS visitadas pra suprimir. Não viu nenhuma → mostra. */
+  var viuProg=!!_secoesVisitadas['programacao'];
+  var viuPres=!!_secoesVisitadas['presentes'];
+  if(viuProg && viuPres)return false;
+  return true;
+}
+
+function abrirRsvpOnboard(motivo){
+  var m=document.getElementById('moRsvpOnboard');
+  if(!m)return;
+  _rsvpOnboardJaApareceu=true;
+  try{sessionStorage.setItem('rsvp_onboard_visto','1');}catch(e){}
+  m.classList.add('on');
+  m.setAttribute('aria-hidden','false');
+  if(typeof lockScroll==='function')lockScroll();
+  try{trackEvento('rsvp_onboard_abriu', motivo||_rsvpOrigem||'auto');}catch(e){}
+  /* Foco no botão primário pra a11y + ESC funcionar */
+  setTimeout(function(){
+    var btn=document.getElementById('rsvp_popup_botao');
+    if(btn)try{btn.focus({preventScroll:true});}catch(e){btn.focus();}
+  },60);
+}
+
+function fecharRsvpOnboard(motivo){
+  var m=document.getElementById('moRsvpOnboard');
+  if(!m)return;
+  m.classList.remove('on');
+  m.setAttribute('aria-hidden','true');
+  if(typeof unlockScroll==='function')unlockScroll();
+  try{trackEvento('rsvp_onboard_fechou', motivo||'close');}catch(e){}
+}
+
+/* Instalação — listeners de origem + trigger no IntersectionObserver do RSVP +
+   fecha por overlay + ESC. Chamada no DOMContentLoaded (ver initRsvpOnboardTracking) */
+function initRsvpOnboardTracking(){
+  /* Origem: hamburger */
+  var linkHamb=document.getElementById('nav_menu_rsvp');
+  if(linkHamb){
+    linkHamb.addEventListener('click',function(){_marcarOrigemRsvp('hamburger');});
+  }
+  /* Origem: hero CTA primário (#hero_cta_primario → #rsvp) */
+  var heroCta=document.getElementById('hero_cta_primario');
+  if(heroCta && (heroCta.getAttribute('href')||'').indexOf('#rsvp')===0){
+    heroCta.addEventListener('click',function(){_marcarOrigemRsvp('hero_cta');});
+  }
+  /* Origem: rodapé CTA primário (#rodape_cta_primario → #rsvp) */
+  var rodCta=document.getElementById('rodape_cta_primario');
+  if(rodCta && (rodCta.getAttribute('href')||'').indexOf('#rsvp')===0){
+    rodCta.addEventListener('click',function(){_marcarOrigemRsvp('rodape_cta');});
+  }
+  /* Origem: nav desktop (#nav_rsvp) — também conta como navegação direta */
+  var navRsvp=document.getElementById('nav_rsvp');
+  if(navRsvp){
+    navRsvp.addEventListener('click',function(){_marcarOrigemRsvp('hero_cta');});
+  }
+
+  /* Observer próprio pro RSVP pra disparar o onboard.
+     Threshold baixo (.15) pra capturar o momento em que a seção começa a aparecer,
+     não quando já está quase toda visível (tio idoso lê devagar). */
+  if(!('IntersectionObserver' in window))return;
+  var rsvpSec=document.getElementById('rsvp');
+  if(!rsvpSec)return;
+  var obsOnboard=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting)return;
+      if(_deveMostrarRsvpOnboard()){
+        abrirRsvpOnboard('auto_'+(_rsvpOrigem||'desconhecido'));
+      }
+    });
+  },{threshold:.15,rootMargin:'-60px 0px -40% 0px'});
+  obsOnboard.observe(rsvpSec);
+
+  /* Observer de seções para marcar quais foram visitadas.
+     Usa o mesmo conjunto de seções do trackSecao, mas aqui só flaga pro onboard. */
+  var secoesFlag=['programacao','presentes','vestido','hero','traje','faq'];
+  var obsFlag=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var id=e.target.id;
+        if(id)_secoesVisitadas[id]=true;
+      }
+    });
+  },{threshold:.25});
+  secoesFlag.forEach(function(id){
+    var s=document.getElementById(id);
+    if(s)obsFlag.observe(s);
+  });
+
+  /* ESC fecha */
+  document.addEventListener('keydown',function(ev){
+    if(ev.key==='Escape'){
+      var m=document.getElementById('moRsvpOnboard');
+      if(m && m.classList.contains('on'))fecharRsvpOnboard('esc');
+    }
+  });
+  /* Clique fora do box (no overlay) fecha */
+  var onboardEl=document.getElementById('moRsvpOnboard');
+  if(onboardEl){
+    onboardEl.addEventListener('click',function(ev){
+      if(ev.target===onboardEl)fecharRsvpOnboard('overlay');
+    });
+  }
+}
+
+/* Dispara o scroll suave para Presentes 3s após a tela de sucesso do RSVP aparecer.
+   Cancela se o usuário scrollar manualmente antes (respeita intenção do convidado
+   que quer ler a confirmação com calma).
+   Respeita prefers-reduced-motion: sem animação, pulo direto. */
+function agendarScrollPosRSVP(){
+  var DELAY_MS=3000;
+  var iniciado=Date.now();
+  var yInicial=window.scrollY||window.pageYOffset||0;
+  var cancelado=false;
+
+  function onScrollManual(){
+    /* se mover >40px pra cima, considera que quer ler a confirmação */
+    var y=window.scrollY||window.pageYOffset||0;
+    if(Math.abs(y - yInicial) > 40){
+      cancelado=true;
+      window.removeEventListener('scroll', onScrollManual);
+      try{trackEvento('rsvp_pos_scroll_cancelado','manual');}catch(e){}
+    }
+  }
+  window.addEventListener('scroll', onScrollManual, {passive:true});
+
+  setTimeout(function(){
+    window.removeEventListener('scroll', onScrollManual);
+    if(cancelado)return;
+    var reduce=false;
+    try{reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+    try{trackEvento('rsvp_pos_scroll_presentes', reduce?'instant':'smooth');}catch(e){}
+    var target=document.getElementById('presentes');
+    if(!target)return;
+    if(reduce){
+      target.scrollIntoView({block:'start'});
+    }else if(typeof smoothScrollTo==='function'){
+      smoothScrollTo('presentes');
+    }else{
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }, DELAY_MS);
 }
 
 function onHospedagemChange(val){
@@ -7585,6 +7943,9 @@ function _enviarRSVP(d,form){
     var rO=document.getElementById('rO');
     if(rO)rO.classList.add('on');
     _rsvpEmEnvio=false;
+    /* Pós-confirmação: 3s após mostrar tela de sucesso, rola suave pra Presentes.
+       Cancela se o convidado scrollar pra ler a confirmação com calma. */
+    agendarScrollPosRSVP();
   }, function onErrorRSVP(){
     /* Network error — libera submit e avisa convidado */
     _rsvpEmEnvio=false;
@@ -8721,6 +9082,13 @@ var nomeSalvo=getNomeSalvo();
 
   /* Pacote 3 B12 — pausar countdown quando hero sai de viewport */
   initCountdownObserver();
+
+  /* Pacote RSVP-1 (2026-05-05) — Onboard RSVP:
+     - listeners de origem (hamburger/hero/rodapé/nav)
+     - IntersectionObserver do #rsvp com auto-trigger
+     - IntersectionObserver das demais seções pra flagar o que foi visitado
+     - ESC + clique fora fecham */
+  try{ initRsvpOnboardTracking(); }catch(e){}
 });
 
 function initSabadoGlow(){
