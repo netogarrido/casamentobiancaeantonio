@@ -4576,13 +4576,19 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .faq-a-in{padding:0 15px 13px;font-size:.76rem;line-height:1.65;color:var(--im)}
 
 /* Botão CTA das perguntas FAQ — pílula ouro simples, discreta.
-   Aparece depois da resposta quando a pergunta tem CTA cadastrada no Sheet. */
+   Aparece abaixo da resposta quando a pergunta tem CTA cadastrada no Sheet.
+   Fix 2026-05-03: quebra linha pra ficar ABAIXO do texto (era inline), centralizado, com respiro. */
+.faq-cta-wrap{
+  display:flex;
+  justify-content:center;
+  margin-top:16px;
+  padding-bottom:4px;
+}
 .faq-cta-btn{
   display:inline-flex;
   align-items:center;
   gap:6px;
-  margin-top:12px;
-  padding:8px 16px;
+  padding:8px 18px;
   background:rgba(212,160,74,.12);
   border:1px solid rgba(212,160,74,.45);
   border-radius:999px;
@@ -6585,23 +6591,26 @@ function applyPerguntas(rows){
 }
 
 /* Mapa FAQ CTA → ação no site.
-   Chave = ordem da pergunta no Sheet. Valor = função que executa o redirect/modal. */
+   Chave = ordem da pergunta no Sheet. Valor = função que executa o redirect/modal.
+   
+   Refinado 2026-05-03: destinos precisos, não só scroll genérico. Quando a pergunta é
+   sobre DAY USE ou PARTICIPAÇÃO, abre a box de vias com day aberto — usuário vê já
+   toda a informação (o que é, valor, reserva, contato). */
 var FAQ_CTA_MAP={
-  1: function(){smoothScrollTo('hero');},                    /* Quando será o casamento? → Hero (contagem) */
-  5: function(){smoothScrollTo('programacao');},             /* Como posso participar? → Programação (vias) */
-  7: function(){smoothScrollTo('rsvp');},                    /* Preciso confirmar? → RSVP */
-  8: function(){smoothScrollTo('rsvp');},                    /* Como confirmo presença? → RSVP */
-  9: function(){smoothScrollTo('rsvp');},                    /* O que informar no RSVP? → RSVP */
-  10:function(){smoothScrollTo('rsvp');},                    /* Por que essas infos? → RSVP */
-  11:function(){abrirHoteis();},                             /* Tem hospedagem Sant'Anna? → modal hotéis */
-  12:function(){abrirHoteis();},                             /* Quem não conseguiu quarto? → modal hotéis */
-  13:function(){abrirHoteis();},                             /* Hotéis próximos? → modal hotéis */
-  14:function(){smoothScrollTo('programacao');},             /* O que é day use? → Programação */
-  19:function(){abrirReservar();},                           /* Quantas vagas? → modal Marcela */
-  20:function(){abrirReservar();},                           /* Como reservar? → modal Marcela */
-  22:function(){smoothScrollTo('programacao');},             /* Valor do day use? → Programação */
-  23:function(){abrirReservar();},                           /* Reservar pelo site? → modal Marcela */
-  28:function(){smoothScrollTo('presentes');}                /* Como funciona lista presentes? → Presentes */
+  5: function(){abrirDayUseDaProgramacao();},  /* Como posso participar? → box de vias aberto em "day" */
+  7: function(){smoothScrollTo('rsvp');},      /* Preciso confirmar? → RSVP */
+  8: function(){smoothScrollTo('rsvp');},      /* Como confirmo presença? → RSVP */
+  9: function(){smoothScrollTo('rsvp');},      /* O que informar no RSVP? → RSVP */
+  10:function(){smoothScrollTo('rsvp');},      /* Por que essas infos? → RSVP */
+  11:function(){abrirHoteis();},               /* Tem hospedagem Sant'Anna? → modal hotéis alt */
+  12:function(){abrirHoteis();},               /* Quem não conseguiu quarto? → modal hotéis alt */
+  13:function(){abrirHoteis();},               /* Hotéis próximos? → modal hotéis alt */
+  14:function(){abrirDayUseDaProgramacao();},  /* O que é day use? → abre box day aberto */
+  19:function(){abrirReservar();},             /* Quantas vagas? → modal Marcela */
+  20:function(){abrirReservar();},             /* Como reservar? → modal Marcela */
+  22:function(){abrirDayUseDaProgramacao();},  /* Valor do day use? → box day (mostra valor + reserva) */
+  23:function(){abrirReservar();},             /* Reservar pelo site? → modal Marcela */
+  28:function(){smoothScrollTo('presentes');}  /* Como funciona lista presentes? → Presentes */
 };
 
 function faqCtaGo(ordem){
@@ -6621,10 +6630,11 @@ function renderFAQ(faqs){
       var cd=document.createElement('div');cd.className='faq-cat';cd.textContent=f.c;l.appendChild(cd);
     }
     var d=document.createElement('div');d.className='faq-it';
-    /* Botão "Veja mais ↑" aparece só se CTA preenchida no Sheet E ordem mapeada em FAQ_CTA_MAP */
+    /* Botão "Veja mais ↑" aparece só se CTA preenchida no Sheet E ordem mapeada em FAQ_CTA_MAP.
+       Fix 2026-05-03: envelopado em .faq-cta-wrap pra ficar ABAIXO do texto, centralizado. */
     var ctaHtml='';
     if(f.cta && FAQ_CTA_MAP[f.o]){
-      ctaHtml='<button type="button" class="faq-cta-btn" onclick="faqCtaGo('+f.o+')">Veja mais <span class="faq-cta-seta">↑</span></button>';
+      ctaHtml='<div class="faq-cta-wrap"><button type="button" class="faq-cta-btn" onclick="faqCtaGo('+f.o+')">Veja mais <span class="faq-cta-seta">↑</span></button></div>';
     }
     d.innerHTML='<div class="faq-q"><span>'+f.q+'</span><div class="faq-tg">+</div></div><div class="faq-a"><div class="faq-a-in">'+f.a+ctaHtml+'</div></div>';
     d.querySelector('.faq-q').addEventListener('click',function(){
