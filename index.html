@@ -2779,27 +2779,38 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     overflow:visible;
   }
 
-  /* Coluna esquerda: foto sticky */
+  /* Coluna esquerda: foto com aspect-ratio natural retrato, não mais 100vh esticada.
+     
+     Antes: height:calc(100vh - 78px) + object-fit:cover → cortava céu e cabeça da família.
+     Agora: aspect-ratio 4/5 + max-height 560px + object-fit:cover (mantém mas sem distorcer tanto
+     porque a proporção se aproxima do natural). Fundo bege ao redor cria moldura visual natural.
+     Sticky mantém foto acompanhando a coluna direita se ela crescer com subcategorias. */
   .pres-hero{
     grid-column:1;
     grid-row:1 / 99;
     position:sticky;
-    top:78px; /* altura do nav */
-    height:calc(100vh - 78px);
-    margin:0;
+    top:100px; /* um pouco abaixo do nav pra respirar */
+    aspect-ratio:4/5;
+    max-height:620px;
+    width:100%;
+    height:auto;
+    margin:clamp(24px,3vh,48px) 0 0;
     overflow:hidden;
     z-index:1;
+    border-radius:14px;
+    box-shadow:0 18px 40px rgba(84,73,60,.22), 0 4px 12px rgba(84,73,60,.12);
   }
 
-  /* Foto preenche toda a altura */
+  /* Foto preenche o container com aspect-ratio correto */
   .pres-polaroid-wrap{
     height:100%;
+    width:100%;
   }
   .pres-polaroid-wrap img{
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center top;
+    object-position:center center;
   }
 
   /* Overlay/título sobre a foto.
