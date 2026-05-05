@@ -4614,6 +4614,49 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .mini.mini--big .mini-btn svg{width:16px;height:16px}
 
+/* Bloco 2026-05-03 #5b: label "pausar" — aparece só em Programação/RSVP com música tocando.
+   Pill pequena editorial, Cormorant italic ouro, à esquerda do botão redondo. */
+.mini-pausar-label{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:34px;
+  padding:0 14px;
+  background:rgba(15,23,32,.92);
+  color:var(--al);
+  border:1px solid rgba(212,160,74,.42);
+  border-radius:999px;
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:500;
+  font-size:.9rem;
+  letter-spacing:.04em;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 3px 12px rgba(0,0,0,.18);
+  opacity:0;
+  transform:translateX(8px);
+  pointer-events:none;
+  transition:opacity .3s ease, transform .3s ease;
+  white-space:nowrap;
+}
+.mini-pausar-label.vis{
+  opacity:1;
+  transform:translateX(0);
+  pointer-events:auto;
+}
+.mini-pausar-label:hover{
+  background:var(--n);
+  border-color:var(--a);
+  color:var(--ap);
+}
+.mini-pausar-label::before{
+  content:'⏸ ';
+  margin-right:6px;
+  font-style:normal;
+  font-size:.85rem;
+}
+
 /* LIGHTBOX CARROSSEL */
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:3000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
 .lightbox.on{display:flex}
@@ -4717,6 +4760,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 <!-- MINI PLAYER -->
 <div class="mini" id="mini">
+  <!-- Bloco 2026-05-03 #5b: label "pausar" aparece só quando está em Programação/RSVP
+       com música tocando. Clique chama tM() igual o botão principal. -->
+  <button type="button" class="mini-pausar-label" id="miniPausarLabel" onclick="tM()" aria-label="Pausar música">pausar</button>
   <div class="mini-btn" onclick="tM()" id="miniBtnEl">
     <svg id="mIco" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
   </div>
@@ -5718,6 +5764,11 @@ var _audioUltimoPlay=null;
    Bloco 2026-05-03 #5: reduz volume automaticamente em seções de leitura densa
    (Programação e RSVP). Fade suave 0.8s. Tio-velho não fica "atordoado" com música
    enquanto tenta ler informações críticas. Volta pro volume cheio ao sair.
+   
+   iOS: Safari bloqueia audio.volume programático (política Apple). Em iOS o volume
+   simplesmente não muda — usuário tem que pausar manualmente. Pra ajudar, mostramos
+   um label "pausar" ao lado do mini-player quando está em Programação/RSVP com música
+   tocando (aplica em todos dispositivos, mas é o único recurso no iOS).
 ══════════════════════════════════════════ */
 (function(){
   if(!('IntersectionObserver' in window))return;
@@ -5742,13 +5793,30 @@ var _audioUltimoPlay=null;
   }
   
   var dentroLeitura=false;
+  
   function aplicarVolume(){
     var audioEl=document.getElementById('bgMusic');
     if(!audioEl||audioEl.paused)return;
     var alvo=dentroLeitura?VOL_REDUZIDO:VOL_CHEIO;
-    if(Math.abs(audioEl.volume-alvo)<0.05)return; /* já está perto */
+    if(Math.abs(audioEl.volume-alvo)<0.05)return;
     fadeVolume(audioEl.volume,alvo);
   }
+  
+  /* Mostra/esconde o label "pausar" ao lado do mini-player.
+     Visível só quando: está em Programação/RSVP E música tocando. */
+  function atualizarLabelPausar(){
+    var label=document.getElementById('miniPausarLabel');
+    if(!label)return;
+    var audioEl=document.getElementById('bgMusic');
+    var tocando=audioEl && !audioEl.paused;
+    if(dentroLeitura && tocando){
+      label.classList.add('vis');
+    }else{
+      label.classList.remove('vis');
+    }
+  }
+  /* Exporta pra outras funções chamarem (play/pause listeners) */
+  window._atualizarLabelPausar=atualizarLabelPausar;
   
   /* Observa Programação e RSVP */
   function initVolumeObserver(){
@@ -5768,6 +5836,7 @@ var _audioUltimoPlay=null;
         dentroLeitura=algumAtivo;
         aplicarVolume();
       }
+      atualizarLabelPausar();
     },{threshold:0.35});
     
     elementos.forEach(function(el){obs.observe(el);});
