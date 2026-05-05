@@ -4688,13 +4688,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--n);color:var(--al);padding:10px 20px;border-radius:var(--rs);font-size:.76rem;z-index:9999;transition:transform .35s;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:500;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 /* ══════════════════════════════════════════
-   MINI PLAYER (Bloco 2026-05-03 #5 v3 — simplificado final)
+   MINI PLAYER (Bloco 2026-05-03 #5 v4)
    
-   Estado único:
-   - .mini.vis: pílula navy com ícone play/pause + texto "Pausar música"
-   - Aparece após popup fechar (tanto "Sim" quanto "Não") e fica pra sempre
-   - Sem variações por seção, sem volume auto, sem pausa auto
-   - Clique toggla play/pause — só o ícone muda (▶/⏸), texto fica fixo
+   Estado TOCANDO (padrão): pílula com ícone ⏸ + texto "Pausar música"
+   Estado PAUSADO: só ícone ▶ redondo (texto escondido — dizer "Pausar música" com play visível seria mentiroso)
+   
+   Controle via classe .mini-playing:
+   - .mini.vis.mini-playing → pílula expandida com texto
+   - .mini.vis (sem playing) → círculo 46x46 só com ícone play
 ══════════════════════════════════════════ */
 .mini{
   position:fixed;
@@ -4713,17 +4714,22 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  padding:0 22px 0 18px;
-  min-height:46px;
+  gap:0;
+  padding:0;
+  width:46px;
+  height:46px;
   background:var(--n);
   border:1px solid rgba(212,160,74,.55);
   border-radius:999px;
   cursor:pointer;
   box-shadow:0 6px 22px rgba(0,0,0,.28), 0 0 0 3px rgba(212,160,74,.18);
   -webkit-tap-highlight-color:transparent;
-  transition:border-color .25s ease, box-shadow .25s ease, transform .15s ease;
+  transition:width .35s cubic-bezier(.4,0,.2,1),
+             padding .35s cubic-bezier(.4,0,.2,1),
+             gap .35s cubic-bezier(.4,0,.2,1),
+             border-color .25s ease, box-shadow .25s ease, transform .15s ease;
   white-space:nowrap;
+  overflow:hidden;
   font-family:var(--fh);
 }
 .mini-btn:hover{
@@ -4743,6 +4749,20 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-size:.92rem;
   letter-spacing:.02em;
   color:var(--al);
+  max-width:0;
+  opacity:0;
+  overflow:hidden;
+  transition:max-width .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+}
+/* Estado tocando: pílula expande + label aparece */
+.mini.mini-playing .mini-btn{
+  width:auto;
+  padding:0 22px 0 18px;
+  gap:10px;
+}
+.mini.mini-playing .mini-label{
+  max-width:180px;
+  opacity:1;
 }
 
 /* LIGHTBOX CARROSSEL */
@@ -6063,6 +6083,8 @@ var au=document.getElementById('bgMusic');
   au.addEventListener('play',function(){
     _audioUltimoPlay=Date.now();
     syncPlayerUI();
+    /* Mini-player v4: expande com texto "Pausar música" quando está tocando */
+    try{var _m=document.getElementById('mini');if(_m)_m.classList.add('mini-playing');}catch(e){}
   });
   au.addEventListener('pause',function(){
     if(_audioUltimoPlay){
@@ -6070,6 +6092,8 @@ var au=document.getElementById('bgMusic');
       _audioUltimoPlay=null;
     }
     syncPlayerUI();
+    /* Mini-player v4: contrai pra só ícone play quando pausado (texto "Pausar música" seria mentira) */
+    try{var _m2=document.getElementById('mini');if(_m2)_m2.classList.remove('mini-playing');}catch(e){}
   });
 
   /* P8: feedback em rede ruim — áudio estava falhando em silêncio.
