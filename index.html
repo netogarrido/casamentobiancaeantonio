@@ -4688,15 +4688,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--n);color:var(--al);padding:10px 20px;border-radius:var(--rs);font-size:.76rem;z-index:9999;transition:transform .35s;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:500;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 /* ══════════════════════════════════════════
-   MINI PLAYER (Bloco 2026-05-03 #5 REFATORADO)
+   MINI PLAYER (Bloco 2026-05-03 #5 v3 — simplificado final)
    
-   Estados:
-   - base .mini.vis: fixed bottom-right, visível após popup fechar
-   - .mini--big: círculo cresce 46→58px em Programação/RSVP
-   - .mini--expandido: pílula inteira com texto "Pausar música" ao lado do ícone
-     (só desktop/Android + música tocando + Programação/RSVP)
-   
-   .mini-btn é o botão principal (flex row). Label interno expande com width.
+   Estado único:
+   - .mini.vis: pílula navy com ícone play/pause + texto "Pausar música"
+   - Aparece após popup fechar (tanto "Sim" quanto "Não") e fica pra sempre
+   - Sem variações por seção, sem volume auto, sem pausa auto
+   - Clique toggla play/pause — só o ícone muda (▶/⏸), texto fica fixo
 ══════════════════════════════════════════ */
 .mini{
   position:fixed;
@@ -4712,71 +4710,39 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .mini.vis{opacity:1;pointer-events:auto}
 
 .mini-btn{
-  width:46px;
-  height:46px;
-  border-radius:999px; /* pílula já prevista — em 46px redondo visualmente igual a 50% */
-  background:var(--n);
-  border:1px solid rgba(212,160,74,.2);
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:0;
-  padding:0;
+  gap:10px;
+  padding:0 22px 0 18px;
+  min-height:46px;
+  background:var(--n);
+  border:1px solid rgba(212,160,74,.55);
+  border-radius:999px;
   cursor:pointer;
-  box-shadow:0 4px 16px rgba(0,0,0,.2);
+  box-shadow:0 6px 22px rgba(0,0,0,.28), 0 0 0 3px rgba(212,160,74,.18);
   -webkit-tap-highlight-color:transparent;
-  transition:all .35s cubic-bezier(.4,0,.2,1);
+  transition:border-color .25s ease, box-shadow .25s ease, transform .15s ease;
   white-space:nowrap;
-  overflow:hidden;
+  font-family:var(--fh);
 }
-.mini-btn:hover{border-color:var(--a)}
+.mini-btn:hover{
+  border-color:var(--a);
+  box-shadow:0 8px 26px rgba(0,0,0,.32), 0 0 0 3px rgba(212,160,74,.28);
+}
+.mini-btn:active{transform:scale(.97)}
 .mini-btn svg{
-  width:13px;
-  height:13px;
+  width:15px;
+  height:15px;
   fill:var(--al);
   flex-shrink:0;
-  transition:all .3s;
 }
-
-/* Label interno: começa escondido (width:0, opacity:0). Expande quando pílula expande. */
 .mini-label{
-  display:inline-block;
-  font-family:var(--fh);
   font-style:italic;
   font-weight:500;
   font-size:.92rem;
   letter-spacing:.02em;
   color:var(--al);
-  max-width:0;
-  opacity:0;
-  overflow:hidden;
-  padding-left:0;
-  padding-right:0;
-  transition:max-width .35s cubic-bezier(.4,0,.2,1),
-             opacity .25s ease,
-             padding .35s cubic-bezier(.4,0,.2,1);
-}
-
-/* Estado "big": só círculo maior (em Programação/RSVP, independente de música) */
-.mini.mini--big .mini-btn{
-  width:58px;
-  height:58px;
-  box-shadow:0 6px 22px rgba(0,0,0,.28), 0 0 0 3px rgba(212,160,74,.14);
-  border-color:rgba(212,160,74,.42);
-}
-.mini.mini--big .mini-btn svg{width:16px;height:16px}
-
-/* Estado "expandido": pílula inteira com texto (desktop/Android + tocando + Prog/RSVP) */
-.mini.mini--expandido .mini-btn{
-  width:auto;
-  padding:0 22px 0 18px;
-  gap:10px;
-  border-color:rgba(212,160,74,.55);
-  box-shadow:0 6px 22px rgba(0,0,0,.28), 0 0 0 3px rgba(212,160,74,.18);
-}
-.mini.mini--expandido .mini-label{
-  max-width:180px;
-  opacity:1;
 }
 
 /* LIGHTBOX CARROSSEL */
@@ -5883,140 +5849,14 @@ var _audioUltimoPlay=null;
 })();
 
 /* ══════════════════════════════════════════
-   Bloco 2026-05-03 #5 REFATORADO: controle unificado do mini-player em Programação/RSVP.
+   Bloco 2026-05-03 #5 v3 FINAL: removidos comportamentos automáticos.
    
-   Comportamento:
-   1. Mini-player cresce 46→58px quando IntersectionObserver detecta entrada em
-      Programação OU RSVP (não mais por scroll %). Volta a 46px em outras seções.
-   2. Desktop/Android: volume reduz pra 50% em Programação/RSVP (fade 0.8s). Volta 100% ao sair.
-   3. iOS Safari: volume programático é bloqueado pela Apple. Em iOS, PAUSA a música em
-      Programação/RSVP automaticamente e RETOMA ao sair (se nós tínhamos pausado).
-   4. Pílula expande com texto "Pausar música" em Programação/RSVP se música tocando.
-      Em iOS não expande porque música já está pausada. Clique inteiro = pausar/play.
+   Histórico:
+   - v1 reduzia volume em Prog/RSVP (desktop/Android) e pausava em iOS
+   - v2 expandia pílula condicionalmente
+   - v3 (atual): nada automático. Pílula sempre expandida com texto "Pausar música".
+     Usuário controla manualmente via clique. iOS e Android tratados igual.
 ══════════════════════════════════════════ */
-(function(){
-  if(!('IntersectionObserver' in window))return;
-  var VOL_CHEIO=1.0;
-  var VOL_REDUZIDO=0.5;
-  var FADE_MS=800;
-  var FADE_STEPS=16;
-  
-  /* Detecta iOS (iPhone/iPad/iPod + iPadOS 13+) */
-  var isIOS=(function(){
-    try{
-      return /iPad|iPhone|iPod/.test(navigator.userAgent)
-        || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-    }catch(e){return false;}
-  })();
-  
-  var _fadeInterval=null;
-  function fadeVolume(from,to){
-    var audioEl=document.getElementById('bgMusic');
-    if(!audioEl)return;
-    if(_fadeInterval){clearInterval(_fadeInterval);_fadeInterval=null;}
-    var step=(to-from)/FADE_STEPS;
-    var i=0;
-    _fadeInterval=setInterval(function(){
-      i++;
-      var v=from+step*i;
-      if(v<0)v=0;
-      if(v>1)v=1;
-      try{audioEl.volume=v;}catch(e){}
-      if(i>=FADE_STEPS){
-        clearInterval(_fadeInterval);
-        _fadeInterval=null;
-        try{audioEl.volume=to;}catch(e){}
-      }
-    },FADE_MS/FADE_STEPS);
-  }
-  
-  var dentroLeitura=false;
-  var _pausadoPorNos=false; /* iOS: só retomamos se NÓS pausamos */
-  
-  function aplicarComportamento(){
-    var audioEl=document.getElementById('bgMusic');
-    if(!audioEl)return;
-    
-    if(isIOS){
-      /* iOS: pausa/retoma (volume é bloqueado no Safari iOS) */
-      if(dentroLeitura && !audioEl.paused){
-        _pausadoPorNos=true;
-        try{audioEl.pause();}catch(e){}
-      }else if(!dentroLeitura && audioEl.paused && _pausadoPorNos){
-        _pausadoPorNos=false;
-        var p=audioEl.play();
-        if(p&&p.catch){p.catch(function(){});}
-      }
-      return;
-    }
-    
-    /* Desktop/Android: fade de volume.
-       Não cortar se está pausado manualmente — só ajustar volume pra próxima vez que tocar. */
-    if(audioEl.paused){
-      /* Mesmo pausado, seta volume alvo diretamente (sem fade) pra quando voltar a tocar */
-      try{audioEl.volume=dentroLeitura?VOL_REDUZIDO:VOL_CHEIO;}catch(e){}
-      return;
-    }
-    var alvo=dentroLeitura?VOL_REDUZIDO:VOL_CHEIO;
-    if(Math.abs(audioEl.volume-alvo)<0.05)return;
-    fadeVolume(audioEl.volume,alvo);
-  }
-  
-  /* Atualiza estado visual do mini-player:
-     - .mini--big: cresce 46→58px quando em Programação/RSVP
-     - .mini--expandido: pílula com texto "Pausar música" (só desktop/Android + música tocando) */
-  function atualizarMiniPlayer(){
-    var mini=document.getElementById('mini');
-    if(!mini)return;
-    var audioEl=document.getElementById('bgMusic');
-    var tocando=audioEl && !audioEl.paused;
-    
-    if(dentroLeitura){
-      mini.classList.add('mini--big');
-    }else{
-      mini.classList.remove('mini--big');
-    }
-    
-    /* Pílula expandida: só em desktop/Android + Programação/RSVP + música tocando */
-    if(dentroLeitura && tocando && !isIOS){
-      mini.classList.add('mini--expandido');
-    }else{
-      mini.classList.remove('mini--expandido');
-    }
-  }
-  /* Exporta pra listeners de play/pause chamarem */
-  window._atualizarMiniPlayer=atualizarMiniPlayer;
-  
-  /* Observa Programação e RSVP */
-  function initVolumeObserver(){
-    var alvos=['programacao','rsvp'];
-    var elementos=alvos.map(function(id){return document.getElementById(id);}).filter(Boolean);
-    if(!elementos.length)return;
-    
-    var estadoPorSecao={};
-    alvos.forEach(function(id){estadoPorSecao[id]=false;});
-    
-    var obs=new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        estadoPorSecao[entry.target.id]=entry.isIntersecting;
-      });
-      var algumAtivo=Object.values(estadoPorSecao).some(function(v){return v;});
-      if(algumAtivo!==dentroLeitura){
-        dentroLeitura=algumAtivo;
-        aplicarComportamento();
-      }
-      atualizarMiniPlayer();
-    },{threshold:0.35});
-    
-    elementos.forEach(function(el){obs.observe(el);});
-  }
-  
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',initVolumeObserver);
-  }else{
-    initVolumeObserver();
-  }
-})();
 
 /* ══════════════════════════════════════════
    REGISTRAR ENTRADA (analytics)
@@ -6223,8 +6063,6 @@ var au=document.getElementById('bgMusic');
   au.addEventListener('play',function(){
     _audioUltimoPlay=Date.now();
     syncPlayerUI();
-    /* Bloco 2026-05-03 #5 refatorado: atualiza visual do mini-player (pílula expandida) */
-    try{if(window._atualizarMiniPlayer)window._atualizarMiniPlayer();}catch(e){}
   });
   au.addEventListener('pause',function(){
     if(_audioUltimoPlay){
@@ -6232,7 +6070,6 @@ var au=document.getElementById('bgMusic');
       _audioUltimoPlay=null;
     }
     syncPlayerUI();
-    try{if(window._atualizarMiniPlayer)window._atualizarMiniPlayer();}catch(e){}
   });
 
   /* P8: feedback em rede ruim — áudio estava falhando em silêncio.
