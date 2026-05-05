@@ -8397,10 +8397,14 @@ function vpCiclo(){
     var z=(el._slotIdx===3)?zBase+10:zBase+idx;
     vpPousar(el,z,null);
     idx++;
-    var delay=vpRand(700,1500);
+    /* Bloco polaroids #2: intervalo maior entre quedas (era 700-1500ms).
+       Agora 1500-2800ms — respiro editorial, cada foto ganha momento próprio. */
+    var delay=vpRand(1500,2800);
     vpTimer=setTimeout(quedaProxima,delay);
   }
-  vpTimer=setTimeout(quedaProxima,700);
+  /* Delay inicial reduzido: começa 300ms após observer disparar (era 700ms).
+     Usuário acabou de entrar na seção, fotos caem quase imediato. */
+  vpTimer=setTimeout(quedaProxima,300);
 }
 
 /* prefers-reduced-motion: polaroids aparecem com fade simples, sem movimento */
@@ -8449,7 +8453,8 @@ function initVestidoSwap(){
   }catch(e){}
   
   clearTimeout(vpTimer);
-  vpTimer=setTimeout(vpCiclo,500);
+  /* Chama ciclo imediatamente — o delay inicial de 300ms agora está dentro do próprio vpCiclo */
+  vpCiclo();
 }
 
 /* ══════════════════════════════════════════
@@ -8521,8 +8526,19 @@ var nomeSalvo=getNomeSalvo();
     pularParaStageUmSeNomeSalvo();
   }
   
-  var vestidoSec=document.getElementById('vestido');
-  if(vestidoSec&&'IntersectionObserver' in window){
+  /* Observer das polaroids.
+     
+     Bug investigado: antes observava a SEÇÃO `.vestido` inteira com threshold:0.25.
+     Como a seção é longa (~3000px), 25% = ~750px — disparava imprevisível, às vezes
+     muito cedo (refresh na seção), às vezes só quando usuário já tinha scrollado
+     muito dentro dela.
+     
+     Fix: observar DIRETAMENTE o container das polaroids (.vestido-photos).
+     threshold:0.1 + rootMargin:-80px (abaixo do nav fixo) = dispara quando ~10%
+     das polaroids cruzam a linha do nav. Timing previsível: sempre no momento
+     em que o usuário efetivamente VÊ o espaço onde as polaroids vão cair. */
+  var polaroidsWrap=document.querySelector('.vestido-photos');
+  if(polaroidsWrap&&'IntersectionObserver' in window){
     var vpObs=new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if(entry.isIntersecting){
@@ -8530,8 +8546,8 @@ var nomeSalvo=getNomeSalvo();
           vpObs.disconnect();
         }
       });
-    },{threshold:0.25});
-    vpObs.observe(vestidoSec);
+    },{threshold:0.1,rootMargin:'-80px 0px 0px 0px'});
+    vpObs.observe(polaroidsWrap);
   }
 
   /* Abre "Day use" como default na Programação */
