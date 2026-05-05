@@ -2253,17 +2253,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
 /* Bloco 2026-05-03 #1: antetítulo editorial das caixinhas do músico.
-   Cormorant italic, ouro escuro, centralizado. Aparece FORA da letra, abaixo do pergaminho,
-   só depois que o usuário abriu a letra 1 vez (gate .letra-foi-aberta). */
+   Designer-ux recomendação: peso 600 + tamanho 1.22rem + cor mais escura + respiro maior.
+   Evita bold italic puro (fica pesado em Cormorant) mas dá ~85% do impacto. */
 .musica-cta-titulo{
   font-family:var(--fh);
   font-style:italic;
-  font-weight:500;
-  font-size:1.08rem;
-  line-height:1.4;
-  color:#9C7A3F;
+  font-weight:600;
+  font-size:1.22rem;
+  line-height:1.45;
+  color:#8a6a32;
   text-align:center;
-  margin:28px 20px 14px;
+  margin:38px 20px 18px;
   letter-spacing:.01em;
   display:none; /* começa oculto — gate da classe letra-foi-aberta decide */
 }
