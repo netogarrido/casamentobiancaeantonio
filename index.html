@@ -909,10 +909,14 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   appearance:none;
   -webkit-appearance:none;
   background:transparent;
+  /* Bloco 2026-05-03 #4: altura maior pra aumentar hitbox de toque
+     (tio-velho não acertava a barrinha de 2px). Visual da track mantém fino via pseudo. */
+  height:28px;
+  cursor:pointer;
 }
 
 .hero-scrub input[type="range"]::-webkit-slider-runnable-track{
-  height:2px;
+  height:3px;
   border-radius:999px;
   background:rgba(212,160,74,.22);
 }
@@ -920,28 +924,29 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .hero-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:10px;
-  height:10px;
+  width:14px;
+  height:14px;
   border-radius:50%;
-  background:rgba(232,197,122,.9);
+  background:rgba(232,197,122,.95);
   border:none;
   box-shadow:0 0 0 2px rgba(15,23,32,.55);
-  margin-top:-4px;
+  margin-top:-5px;
+  cursor:grab;
 }
 
 .hero-scrub input[type="range"]::-moz-range-track{
-  height:2px;
+  height:3px;
   border:none;
   border-radius:999px;
   background:rgba(212,160,74,.22);
 }
 
 .hero-scrub input[type="range"]::-moz-range-thumb{
-  width:10px;
-  height:10px;
+  width:14px;
+  height:14px;
   border:none;
   border-radius:50%;
-  background:rgba(232,197,122,.9);
+  background:rgba(232,197,122,.95);
   box-shadow:0 0 0 2px rgba(15,23,32,.55);
 }
 
@@ -1588,13 +1593,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   box-shadow:0 0 4px rgba(212,160,74,.4);
 }
 
-/* Hitbox invisível ao redor da barrinha — só ativa em arrasto deliberado */
+/* Hitbox invisível ao redor da barrinha — só ativa em arrasto deliberado.
+   Bloco 2026-05-03 #4: aumentado de 28×28 pra 44×44 (tio-velho C2 — target mínimo iOS HIG + WCAG 2.5.5).
+   Visual da bolinha continua mesmo tamanho; só a área de toque invisível cresceu. */
 .player-scrub-grab{
   position:absolute;
   top:50%;
-  left:calc(var(--prog) - 14px);
-  width:28px;
-  height:28px;
+  left:calc(var(--prog) - 22px);
+  width:44px;
+  height:44px;
   transform:translateY(-50%);
   z-index:3;
   cursor:grab;
@@ -1697,15 +1704,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 .pergaminho-titulo{
+  /* Bloco 2026-05-03 #7: copia estilo do .lyr-titulo (letra aberta) pra manter
+     consistência entre estados fechado/aberto. Antes: 1.05rem; agora: 1.7rem ouro forte. */
   font-family:var(--fh);
-  font-size:1.05rem;
+  font-size:1.7rem;
   font-weight:500;
   font-style:italic;
-  letter-spacing:.04em;
+  letter-spacing:.02em;
   text-transform:none;
-  color:#9C7A3F;
+  color:var(--a); /* ouro forte, igual ao aberto */
   text-align:left;
   margin-bottom:22px;
+  line-height:1.15;
   position:relative;
   z-index:2;
 }
@@ -1750,7 +1760,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:3;
 }
   
-/* convite a abrir — discreto, dentro do pergaminho */
+/* convite a abrir — discreto, dentro do pergaminho.
+   Bloco 2026-05-03 #6: reforçado (Tio-velho C2 — estava apagado demais, tio não via).
+   Agora: fundo ouro translúcido sutil + peso 600 + tamanho maior. Mantém editorial. */
 .pergaminho-abrir{
   position:absolute;
   left:0;
@@ -1760,17 +1772,23 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   align-items:center;
   justify-content:center;
   gap:10px;
-  padding:14px 20px 18px;
-  background:transparent;
+  padding:16px 20px 22px;
+  background:linear-gradient(180deg,
+    rgba(212,160,74,0) 0%,
+    rgba(212,160,74,.06) 50%,
+    rgba(212,160,74,.10) 100%);
   border:none;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   z-index:2;
-  transition:opacity .25s ease;
+  transition:background .25s ease, opacity .25s ease;
 }
 .pergaminho:hover .pergaminho-abrir,
 .pergaminho-abrir:hover{
-  opacity:.78;
+  background:linear-gradient(180deg,
+    rgba(212,160,74,.04) 0%,
+    rgba(212,160,74,.10) 50%,
+    rgba(212,160,74,.16) 100%);
 }
 .pergaminho-abrir-linha{
   flex:1;
@@ -1784,10 +1802,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .pergaminho-abrir-txt{
   font-family:var(--fh);
   font-style:italic;
-  font-weight:500;
-  font-size:1.02rem;
+  font-weight:600;
+  font-size:1.15rem;
   letter-spacing:.02em;
-  /* Escurecido de var(--a) pra #9C7A3F pra passar WCAG AA sobre fundo pergaminho creme */
+  /* Bloco 2026-05-03 #6: peso 600 e tamanho 1.15rem (antes 500 / 1.02rem) pra tio ver */
   color:#9C7A3F;
   white-space:nowrap;
 }
@@ -2206,6 +2224,33 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card--light:hover{border-color:var(--a);transform:translateY(-1px);box-shadow:0 6px 18px rgba(84,73,60,.08);}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
+/* Bloco 2026-05-03 #1: antetítulo editorial das caixinhas do músico.
+   Cormorant italic, ouro escuro, centralizado. Aparece antes das caixinhas
+   tanto dentro da letra (#musica_cta) quanto fora (#musica_cta_fora, após letra fechar). */
+.musica-cta-titulo{
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:500;
+  font-size:1.08rem;
+  line-height:1.4;
+  color:#9C7A3F;
+  text-align:center;
+  margin:22px 20px 12px;
+  letter-spacing:.01em;
+  /* Some se vazio */
+}
+.musica-cta-titulo:empty{display:none;}
+/* Variante fora da letra — aparece depois da letra fechar, junto com #cxVestido */
+.musica-cta-titulo--fora{
+  display:none; /* começa oculto — JS espelha e mostra se tiver conteúdo */
+  margin:28px 20px 14px;
+}
+/* Só aparece se a letra já foi aberta ao menos uma vez (mesmo gate das caixinhas externas) */
+.vestido.letra-foi-aberta .musica-cta-titulo--fora{
+  display:block;
+  animation:fadeInRise .6s ease both;
+}
+
 /* Mobile: caixinhas um pouco mais compactas pra não "pesar" dentro da letra.
    Nome subido de 0.76 → 0.82rem pra passar no tio-velho (idoso 65+) sem quebrar em 3 linhas. */
 @media(max-width:639px){
@@ -2485,16 +2530,23 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 .cat-card.on{
-  background:rgba(255,255,255,.92);
+  /* Bloco 2026-05-03 #8: reforçado pra destaque ser inegável. Antes dependia só de
+     box-shadow que pode ser clippado por backdrop-filter do pai (.pres-cats-panel).
+     Agora usa outline (não é clippado), borda ouro grossa, z-index elevado. */
+  background:rgba(255,255,255,.98);
+  outline:3px solid var(--a);
+  outline-offset:-1px;
   box-shadow:
-    0 0 0 2px var(--a),
-    0 0 22px rgba(212,160,74,.45),
-    0 8px 24px rgba(212,160,74,.28);
-  border-color:var(--al);
+    0 0 0 2px rgba(212,160,74,.25),
+    0 0 28px rgba(212,160,74,.55),
+    0 10px 28px rgba(212,160,74,.32);
+  border-color:var(--a);
+  transform:translateY(-2px) scale(1.02);
+  z-index:3;
 }
 .cat-card.on img{
-  filter:saturate(1.35) brightness(1.08) contrast(1.05);
-  transform:scale(1.04);
+  filter:saturate(1.4) brightness(1.12) contrast(1.08) !important;
+  transform:scale(1.06);
 }
 .cat-card.on .cat-lbl{
   background:rgba(255,251,242,.92);
@@ -2542,6 +2594,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 .cat-card:hover img{transform:scale(1.05);filter:saturate(1.05) brightness(1);}
+/* Bloco 2026-05-03 #8: guard pra hover não sobrescrever estado .on (tio desktop) */
+.cat-card.on:hover img{transform:scale(1.06);filter:saturate(1.4) brightness(1.12) contrast(1.08);}
 
 .cat-lbl{
   position:absolute;
@@ -3620,15 +3674,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:4;
 }
 
-/* Ribbon "ESGOTADO" — chip compacto editorial (designer-ux Top#1, Pacote 3) */
+/* Ribbon "ESGOTADO" — chip compacto editorial.
+   Bloco 2026-05-03 #10: centralizado horizontal (antes era canto superior direito)
+   + margin-bottom pra dar respiro até o nome/dados abaixo. */
 .prog-soldout-ribbon{
-  position:absolute;
-  top:10px;
-  right:10px;
+  position:relative;
+  top:auto;
+  right:auto;
   left:auto;
-  width:auto;
-  max-width:140px;
-  padding:4px 10px 3px;
+  width:fit-content;
+  max-width:180px;
+  margin:0 auto 14px;
+  padding:5px 14px 4px;
   background:rgba(179,38,30,.90);
   color:#fff;
   font-family:var(--fb);
@@ -3638,7 +3695,6 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   line-height:1;
   text-align:center;
   text-transform:uppercase;
-  transform:none;
   border-radius:4px;
   box-shadow:0 2px 6px rgba(179,38,30,.28);
   z-index:3;
@@ -4512,12 +4568,31 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* TOAST + MINI PLAYER */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--n);color:var(--al);padding:10px 20px;border-radius:var(--rs);font-size:.76rem;z-index:9999;transition:transform .35s;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:500;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
-/* mini player: só o botão de play */
+/* mini player: só o botão de play.
+   Bloco 2026-05-03 #5: cresce 46→58px quando usuário rolou mais de 30% (classe .mini--big
+   aplicada via JS scroll listener). Mais visível em Programação/RSVP sem atrapalhar no topo. */
 .mini{position:fixed;bottom:18px;right:18px;z-index:800;display:flex;align-items:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .3s}
 .mini.vis{opacity:1;pointer-events:auto}
-.mini-btn{width:46px;height:46px;border-radius:50%;background:var(--n);border:1px solid rgba(212,160,74,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:all .25s}
+.mini-btn{
+  width:46px;height:46px;
+  border-radius:50%;
+  background:var(--n);
+  border:1px solid rgba(212,160,74,.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+  -webkit-tap-highlight-color:transparent;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
 .mini-btn:hover{border-color:var(--a)}
-.mini-btn svg{width:13px;height:13px;fill:var(--al)}
+.mini-btn svg{width:13px;height:13px;fill:var(--al);transition:all .3s}
+/* Estado "descoberto": usuário rolou bastante, mini fica maior pra tio enxergar */
+.mini.mini--big .mini-btn{
+  width:58px;height:58px;
+  box-shadow:0 6px 22px rgba(0,0,0,.28), 0 0 0 3px rgba(212,160,74,.14);
+  border-color:rgba(212,160,74,.42);
+}
+.mini.mini--big .mini-btn svg{width:16px;height:16px}
 
 /* LIGHTBOX CARROSSEL */
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:3000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
@@ -4781,8 +4856,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">×</button>
       <div class="lyr-titulo" id="lyrTitulo"></div>
       <div class="lyr-text" id="musica_letra"></div>
+      <!-- Bloco 2026-05-03 #1: musica_cta agora é ANTETÍTULO das caixinhas (antes vinha depois).
+           Mesmo texto aparece ESPELHADO no #musica_cta_fora (fora da letra) via applyConteudo. -->
+      <p id="musica_cta" class="musica-cta-titulo"></p>
       <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
-      <p id="musica_cta"></p>
       <button class="pergaminho-abrir pergaminho-abrir--fechar" onclick="tL()" aria-label="Recolher letra">
         <span class="pergaminho-abrir-linha"></span>
         <span class="pergaminho-abrir-txt" id="musica_btn_letra_fecha">recolher a letra</span>
@@ -4792,6 +4869,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </div>
   </div>
 
+  <!-- Bloco 2026-05-03 #1: antetítulo espelhado (aparece com caixinhas externas após letra fechar) -->
+  <p id="musica_cta_fora" class="musica-cta-titulo musica-cta-titulo--fora"></p>
   <div class="cx-cards" id="cxVestido"></div>
 
 <div class="vestido-seta-presentes-wrap" id="vestidoSetaPresentesWrap">
@@ -5592,6 +5671,13 @@ var _audioUltimoPlay=null;
       if(total>0){
         var pct=Math.round((window.scrollY/total)*100);
         if(pct>_scrollMax)_scrollMax=pct;
+        /* Bloco 2026-05-03 #5: mini-player cresce depois de 30% da página (após Vestido).
+           Evita chamar atenção no topo, mas aparece melhor em Programação/RSVP. */
+        var mini=document.getElementById('mini');
+        if(mini){
+          if(pct>=30){mini.classList.add('mini--big');}
+          else{mini.classList.remove('mini--big');}
+        }
       }
       if(!secoesCache)secoesCache=document.querySelectorAll('section[id]');
       var vh=window.innerHeight*0.8;
@@ -5606,6 +5692,72 @@ var _audioUltimoPlay=null;
       ticking=false;
     });
   },{passive:true});
+})();
+
+/* ══════════════════════════════════════════
+   Bloco 2026-05-03 #5: reduz volume automaticamente em seções de leitura densa
+   (Programação e RSVP). Fade suave 0.8s. Tio-velho não fica "atordoado" com música
+   enquanto tenta ler informações críticas. Volta pro volume cheio ao sair.
+══════════════════════════════════════════ */
+(function(){
+  if(!('IntersectionObserver' in window))return;
+  var VOL_CHEIO=1.0;
+  var VOL_REDUZIDO=0.5;
+  var FADE_MS=800;
+  var FADE_STEPS=16;
+  
+  function fadeVolume(from,to){
+    var audioEl=document.getElementById('bgMusic');
+    if(!audioEl)return;
+    var step=(to-from)/FADE_STEPS;
+    var i=0;
+    var iv=setInterval(function(){
+      i++;
+      var v=from+step*i;
+      if(v<0)v=0;
+      if(v>1)v=1;
+      try{audioEl.volume=v;}catch(e){}
+      if(i>=FADE_STEPS){clearInterval(iv);try{audioEl.volume=to;}catch(e){}}
+    },FADE_MS/FADE_STEPS);
+  }
+  
+  var dentroLeitura=false;
+  function aplicarVolume(){
+    var audioEl=document.getElementById('bgMusic');
+    if(!audioEl||audioEl.paused)return;
+    var alvo=dentroLeitura?VOL_REDUZIDO:VOL_CHEIO;
+    if(Math.abs(audioEl.volume-alvo)<0.05)return; /* já está perto */
+    fadeVolume(audioEl.volume,alvo);
+  }
+  
+  /* Observa Programação e RSVP */
+  function initVolumeObserver(){
+    var alvos=['programacao','rsvp'];
+    var elementos=alvos.map(function(id){return document.getElementById(id);}).filter(Boolean);
+    if(!elementos.length)return;
+    
+    var estadoPorSecao={};
+    alvos.forEach(function(id){estadoPorSecao[id]=false;});
+    
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        estadoPorSecao[entry.target.id]=entry.isIntersecting;
+      });
+      var algumAtivo=Object.values(estadoPorSecao).some(function(v){return v;});
+      if(algumAtivo!==dentroLeitura){
+        dentroLeitura=algumAtivo;
+        aplicarVolume();
+      }
+    },{threshold:0.35});
+    
+    elementos.forEach(function(el){obs.observe(el);});
+  }
+  
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initVolumeObserver);
+  }else{
+    initVolumeObserver();
+  }
 })();
 
 /* ══════════════════════════════════════════
@@ -5996,6 +6148,29 @@ function applyConteudo(rows){
   else if(fpm && !fp && fvm){
     fpm.textContent=fvm.textContent;
     fpm.classList.add('sheet-preserve-case');
+  }
+  /* Bloco 2026-05-03 #1: espelha musica_cta em musica_cta_fora (caixinhas fora da letra) */
+  var mct=document.getElementById('musica_cta');
+  var mctf=document.getElementById('musica_cta_fora');
+  if(mct&&mctf){
+    mctf.textContent=mct.textContent;
+    if(mct.textContent.trim()){
+      mctf.style.display='';
+    }else{
+      mctf.style.display='none';
+    }
+  }
+  /* Bloco 2026-05-03 #3: esconder wrapper inteiro do quote de abertura quando
+     historia_texto_abertura estiver vazio (ativo=nao no Sheet OU descricao vazia).
+     Evita aparecer só aspas e espaço sem conteúdo. */
+  var hta=document.getElementById('historia_texto_abertura');
+  var htaWrap=document.getElementById('historia_texto_abertura_wrap');
+  if(hta&&htaWrap){
+    if(!hta.textContent.trim()){
+      htaWrap.style.display='none';
+    }else{
+      htaWrap.style.display='';
+    }
   }
   popularPergaminho();
 
@@ -7990,6 +8165,15 @@ function startSlideshow(){
 
 /* ══════════════════════════════════════════
    VESTIDO — POLAROIDS
+   Bloco 2026-05-03 #2: reescrito pra 1 ciclo ao entrar viewport (antes era loop
+   infinito que ocasionalmente travava). Menos risco, mais editorial.
+   
+   Fluxo novo: cai aleatória → parada 4-5s → arrasto em direções aleatórias (mão
+   deslizando sobre a mesa) → fica no estado final. Se usuário scrolla pra fora e
+   volta, pode disparar novamente via IntersectionObserver.
+   
+   prefers-reduced-motion: pula animação, polaroids aparecem com fade simples
+   (acessibilidade — tios com sensibilidade a movimento / labirintite).
 ══════════════════════════════════════════ */
 var vpTimer=null;
 var vpBusy=false;
@@ -8049,6 +8233,7 @@ function vpPousar(el,zIdx,cb){
   el.style.opacity='1';
   el.style.transform=el._pousoFinal;
   el.classList.add('pousado');
+  el.style.pointerEvents='auto';
   setTimeout(function(){
     el.style.transition='transform .22s ease-out';
     el.style.transform=el._pousoFinal+' scale(1.03)';
@@ -8063,18 +8248,24 @@ function vpPousar(el,zIdx,cb){
   },780);
 }
 
-function vpVarrer(ativos,cb){
+/* Arrasto final: cada polaroid sai em direção ALEATÓRIA (não mais todas pro mesmo lado).
+   Simula uma mão espontânea empurrando — mais natural que movimento coreografado. */
+function vpArrastar(ativos,cb){
   setTimeout(function(){
-    ativos.forEach(function(el){
+    ativos.forEach(function(el,i){
       if(!el||el.style.opacity==='0')return;
-      el.style.transition='transform 1.15s cubic-bezier(.4,0,.6,1), opacity .9s ease';
-      el.style.transform='translate3d(-160%,90%,0) rotate(-18deg)';
+      /* Direção aleatória: mistura horizontal + vertical, com pouca variação de rotação */
+      var dirX=vpRand(0,1)<0.5?vpRand(-200,-120):vpRand(120,200);
+      var dirY=vpRand(40,120);
+      var rot=vpRand(-25,25);
+      el.style.transition='transform 1.0s cubic-bezier(.4,0,.6,1), opacity .8s ease';
+      el.style.transform='translate3d('+dirX+'%,'+dirY+'%,0) rotate('+rot+'deg)';
       el.style.opacity='0';
       el.style.pointerEvents='none';
       el.classList.remove('pousado');
     });
-    setTimeout(function(){if(cb)cb();},1300);
-  },3400);
+    setTimeout(function(){if(cb)cb();},1100);
+  },4500); /* 4.5s de parada antes do arrasto — tempo pro tio ver */
 }
 
 function vpCiclo(){
@@ -8101,9 +8292,10 @@ function vpCiclo(){
   var zBase=3;
   function quedaProxima(){
     if(idx>=ordemQueda.length){
-      vpVarrer(fotosEmbaralhadas,function(){
+      /* Bloco #2: NÃO reinicia ciclo; deixa arrasto final rodar 1 vez */
+      vpArrastar(fotosEmbaralhadas,function(){
         vpBusy=false;
-        vpTimer=setTimeout(vpCiclo,1600);
+        /* vpIniciado permanece true — só reinicia se IntersectionObserver disparar de novo */
       });
       return;
     }
@@ -8111,10 +8303,24 @@ function vpCiclo(){
     var z=(el._slotIdx===3)?zBase+10:zBase+idx;
     vpPousar(el,z,null);
     idx++;
-    var delay=vpRand(1000,2500);
+    var delay=vpRand(700,1500); /* delay entre quedas reduzido pra ciclo caber melhor */
     vpTimer=setTimeout(quedaProxima,delay);
   }
   vpTimer=setTimeout(quedaProxima,700);
+}
+
+/* prefers-reduced-motion: polaroids aparecem com fade simples, sem movimento */
+function vpFadeSimples(){
+  var slots=vpGetSlots();
+  slots.forEach(function(el,i){
+    if(!el||!el.dataset.src)return;
+    el.src=el.dataset.src;
+    el.style.transition='opacity 0.8s ease';
+    el.style.opacity='1';
+    el.style.transform=vpGeraPouso(i);
+    el.style.pointerEvents='auto';
+    el.style.zIndex=String(3+i);
+  });
 }
 
 function initVestidoSwap(){
@@ -8139,8 +8345,17 @@ function initVestidoSwap(){
     vpResetSlot(el,vpGeraPouso(i),vpGeraInicio(i));
   });
   if(!temAlguma)return;
+  
+  /* Bloco #2: reduced-motion pula animação */
+  try{
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      vpFadeSimples();
+      return;
+    }
+  }catch(e){}
+  
   clearTimeout(vpTimer);
-  vpTimer=setTimeout(vpCiclo,800);
+  vpTimer=setTimeout(vpCiclo,500);
 }
 
 /* ══════════════════════════════════════════
@@ -8232,12 +8447,9 @@ var nomeSalvo=getNomeSalvo();
     }
   },600);
 
-  /* Abre "Sábado" como default (dia-protagonista do casamento) — designer-ux #3B */
-  setTimeout(function(){
-    if(typeof toggleDia==='function' && _diaAtivo!=='sabado'){
-      toggleDia('sabado');
-    }
-  },650);
+  /* Bloco 2026-05-03 #9: caixa de dias (sexta/sábado/domingo) começa fechada.
+     Auto-open do sábado removido a pedido do usuário. Convidado abre por descoberta. */
+  /* (linhas removidas: setTimeout toggleDia sabado) */
 
   /* Garante estado inicial correto do RSVP (aviso day use, botão CTA opções) */
   try{
@@ -8247,8 +8459,9 @@ var nomeSalvo=getNomeSalvo();
     }
   }catch(e){}
 
-  /* Animação glow no card Sábado até primeiro clique (apenas esta sessão) */
-  initSabadoGlow();
+  /* Animação glow no card Sábado até primeiro clique (apenas esta sessão).
+     Bloco 2026-05-03 #9: removido a pedido do usuário. */
+  /* initSabadoGlow(); */
 
   /* Pacote 3 B12 — pausar countdown quando hero sai de viewport */
   initCountdownObserver();
