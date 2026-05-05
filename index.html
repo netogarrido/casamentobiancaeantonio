@@ -4561,6 +4561,39 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-color:var(--a);
 }
 
+/* Wrap do select participação — permite o intercept cobrir o select */
+.rsvp-select-wrap{
+  position:relative;
+}
+/* Intercept invisível: cobre o select inteiro, captura o PRIMEIRO clique/tap,
+   abre o popup e se remove. Do segundo toque em diante, o select responde normal.
+   aria-hidden + tabindex=-1: screen reader e navegação por teclado ignoram completamente. */
+.rsvp-select-intercept{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background:transparent;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.rsvp-select-intercept.gone{display:none}
+
+/* Auto-hide da pílula quando o span interno está escondido via ativo=nao.
+   :has() tem cobertura iOS 15.4+ / Android Chrome 105+ → covers ~97% do tráfego.
+   Fallback: applyConteudo marca também o botão pai via JS (initRsvpDetalhesVisibility).
+   Mesma lógica p/ ocultar o <ul> quando todos os 3 bullets estão com display:none. */
+.rsvp-cta-opcoes-wrap:has(#rsvp_detalhes[style*="display: none"]),
+.rsvp-cta-opcoes-wrap.hidden{
+  display:none;
+}
+.mo-rsvp-onboard-opcoes:has(> .mo-rsvp-onboard-opcao:not([style*="display: none"])){
+  /* Pelo menos 1 visível: mantém a lista */
+}
+.mo-rsvp-onboard-opcoes.empty{
+  display:none;
+}
+
 /* ══════════════════════════════════════════
    MODAL ONBOARD RSVP — discreto, creme translúcido
    Aparece 1x/sessão quando convidado chega ao RSVP sem
@@ -4716,6 +4749,34 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .mo-rsvp-onboard-botao:focus-visible{
   outline:2px solid var(--al);
   outline-offset:3px;
+}
+/* CTA secundário — outline discreto, só fecha o popup. Pequeno gap do primário. */
+.mo-rsvp-onboard-botao-sec{
+  display:block;
+  width:100%;
+  margin-top:10px;
+  min-height:44px;
+  padding:11px 22px;
+  background:transparent;
+  color:var(--im);
+  border:1px solid rgba(212,160,74,.35);
+  border-radius:50px;
+  font-family:var(--fb);
+  font-weight:500;
+  font-size:.82rem;
+  letter-spacing:.04em;
+  cursor:pointer;
+  transition:background .2s, border-color .2s, color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mo-rsvp-onboard-botao-sec:hover{
+  background:rgba(212,160,74,.08);
+  border-color:var(--a);
+  color:var(--i);
+}
+.mo-rsvp-onboard-botao-sec:focus-visible{
+  outline:2px solid var(--al);
+  outline-offset:2px;
 }
 @media (prefers-reduced-motion:reduce){
   .mo-rsvp-onboard,
@@ -5587,12 +5648,19 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </div>
    <div class="fg">
   <label class="fl" for="rsvp_select_participacao" id="rsvp_campo_participacao">Como você ou seu grupo vai participar do fim de semana?</label>
-  <select class="fsel" name="participacao" id="rsvp_select_participacao" onchange="onParticiplacaoChange(this.value)">
+  <!-- Wrap relativo: permite o intercept cobrir o select antes do primeiro clique -->
+  <div class="rsvp-select-wrap">
+    <select class="fsel" name="participacao" id="rsvp_select_participacao" onchange="onParticiplacaoChange(this.value)">
     <option value="">Selecione...</option>
     <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna">Já tenho reserva no Sant'Anna (hotel esgotado)</option>
     <option value="dayuse" id="rsvp_opcao_dayuse">Day use no sábado + festa</option>
     <option value="festa" id="rsvp_opcao_festa">Somente festa de sábado</option>
   </select>
+    <!-- Intercept invisível: intercepta o PRIMEIRO clique no select abrindo o popup.
+         Some automaticamente após o popup ser exibido 1x nessa sessão (via rsvp_onboard_visto).
+         Do segundo toque em diante, o select abre normal (picker nativo iOS/Android). -->
+    <div class="rsvp-select-intercept" id="rsvp_select_intercept" aria-hidden="true" tabindex="-1"></div>
+  </div>
   <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none">O day use tem vagas limitadas e precisa ser reservado antecipadamente com a Marcela, mediante pagamento de 20% de sinal e sujeito à lotação.</p>
   <!-- Pílula ouro dormente sempre visível — abre modal onboard com as 3 formas de participar -->
   <div class="rsvp-cta-opcoes-wrap">
@@ -5821,7 +5889,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_dayuse">Day use sábado — R$ 530 por adulto, reserva com a Marcela</li>
       <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_festa">Somente festa — a partir das 20h de sábado</li>
     </ul>
-    <button class="mo-rsvp-onboard-botao" type="button" id="rsvp_popup_botao" onclick="fecharRsvpOnboard('entendi')">Entendi, vou conferir</button>
+    <!-- CTA primário: leva ao Day use dentro da Programação (box 3×1 aberta em "day") -->
+    <button class="mo-rsvp-onboard-botao" type="button" id="rsvp_popup_botao_ver" onclick="fecharRsvpOnboardEVerOpcoes()">Ver as formas de participar ↓</button>
+    <!-- CTA secundário: só fecha, mantém usuário no RSVP -->
+    <button class="mo-rsvp-onboard-botao-sec" type="button" id="rsvp_popup_botao" onclick="fecharRsvpOnboard('entendi')">Entendi, vou conferir</button>
   </div>
 </div>
 
@@ -6598,6 +6669,45 @@ function applyConteudo(rows){
       onParticiplacaoChange(rsvpSelSync.value);
     }
   }catch(e){}
+
+  /* Sincroniza visibilidade do botão/popup do RSVP com ativo=sim/nao da planilha.
+     Bianca controla com 1 toggle na Sheet: chave rsvp_detalhes com ativo=nao desliga
+     TODA a feature (pílula + auto-trigger + intercept do select). ativo=sim reativa. */
+  try{ _syncRsvpDetalhesFeature(); }catch(e){}
+  /* Sincroniza visibilidade do <ul> dos bullets no popup: se os 3 bullets estão ativo=nao,
+     a lista inteira some pra não deixar um espaço vazio no popup. */
+  try{ _syncRsvpPopupBullets(); }catch(e){}
+}
+
+/* Desliga/liga toda a feature "Veja o detalhe das opções" baseado no span #rsvp_detalhes.
+   Se o span está display:none (ativo=nao na Sheet), esconde o wrap da pílula e congela
+   o estado do popup pra que nem o auto-trigger nem o intercept do select abram. */
+function _syncRsvpDetalhesFeature(){
+  var span=document.getElementById('rsvp_detalhes');
+  var wrap=document.querySelector('.rsvp-cta-opcoes-wrap');
+  if(!span || !wrap)return;
+  var desligado = (span.style.display==='none');
+  if(desligado){
+    wrap.classList.add('hidden');
+    /* marca sessionStorage pra que initRsvpOnboardTracking trate como "já visto" e
+       suprima auto-trigger + intercept do select. Usa flag dedicada pra não pisar na
+       flag normal "já viu essa sessão". */
+    try{sessionStorage.setItem('rsvp_onboard_visto','1');}catch(e){}
+    var intercept=document.getElementById('rsvp_select_intercept');
+    if(intercept)intercept.classList.add('gone');
+  }else{
+    wrap.classList.remove('hidden');
+  }
+}
+
+/* Esconde <ul> de bullets se todos os 3 LI estão display:none (controle via Sheet). */
+function _syncRsvpPopupBullets(){
+  var ul=document.querySelector('.mo-rsvp-onboard-opcoes');
+  if(!ul)return;
+  var lis=ul.querySelectorAll('.mo-rsvp-onboard-opcao');
+  var visiveis=0;
+  lis.forEach(function(li){ if(li.style.display!=='none')visiveis++; });
+  ul.classList.toggle('empty', visiveis===0);
 }
     
 
@@ -7712,6 +7822,10 @@ function _marcarOrigemRsvp(origem){
    (hamburger / hero_cta / rodape_cta) + não visitou Programação+Presentes. */
 function _deveMostrarRsvpOnboard(){
   if(_rsvpOnboardJaApareceu)return false;
+  /* Feature toggle: se rsvp_detalhes está com ativo=nao na Sheet, o wrap fica oculto.
+     Nesse caso, não dispara auto-trigger de jeito nenhum. */
+  var wrap=document.querySelector('.rsvp-cta-opcoes-wrap');
+  if(wrap && wrap.classList.contains('hidden'))return false;
   try{
     if(sessionStorage.getItem('rsvp_onboard_visto')==='1')return false;
   }catch(e){}
@@ -7734,9 +7848,12 @@ function abrirRsvpOnboard(motivo){
   m.setAttribute('aria-hidden','false');
   if(typeof lockScroll==='function')lockScroll();
   try{trackEvento('rsvp_onboard_abriu', motivo||_rsvpOrigem||'auto');}catch(e){}
+  /* Avisa listeners (ex: intercept do select) que o popup foi exibido.
+     CustomEvent pra desacoplar — qualquer módulo pode reagir sem acoplar funções. */
+  try{document.dispatchEvent(new CustomEvent('rsvp_onboard_aberto',{detail:{motivo:motivo||''}}));}catch(e){}
   /* Foco no botão primário pra a11y + ESC funcionar */
   setTimeout(function(){
-    var btn=document.getElementById('rsvp_popup_botao');
+    var btn=document.getElementById('rsvp_popup_botao_ver') || document.getElementById('rsvp_popup_botao');
     if(btn)try{btn.focus({preventScroll:true});}catch(e){btn.focus();}
   },60);
 }
@@ -7748,6 +7865,24 @@ function fecharRsvpOnboard(motivo){
   m.setAttribute('aria-hidden','true');
   if(typeof unlockScroll==='function')unlockScroll();
   try{trackEvento('rsvp_onboard_fechou', motivo||'close');}catch(e){}
+}
+
+/* CTA primário do popup: fecha modal + scroll suave pra Programação com Day use aberto.
+   Day use é a via de maior conversão (reserva Marcela, R$530 sinal 20%).
+   Reusa abrirDayUseDaProgramacao() que já existe (usado no FAQ CTA map perguntas 5, 14, 22). */
+function fecharRsvpOnboardEVerOpcoes(){
+  try{trackEvento('rsvp_onboard_ver_opcoes','redirect_programacao_day');}catch(e){}
+  fecharRsvpOnboard('ver_opcoes');
+  /* Pequeno delay pra unlockScroll concluir antes do smoothScrollTo — evita conflito iOS */
+  setTimeout(function(){
+    if(typeof abrirDayUseDaProgramacao==='function'){
+      abrirDayUseDaProgramacao();
+    }else if(typeof smoothScrollTo==='function'){
+      smoothScrollTo('programacao');
+    }else{
+      location.hash='#programacao';
+    }
+  },80);
 }
 
 /* Instalação — listeners de origem + trigger no IntersectionObserver do RSVP +
@@ -7819,6 +7954,35 @@ function initRsvpOnboardTracking(){
     onboardEl.addEventListener('click',function(ev){
       if(ev.target===onboardEl)fecharRsvpOnboard('overlay');
     });
+  }
+
+  /* Intercept do select: primeiro clique abre o popup e remove o intercept.
+     Se o popup já foi visto nessa sessão (flag rsvp_onboard_visto), intercept some
+     imediatamente ao inicializar — select responde normal. */
+  var intercept=document.getElementById('rsvp_select_intercept');
+  if(intercept){
+    var jaVisto=false;
+    try{jaVisto=(sessionStorage.getItem('rsvp_onboard_visto')==='1');}catch(e){}
+    if(jaVisto){
+      intercept.classList.add('gone');
+    }else{
+      /* Handler: captura pointerdown/click/touchstart antes do select abrir.
+         preventDefault() + stopPropagation() impedem o picker nativo. */
+      var bloqueador=function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        intercept.classList.add('gone');
+        abrirRsvpOnboard('select_intercept');
+      };
+      /* pointerdown cobre mouse + toque + caneta. touchstart é fallback iOS antigo. */
+      intercept.addEventListener('pointerdown', bloqueador, {passive:false});
+      intercept.addEventListener('touchstart', bloqueador, {passive:false});
+      intercept.addEventListener('click', bloqueador, {passive:false});
+      /* Se o popup abrir por qualquer outra origem (hamburger, pílula, auto), intercept some também */
+      document.addEventListener('rsvp_onboard_aberto', function(){
+        intercept.classList.add('gone');
+      });
+    }
   }
 }
 
