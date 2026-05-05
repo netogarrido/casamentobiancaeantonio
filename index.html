@@ -4564,6 +4564,37 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .35s}
 .faq-a-in{padding:0 15px 13px;font-size:.76rem;line-height:1.65;color:var(--im)}
 
+/* Botão CTA das perguntas FAQ — pílula ouro simples, discreta.
+   Aparece depois da resposta quando a pergunta tem CTA cadastrada no Sheet. */
+.faq-cta-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:12px;
+  padding:8px 16px;
+  background:rgba(212,160,74,.12);
+  border:1px solid rgba(212,160,74,.45);
+  border-radius:999px;
+  color:#9C7A3F;
+  font-family:var(--fh);
+  font-style:italic;
+  font-weight:500;
+  font-size:.85rem;
+  letter-spacing:.02em;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .2s ease, border-color .2s ease, transform .15s ease;
+}
+.faq-cta-btn:hover{
+  background:rgba(212,160,74,.2);
+  border-color:var(--a);
+}
+.faq-cta-btn:active{transform:scale(.97)}
+.faq-cta-seta{
+  font-size:.9rem;
+  line-height:1;
+}
+
 /* CTA BAND */
 .cta-b{background:linear-gradient(135deg,var(--a),#C89030);padding:34px 20px;text-align:center}
 .cta-b p{font-family:var(--fh);font-size:1.02rem;font-style:italic;color:var(--n);margin-bottom:14px;opacity:.8;font-weight:300}
@@ -6526,9 +6557,48 @@ function applyPerguntas(rows){
   rows.forEach(function(r){
     var ativo=r['ativo?']||r['ativo']||'sim';
     if(String(ativo).toLowerCase()==='nao')return;
-    if(r.pergunta)FAQS.push({c:r.categoria||'',q:r.pergunta,a:r.resposta||''});
+    if(r.pergunta){
+      /* CTA: se qualquer valor não-vazio na coluna CTA do Sheet, renderiza botão "Veja mais".
+         Destino hardcoded em JS (mapa por ordem) pra facilitar manutenção. */
+      var temCta=String(r.CTA||r.cta||'').trim()!=='';
+      FAQS.push({
+        c:r.categoria||'',
+        q:r.pergunta,
+        a:r.resposta||'',
+        o:Number(r.ordem)||0,
+        cta:temCta
+      });
+    }
   });
   if(FAQS.length>0)renderFAQ(FAQS);
+}
+
+/* Mapa FAQ CTA → ação no site.
+   Chave = ordem da pergunta no Sheet. Valor = função que executa o redirect/modal. */
+var FAQ_CTA_MAP={
+  1: function(){smoothScrollTo('hero');},                    /* Quando será o casamento? → Hero (contagem) */
+  5: function(){smoothScrollTo('programacao');},             /* Como posso participar? → Programação (vias) */
+  7: function(){smoothScrollTo('rsvp');},                    /* Preciso confirmar? → RSVP */
+  8: function(){smoothScrollTo('rsvp');},                    /* Como confirmo presença? → RSVP */
+  9: function(){smoothScrollTo('rsvp');},                    /* O que informar no RSVP? → RSVP */
+  10:function(){smoothScrollTo('rsvp');},                    /* Por que essas infos? → RSVP */
+  11:function(){abrirHoteis();},                             /* Tem hospedagem Sant'Anna? → modal hotéis */
+  12:function(){abrirHoteis();},                             /* Quem não conseguiu quarto? → modal hotéis */
+  13:function(){abrirHoteis();},                             /* Hotéis próximos? → modal hotéis */
+  14:function(){smoothScrollTo('programacao');},             /* O que é day use? → Programação */
+  19:function(){abrirReservar();},                           /* Quantas vagas? → modal Marcela */
+  20:function(){abrirReservar();},                           /* Como reservar? → modal Marcela */
+  22:function(){smoothScrollTo('programacao');},             /* Valor do day use? → Programação */
+  23:function(){abrirReservar();},                           /* Reservar pelo site? → modal Marcela */
+  28:function(){smoothScrollTo('presentes');}                /* Como funciona lista presentes? → Presentes */
+};
+
+function faqCtaGo(ordem){
+  var fn=FAQ_CTA_MAP[ordem];
+  if(typeof fn==='function'){
+    try{trackEvento('faq_cta_clicou','ordem_'+ordem);}catch(e){}
+    fn();
+  }
 }
 
 function renderFAQ(faqs){
@@ -6540,8 +6610,13 @@ function renderFAQ(faqs){
       var cd=document.createElement('div');cd.className='faq-cat';cd.textContent=f.c;l.appendChild(cd);
     }
     var d=document.createElement('div');d.className='faq-it';
-    d.innerHTML='<div class="faq-q"><span>'+f.q+'</span><div class="faq-tg">+</div></div><div class="faq-a"><div class="faq-a-in">'+f.a+'</div></div>';
-d.querySelector('.faq-q').addEventListener('click',function(){
+    /* Botão "Veja mais ↑" aparece só se CTA preenchida no Sheet E ordem mapeada em FAQ_CTA_MAP */
+    var ctaHtml='';
+    if(f.cta && FAQ_CTA_MAP[f.o]){
+      ctaHtml='<button type="button" class="faq-cta-btn" onclick="faqCtaGo('+f.o+')">Veja mais <span class="faq-cta-seta">↑</span></button>';
+    }
+    d.innerHTML='<div class="faq-q"><span>'+f.q+'</span><div class="faq-tg">+</div></div><div class="faq-a"><div class="faq-a-in">'+f.a+ctaHtml+'</div></div>';
+    d.querySelector('.faq-q').addEventListener('click',function(){
       var jaAberto=d.classList.contains('op');
       trackEvento(jaAberto?'faq_fechou':'faq_abriu',f.q);
       tF(this);
