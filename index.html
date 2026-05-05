@@ -2075,6 +2075,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     grid-column:1;
     grid-row:2;
     align-self:start;
+    justify-self:stretch;
+    /* Fix 2026-05-05: em desktop, player colapsava pra ~197px porque grid-column ficava
+       sem largura definida → scrubber 129px com thumb em value=0 parecia "no meio" da
+       pílula pequena. Agora ocupa largura total da coluna (até o max-width do elemento). */
+    width:100%;
+    max-width:420px;
     margin-bottom:22px;
   }
   .vestido .inn > .vestido-photos{
