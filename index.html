@@ -2137,9 +2137,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .vestido-foto-principal-wrap{width:78%;}
   .lyr-text{font-size:1.32rem;line-height:1.95}
   .pergaminho-trecho{font-size:1.26rem;line-height:1.92}
-  /* Fix 2026-05-03: padding 4 valores (antes era 3 — apagava padding-left 58px,
-     trecho ficava passando POR CIMA da linha vertical dourada em left:44px). */
-  .pergaminho-corpo{padding:30px 32px 70px 58px}
+  /* Fix 2026-05-03: padding 4 valores + padding-left ampliado pra 68px (era 58px).
+     O V de "Vestido" e o B de "Bibi" têm glifos largos em Cormorant italic 1.7rem e
+     encostavam visualmente na linha vertical em left:44px. Agora 24px de respiro. */
+  .pergaminho-corpo{padding:30px 32px 70px 68px}
+  .lyr-text{padding:0 26px 0 68px}
+  .lyr-titulo{margin:28px 26px 22px 68px}
 
   .vestido::before{width:min(60%,580px);right:-10%;opacity:.10}
   .vestido::after{width:min(70%,620px);left:-14%;opacity:.09}
@@ -2284,7 +2287,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-style:italic;
   text-align:center;
   margin:34px 20px 18px;
-  max-width:560px;
+  max-width:720px;
   margin-left:auto;
   margin-right:auto;
   display:none;
@@ -2297,6 +2300,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   color:var(--i); /* navy escuro, igual à letra */
   letter-spacing:.005em;
   margin-bottom:6px;
+  /* 1 linha só — não deixar quebrar em desktop (cabe em 560-720px) */
+  white-space:nowrap;
 }
 .musica-cta-titulo .musica-cta-l2{
   display:block;
@@ -2308,7 +2313,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 @media(max-width:520px){
   .musica-cta-titulo{margin:28px 16px 14px}
-  .musica-cta-titulo .musica-cta-l1{font-size:1.22rem}
+  .musica-cta-titulo .musica-cta-l1{font-size:1.22rem;white-space:normal}
   .musica-cta-titulo .musica-cta-l2{font-size:1rem}
 }
 /* Caixinhas externas também começam ocultas — mesmo gate */
