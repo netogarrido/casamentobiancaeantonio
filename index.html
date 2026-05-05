@@ -2072,11 +2072,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     padding:14px 16px 12px;
   }
   .vestido .inn > .pergaminho-wrap{
+    /* Bloco 2026-05-03 #fix-desktop: max-width 560px igual à letra aberta.
+       Antes era max-width:none (pegava toda a coluna). Agora fechado e aberto
+       têm exatamente a mesma largura — sem "expansão" ao abrir. */
     grid-column:2;
     grid-row:3;
     align-self:start;
     margin-top:0;
-    max-width:none;
+    max-width:560px;
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
   }
 
   /* Linha 4+: letra aberta, CTA, caixinhas, seta.
@@ -2090,8 +2096,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   }
   /* Quando letra aberta, o pergaminho fechado some (já existe regra .vestido.lyr-aberta .pergaminho-wrap{display:none}) */
   
-  /* musica_cta_fora + caixinhas externas entram abaixo, full-width */
-  .vestido .inn > #musica_cta_fora{
+  /* musica_cta + caixinhas externas entram abaixo, full-width */
+  .vestido .inn > #musica_cta{
     grid-column:1/-1;
     grid-row:4;
   }
@@ -2235,8 +2241,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
 /* Bloco 2026-05-03 #1: antetítulo editorial das caixinhas do músico.
-   Cormorant italic, ouro escuro, centralizado. Aparece antes das caixinhas
-   tanto dentro da letra (#musica_cta) quanto fora (#musica_cta_fora, após letra fechar). */
+   Cormorant italic, ouro escuro, centralizado. Aparece FORA da letra, abaixo do pergaminho,
+   só depois que o usuário abriu a letra 1 vez (gate .letra-foi-aberta). */
 .musica-cta-titulo{
   font-family:var(--fh);
   font-style:italic;
@@ -2245,21 +2251,25 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   line-height:1.4;
   color:#9C7A3F;
   text-align:center;
-  margin:22px 20px 12px;
-  letter-spacing:.01em;
-  /* Some se vazio */
-}
-.musica-cta-titulo:empty{display:none;}
-/* Variante fora da letra — aparece depois da letra fechar, junto com #cxVestido */
-.musica-cta-titulo--fora{
-  display:none; /* começa oculto — JS espelha e mostra se tiver conteúdo */
   margin:28px 20px 14px;
+  letter-spacing:.01em;
+  display:none; /* começa oculto — gate da classe letra-foi-aberta decide */
 }
-/* Só aparece se a letra já foi aberta ao menos uma vez (mesmo gate das caixinhas externas) */
-.vestido.letra-foi-aberta .musica-cta-titulo--fora{
+/* Caixinhas externas também começam ocultas — mesmo gate */
+.vestido .cx-cards#cxVestido{
+  display:none;
+}
+/* Só aparece depois da letra ter sido aberta ao menos uma vez (mesmo gate das caixinhas externas) */
+.vestido.letra-foi-aberta .musica-cta-titulo{
   display:block;
   animation:fadeInRise .6s ease both;
 }
+.vestido.letra-foi-aberta .cx-cards#cxVestido{
+  display:grid;
+  animation:fadeInRise .6s ease both;
+}
+/* Se no Sheet estiver vazio, mesmo com gate ativo, fica escondido */
+.musica-cta-titulo:empty{display:none !important;}
 
 /* Mobile: caixinhas um pouco mais compactas pra não "pesar" dentro da letra.
    Nome subido de 0.76 → 0.82rem pra passar no tio-velho (idoso 65+) sem quebrar em 3 linhas. */
@@ -4866,10 +4876,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">×</button>
       <div class="lyr-titulo" id="lyrTitulo"></div>
       <div class="lyr-text" id="musica_letra"></div>
-      <!-- Bloco 2026-05-03 #1: musica_cta agora é ANTETÍTULO das caixinhas (antes vinha depois).
-           Mesmo texto aparece ESPELHADO no #musica_cta_fora (fora da letra) via applyConteudo. -->
-      <p id="musica_cta" class="musica-cta-titulo"></p>
-      <div id="cxNoivoDentro" class="cx-cards cx-noivo-dentro"></div>
+      <!-- Bloco 2026-05-03 #fix-letra: musica_cta e caixinhas foram MOVIDAS PRA FORA da letra
+           (usuário quer que apareçam abaixo do pergaminho, não dentro). Só aparecem depois
+           que letra foi aberta 1 vez, via classe .letra-foi-aberta. -->
       <button class="pergaminho-abrir pergaminho-abrir--fechar" onclick="tL()" aria-label="Recolher letra">
         <span class="pergaminho-abrir-linha"></span>
         <span class="pergaminho-abrir-txt" id="musica_btn_letra_fecha">recolher a letra</span>
@@ -4879,8 +4888,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </div>
   </div>
 
-  <!-- Bloco 2026-05-03 #1: antetítulo espelhado (aparece com caixinhas externas após letra fechar) -->
-  <p id="musica_cta_fora" class="musica-cta-titulo musica-cta-titulo--fora"></p>
+  <!-- Bloco 2026-05-03 #fix-letra: musica_cta + caixinhas EXTERNAS, aparecem após letra aberta 1x.
+       musica_cta recebe o texto da chave musica_cta do Sheet. -->
+  <p id="musica_cta" class="musica-cta-titulo musica-cta-titulo--fora"></p>
   <div class="cx-cards" id="cxVestido"></div>
 
 <div class="vestido-seta-presentes-wrap" id="vestidoSetaPresentesWrap">
@@ -6159,30 +6169,29 @@ function applyConteudo(rows){
     fpm.textContent=fvm.textContent;
     fpm.classList.add('sheet-preserve-case');
   }
-  /* Bloco 2026-05-03 #1: espelha musica_cta em musica_cta_fora (caixinhas fora da letra) */
+  /* Bloco 2026-05-03 #fix-letra: musica_cta agora é externo (fora da letra).
+     applyConteudo já preenche o textContent automaticamente via chave. Só precisa
+     marcar display conforme se tem conteúdo. */
   var mct=document.getElementById('musica_cta');
-  var mctf=document.getElementById('musica_cta_fora');
-  if(mct&&mctf){
-    mctf.textContent=mct.textContent;
+  if(mct){
     if(mct.textContent.trim()){
-      mctf.style.display='';
+      mct.style.display='';
     }else{
-      mctf.style.display='none';
+      mct.style.display='none';
     }
   }
   /* Bloco 2026-05-03 #3: esconder wrapper inteiro do quote de abertura quando
-     historia_texto_abertura estiver vazio no Sheet (ativo=nao OU descricao em branco).
+     historia_texto_abertura estiver vazio OU inativo.
      
-     Fix: checar CONTEUDO (fonte de verdade do Sheet), NÃO textContent do span
-     (que pode ter fallback hardcoded do HTML "Um trecho da letra..."). */
-  var htaValor=(CONTEUDO && CONTEUDO['historia_texto_abertura'])?String(CONTEUDO['historia_texto_abertura']).trim():'';
+     Fix v3: checa 3 condições — CONTEUDO vazio, OU span display:none (ativo=nao aplicou),
+     OU textContent só tem whitespace. Uma dessas = esconde o wrapper. */
+  var htaSpan=document.getElementById('historia_texto_abertura');
   var htaWrap=document.getElementById('historia_texto_abertura_wrap');
   if(htaWrap){
-    if(!htaValor){
-      htaWrap.style.display='none';
-    }else{
-      htaWrap.style.display='';
-    }
+    var htaValor=(CONTEUDO && CONTEUDO['historia_texto_abertura']!==undefined)?String(CONTEUDO['historia_texto_abertura']).trim():'';
+    var htaSpanHidden=htaSpan?(htaSpan.style.display==='none'):false;
+    var vazio=!htaValor || htaSpanHidden;
+    htaWrap.style.display=vazio?'none':'';
   }
   popularPergaminho();
 
@@ -6352,21 +6361,16 @@ function _buildCxCard(cx,variant){
   return card;
 }
 function renderCaixinhasVestido(){
-  var cDentro=document.getElementById('cxNoivoDentro');
+  /* Bloco 2026-05-03 #fix-letra: #cxNoivoDentro removido do HTML (estava dentro da letra).
+     Caixinhas agora vivem APENAS em #cxVestido externo, que só aparece após letra ter sido
+     aberta 1 vez (via classe .letra-foi-aberta na seção). */
   var cFora=document.getElementById('cxVestido');
-  if(!cDentro&&!cFora)return;
-  if(cDentro)cDentro.innerHTML='';
-  if(cFora)cFora.innerHTML='';
-  var temItens=false;
+  if(!cFora)return;
+  cFora.innerHTML='';
   CAIXINHAS.forEach(function(cx){
     if(cx.catId!=='noivo_artista')return;
-    if(cDentro)cDentro.appendChild(_buildCxCard(cx,'dark'));
-    if(cFora)cFora.appendChild(_buildCxCard(cx,'dark'));
-    temItens=true;
+    cFora.appendChild(_buildCxCard(cx,'dark'));
   });
-  if(temItens&&cDentro)cDentro.classList.add('tem-itens');
-  /* fora começa oculto — só aparece ao fechar a letra */
-  if(cFora)cFora.style.display='none';
 }
 
 
@@ -6794,8 +6798,8 @@ function _toggleLetra(abrir){
   var b=document.getElementById('lB');
   var sec=document.getElementById('vestido');
   if(!b||!sec)return;
-  var cFora=document.getElementById('cxVestido');
-  var cDentro=document.getElementById('cxNoivoDentro');
+  /* Bloco 2026-05-03 #fix-letra: #cxNoivoDentro removido do DOM.
+     Caixinhas externas (#cxVestido) controladas via CSS (.letra-foi-aberta). */
 
   var navOffset=78;
 
@@ -6814,30 +6818,17 @@ function _toggleLetra(abrir){
 
   if(abrir){
     /* ABRIR: rola instantaneamente até o pergaminho (topo da letra que vai abrir)
-       ANTES de disparar a transição. Não precisa "centralizar" nada depois —
-       o usuário já está no começo da letra e lê rolando pra baixo. */
+       ANTES de disparar a transição. */
     var pergAntes=document.getElementById('pergaminhoWrap');
     _scrollInstantTo(pergAntes);
 
     b.classList.add('open');
     sec.classList.add('lyr-aberta');
     sec.classList.add('letra-foi-aberta');
-    if(cFora)cFora.style.display='none';
-    if(cDentro)cDentro.style.display='';
     trackEvento('letra_abriu','');
   }else{
-    /* FECHAR — fix definitivo do "pulo":
-       
-       Problema anterior: chamava _scrollInstantTo(pergaminhoWrap) ANTES de remover
-       .lyr-aberta da seção. Mas com .lyr-aberta ativo, o CSS aplica display:none
-       no pergaminho. getBoundingClientRect() de display:none retorna {top:0},
-       então o scroll ia pro topo do site (bug visível).
-       
-       Fix: primeiro removemos .lyr-aberta (pergaminho volta a ter layout), aí
-       medimos o pergaminho real. Aí removemos .lyr-box.open (inicia animação
-       de colapso). Nessa ordem, o scroll está no lugar certo antes da animação. */
-    
-    /* 1. Re-exibe pergaminho (agora mensurável) */
+    /* FECHAR — fix do "pulo":
+       1. Re-exibe pergaminho (agora mensurável) */
     sec.classList.remove('lyr-aberta');
     
     /* 2. Agora que pergaminho tem layout, calcula e aplica scroll instantâneo */
@@ -6846,10 +6837,6 @@ function _toggleLetra(abrir){
     
     /* 3. Inicia animação de colapso da letra (já com scroll no lugar final) */
     b.classList.remove('open');
-    
-    /* 4. Esconde caixinhas internas / re-mostra externas */
-    if(cDentro)cDentro.style.display='none';
-    if(cFora)cFora.style.display='';
     
     trackEvento('letra_fechou','');
   }
