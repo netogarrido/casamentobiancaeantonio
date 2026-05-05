@@ -2269,30 +2269,47 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 /* Bloco 2026-05-03 #1: antetítulo editorial das caixinhas do músico.
    
-   Auditoria UX 2026-05-03 (correção do "carnaval"): bloco vertical tinha 4 elementos
-   em Cormorant italic ouro (letra+recolher+este+nossa lista) competindo visualmente.
-   Fix: esse antetítulo agora é NEUTRO em cinza editorial, não ouro. Cria contraste
-   com as caixinhas (ouro saturado) e com os 2 botões adjacentes (ouro discreto).
+   Designer UX v3: título de 2 linhas — linha 1 em peso/cor da letra da música
+   (cria continuidade), linha 2 menor e cinza (label da ação). Se o texto não
+   tem "...", fica em linha única com estilo de linha 1.
    
-   Hierarquia final:
+   Hierarquia final no bloco:
    - Caixinhas = FORTE (ouro + emoji cor + pílula destacada)
-   - "Espero..." = MÉDIO (cinza editorial, contexto)
+   - Linha 1 do antetítulo = MÉDIO-ALTO (navy forte, tamanho 1.4rem, igual letra)
+   - Linha 2 do antetítulo = MÉDIO-BAIXO (cinza, 1.08rem)
    - "Recolher" / "Nossa lista" = FRACO (ouro leve, navegação)
 */
 .musica-cta-titulo{
   font-family:var(--fh);
   font-style:italic;
-  font-weight:500;
-  font-size:1.12rem;
-  line-height:1.5;
-  color:var(--im); /* #54493C — cinza editorial neutro, não ouro */
   text-align:center;
-  margin:34px 20px 16px;
-  letter-spacing:.005em;
-  max-width:520px;
+  margin:34px 20px 18px;
+  max-width:560px;
   margin-left:auto;
   margin-right:auto;
-  display:none; /* começa oculto — gate da classe letra-foi-aberta decide */
+  display:none;
+}
+.musica-cta-titulo .musica-cta-l1{
+  display:block;
+  font-weight:500;
+  font-size:1.4rem;
+  line-height:1.35;
+  color:var(--i); /* navy escuro, igual à letra */
+  letter-spacing:.005em;
+  margin-bottom:6px;
+}
+.musica-cta-titulo .musica-cta-l2{
+  display:block;
+  font-weight:500;
+  font-size:1.08rem;
+  line-height:1.4;
+  color:var(--im); /* cinza médio */
+  letter-spacing:.01em;
+}
+@media(max-width:520px){
+  .musica-cta-titulo{margin:28px 16px 14px}
+  .musica-cta-titulo .musica-cta-l1{font-size:1.22rem}
+  .musica-cta-titulo .musica-cta-l2{font-size:1rem}
 }
 /* Caixinhas externas também começam ocultas — mesmo gate */
 .vestido .cx-cards#cxVestido{
@@ -4626,13 +4643,35 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .mo-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
 .mo-step-n{width:26px;height:26px;border-radius:50%;background:var(--a);color:var(--n);font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mo-step-t{font-size:.8rem;color:var(--i);line-height:1.5;padding-top:3px}
-.mo-fg{margin-bottom:10px}
-.mo-fl{font-size:.56rem;font-weight:600;letter-spacing:.14em;color:var(--is);margin-bottom:5px;display:block}
+.mo-fg{margin-bottom:14px}
+/* Labels UX 2026-05-03: era 0.56rem uppercase tracking 0.14em (quase ilegível pro tio).
+   Agora: 0.78rem, peso 500, sem uppercase, tracking menor, cinza médio.
+   Humano, legível, mantém estética Sans do formulário. */
+.mo-fl{
+  font-family:var(--fb);
+  font-size:.78rem;
+  font-weight:500;
+  letter-spacing:.02em;
+  color:var(--im);
+  margin-bottom:6px;
+  display:block;
+  text-transform:none;
+}
 .mo-fi{width:100%;padding:12px 13px;background:#fff;border:1.5px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i)}
 .mo-fi::placeholder{color:var(--is)}.mo-fi:focus{border-color:var(--a);outline:none}
 .mo-fta{width:100%;min-height:70px;padding:12px 13px;background:#fff;border:1.5px solid var(--st);border-radius:var(--rs);font-size:16px;color:var(--i);resize:none;line-height:1.5}
 .mo-fta::placeholder{color:var(--is)}.mo-fta:focus{border-color:var(--a);outline:none}
-.mo-cnt{text-align:right;font-size:.56rem;color:var(--is);margin-top:3px}
+/* Contador de chars: escondido até usuário começar a digitar.
+   Conversor: reduz fricção no campo opcional — não cria medo de "não atingir". */
+.mo-cnt{
+  text-align:right;
+  font-size:.7rem;
+  color:var(--is);
+  margin-top:4px;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.mo-cnt.mo-cnt--vis{opacity:1}
 .mo-btns{display:flex;flex-direction:column;gap:8px;margin-top:18px}
 .ty{display:none;text-align:center;padding:32px 8px}.ty.on{display:block}
 .ty h3{font-family:var(--fh);font-size:1.35rem;margin-bottom:8px}
@@ -5426,7 +5465,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       </div>
       <div class="mo-fg">
         <label class="mo-fl" id="modal_msg_label">Mensagem para Bianca e Antonio (opcional)</label>
-        <textarea class="mo-fta" id="mMs" placeholder="Escreva aqui com carinho..." maxlength="500" oninput="document.getElementById('mCt').textContent=this.value.length"></textarea>
+        <textarea class="mo-fta" id="mMs" placeholder="Escreva aqui com carinho..." maxlength="500" oninput="(function(t){document.getElementById('mCt').textContent=t.value.length;var c=document.querySelector('.mo-cnt');if(c)c.classList.toggle('mo-cnt--vis',t.value.length>0);})(this)"></textarea>
         <div class="mo-cnt"><span id="mCt">0</span>/500</div>
       </div>
 <div class="mo-btns">
@@ -6373,15 +6412,30 @@ function applyConteudo(rows){
   }
   /* Bloco 2026-05-03 #fix-letra: musica_cta agora é externo (fora da letra).
      applyConteudo já preenche o textContent automaticamente via chave. Só precisa
-     marcar display conforme se tem conteúdo. */
+     marcar display conforme se tem conteúdo.
+     
+     Designer UX: transforma o parágrafo num título editorial de 2 linhas:
+     - Linha 1 (destaque navy): parte antes dos "..." — reforça continuidade com a letra
+     - Linha 2 (cinza, menor): parte depois dos "..." — label da ação das caixinhas
+     Se o texto não tiver "...", fica em linha única com estilo de linha 1. */
   var mct=document.getElementById('musica_cta');
   if(mct){
-    if(mct.textContent.trim()){
+    var txtCta=mct.textContent.trim();
+    if(txtCta){
+      var partes=txtCta.split(/\.{3,}|…/);
+      if(partes.length>=2){
+        var linha1=partes[0].trim()+'…';
+        var linha2=partes.slice(1).join('…').trim();
+        mct.innerHTML='<span class="musica-cta-l1">'+linha1+'</span><span class="musica-cta-l2">'+linha2+'</span>';
+      }else{
+        mct.innerHTML='<span class="musica-cta-l1">'+txtCta+'</span>';
+      }
       mct.style.display='';
     }else{
       mct.style.display='none';
     }
   }
+  popularPergaminho();
   /* Bloco 2026-05-03 #3: esconder wrapper inteiro do quote de abertura quando
      historia_texto_abertura estiver vazio OU inativo.
      
@@ -7300,6 +7354,9 @@ function openModal(g){
   document.getElementById('mNm').value=getNomeSalvo();
   document.getElementById('mMs').value='';
   document.getElementById('mCt').textContent='0';
+  /* Reset contador escondido ao abrir novo modal */
+  var _mcnt=document.querySelector('.mo-cnt');
+  if(_mcnt)_mcnt.classList.remove('mo-cnt--vis');
   var labelNome=document.getElementById('modal_nome_label');
   if(labelNome){labelNome.textContent=getNomeSalvo()?'Confirme seu nome':'Seu nome';}
   var moBox=document.querySelector('.mo-box');
