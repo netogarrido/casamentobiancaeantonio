@@ -2769,29 +2769,33 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 /* ──────────── PRESENTES — DESKTOP SIDE-BY-SIDE ──────────── */
 @media(min-width:768px){
 
-  /* Section vira grid: foto esquerda | conteúdo direita */
+  /* Section vira grid: foto esquerda | conteúdo direita.
+     
+     Fix 2026-05-03 ultrawide: padding lateral grande pra centralizar conteúdo em telas
+     grandes, mantendo o background bege full-width da viewport.
+     Abordagem: padding lateral dinâmico `calc((100% - 1180px) / 2)` quando tela > 1180px. */
   .presentes{
     display:grid;
     grid-template-columns:42% 1fr;
     grid-template-rows:auto;
+    column-gap:clamp(24px,3vw,56px);
     align-items:start;
+    /* Padding lateral: mínimo 20px, mas escala com a sobra da tela acima de 1180px */
+    padding-left:max(20px, calc((100vw - 1180px) / 2));
+    padding-right:max(20px, calc((100vw - 1180px) / 2));
     padding-bottom:0;
     overflow:visible;
   }
 
-  /* Coluna esquerda: foto com aspect-ratio natural retrato, não mais 100vh esticada.
-     
-     Antes: height:calc(100vh - 78px) + object-fit:cover → cortava céu e cabeça da família.
-     Agora: aspect-ratio 4/5 + max-height 560px + object-fit:cover (mantém mas sem distorcer tanto
-     porque a proporção se aproxima do natural). Fundo bege ao redor cria moldura visual natural.
-     Sticky mantém foto acompanhando a coluna direita se ela crescer com subcategorias. */
+  /* Coluna esquerda: foto vertical (3/5, mais retrato) com título no topo sobre o céu.
+     Aspect 3/5 = mais alta que larga, mostra mais do céu e da paisagem. */
   .pres-hero{
     grid-column:1;
     grid-row:1 / 99;
     position:sticky;
-    top:100px; /* um pouco abaixo do nav pra respirar */
-    aspect-ratio:4/5;
-    max-height:620px;
+    top:100px;
+    aspect-ratio:3/5;
+    max-height:720px;
     width:100%;
     height:auto;
     margin:clamp(24px,3vh,48px) 0 0;
@@ -2801,7 +2805,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     box-shadow:0 18px 40px rgba(84,73,60,.22), 0 4px 12px rgba(84,73,60,.12);
   }
 
-  /* Foto preenche o container com aspect-ratio correto */
+  /* Foto preenche o container */
   .pres-polaroid-wrap{
     height:100%;
     width:100%;
@@ -2824,7 +2828,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
   #presentes_titulo{
     font-size:clamp(2.2rem,3vw,3.4rem);
-    top:clamp(24px,4vh,48px);
+    top:clamp(32px,5vh,72px);
     bottom:auto;
     transform:translateX(-50%);
     text-align:center;
