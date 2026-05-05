@@ -2792,27 +2792,38 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     object-position:center top;
   }
 
-  /* Overlay/título sobre a foto */
+  /* Overlay/título sobre a foto.
+     
+     Fix desktop 2026-05-03: título "Nossa lista de presentes" estava no BASE da foto
+     com contraste ruim sobre areia clara. Agora:
+     - Título move pro TOPO da foto (sempre tem gradient escuro garantido)
+     - Gradient invertido: navy forte no topo, fade pra transparente
+     - Contraste AA garantido independente do conteúdo da foto abaixo */
   .pres-hero::after{
     height:35%;
+    top:0;
+    bottom:auto;
     background:linear-gradient(180deg,
-      rgba(232,220,196,0) 0%,
-      rgba(232,220,196,.7) 60%,
-      rgba(232,220,196,.95) 100%);
+      rgba(15,23,32,.72) 0%,
+      rgba(15,23,32,.45) 50%,
+      rgba(15,23,32,0) 100%);
   }
 
   #presentes_titulo{
-    font-size:clamp(2.4rem,3.2vw,3.6rem);
-    top:auto;
-    bottom:clamp(16px,3vh,32px);
+    font-size:clamp(2.2rem,3vw,3.4rem);
+    top:clamp(24px,4vh,48px);
+    bottom:auto;
     transform:translateX(-50%);
     text-align:center;
     width:calc(100% - 48px);
+    color:#fff;
+    text-shadow:0 2px 12px rgba(15,23,32,.65), 0 1px 3px rgba(15,23,32,.4);
   }
 
   .pres-hero-badge{
-    bottom:auto;
-    top:20px;
+    /* Badge "ver todas" move pro canto inferior esquerdo pra não colidir com o título no topo */
+    bottom:20px;
+    top:auto;
     left:20px;
   }
 
