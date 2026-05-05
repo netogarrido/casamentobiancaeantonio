@@ -1083,22 +1083,23 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   max-width:420px;
   width:100%;
   margin:0 auto;
-  padding:0 4px;
+  padding:6px 4px;
   background:none;
   border:none;
   border-radius:0;
   box-shadow:none;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
-  /* Escurecido pra #9C7A3F pra passar WCAG AA */
   color:#9C7A3F;
   font-family:var(--fh);
   font-style:italic;
-  font-weight:400;
-  font-size:1.05rem;
+  /* Recalibrado 2026-05-03: peso 400 estava ilegível pro tio-velho.
+     Volta pra peso 500 (legível) + tamanho 1.1rem. Cor ouro escuro mantém contraste AA. */
+  font-weight:500;
+  font-size:1.1rem;
   letter-spacing:.02em;
   text-transform:none;
-  line-height:1;
+  line-height:1.2;
   animation:none;
   -webkit-tap-highlight-color:transparent;
   transition:opacity .25s ease;
@@ -1768,8 +1769,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
   
 /* convite a abrir — discreto, dentro do pergaminho.
-   Bloco 2026-05-03 #6: reforçado (Tio-velho C2 — estava apagado demais, tio não via).
-   Agora: fundo ouro translúcido sutil + peso 600 + tamanho maior. Mantém editorial. */
+   Auditoria 2026-05-03: REMOVIDO o fundo degradê ouro (era pra o tio ver, mas criava
+   carnaval com outros 3 elementos dourados adjacentes). Agora: linha tracejada limpa +
+   texto ouro discreto + seta. Tio ainda vê pelo tamanho do texto (1.15rem) e pelo
+   chevron, sem peso visual extra. */
 .pergaminho-abrir{
   position:absolute;
   left:0;
@@ -1780,22 +1783,16 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   justify-content:center;
   gap:10px;
   padding:16px 20px 22px;
-  background:linear-gradient(180deg,
-    rgba(212,160,74,0) 0%,
-    rgba(212,160,74,.06) 50%,
-    rgba(212,160,74,.10) 100%);
+  background:transparent;
   border:none;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   z-index:2;
-  transition:background .25s ease, opacity .25s ease;
+  transition:opacity .25s ease;
 }
 .pergaminho:hover .pergaminho-abrir,
 .pergaminho-abrir:hover{
-  background:linear-gradient(180deg,
-    rgba(212,160,74,.04) 0%,
-    rgba(212,160,74,.10) 50%,
-    rgba(212,160,74,.16) 100%);
+  opacity:.82;
 }
 .pergaminho-abrir-linha{
   flex:1;
@@ -1809,10 +1806,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .pergaminho-abrir-txt{
   font-family:var(--fh);
   font-style:italic;
-  font-weight:600;
-  font-size:1.15rem;
+  /* Recalibrado 2026-05-03: peso 500 + 1.1rem. Era 600/1.15rem (carnaval com outros
+     3 elementos dourados adjacentes). Agora legível pro tio sem competir visualmente. */
+  font-weight:500;
+  font-size:1.1rem;
   letter-spacing:.02em;
-  /* Bloco 2026-05-03 #6: peso 600 e tamanho 1.15rem (antes 500 / 1.02rem) pra tio ver */
   color:#9C7A3F;
   white-space:nowrap;
 }
@@ -2253,18 +2251,30 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cx-card--light .cx-ico{background:var(--ag);border:1px solid rgba(212,160,74,.2);}
 
 /* Bloco 2026-05-03 #1: antetítulo editorial das caixinhas do músico.
-   Designer-ux recomendação: peso 600 + tamanho 1.22rem + cor mais escura + respiro maior.
-   Evita bold italic puro (fica pesado em Cormorant) mas dá ~85% do impacto. */
+   
+   Auditoria UX 2026-05-03 (correção do "carnaval"): bloco vertical tinha 4 elementos
+   em Cormorant italic ouro (letra+recolher+este+nossa lista) competindo visualmente.
+   Fix: esse antetítulo agora é NEUTRO em cinza editorial, não ouro. Cria contraste
+   com as caixinhas (ouro saturado) e com os 2 botões adjacentes (ouro discreto).
+   
+   Hierarquia final:
+   - Caixinhas = FORTE (ouro + emoji cor + pílula destacada)
+   - "Espero..." = MÉDIO (cinza editorial, contexto)
+   - "Recolher" / "Nossa lista" = FRACO (ouro leve, navegação)
+*/
 .musica-cta-titulo{
   font-family:var(--fh);
   font-style:italic;
-  font-weight:600;
-  font-size:1.22rem;
-  line-height:1.45;
-  color:#8a6a32;
+  font-weight:500;
+  font-size:1.12rem;
+  line-height:1.5;
+  color:var(--im); /* #54493C — cinza editorial neutro, não ouro */
   text-align:center;
-  margin:38px 20px 18px;
-  letter-spacing:.01em;
+  margin:34px 20px 16px;
+  letter-spacing:.005em;
+  max-width:520px;
+  margin-left:auto;
+  margin-right:auto;
   display:none; /* começa oculto — gate da classe letra-foi-aberta decide */
 }
 /* Caixinhas externas também começam ocultas — mesmo gate */
