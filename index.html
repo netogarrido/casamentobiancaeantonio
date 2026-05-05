@@ -7579,7 +7579,7 @@ function _enviarRSVP(d,form){
       enviar({type:'sugestao_musica',musica:sug});
     }
     if(msg){
-      enviar({type:'presente',presente:'Mensagem via RSVP',valor:0,mensagem:msg});
+      enviar({type:'rsvp_mensagem',mensagem:msg});
     }
     if(form)form.style.display='none';
     var rO=document.getElementById('rO');
