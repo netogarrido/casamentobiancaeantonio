@@ -6697,7 +6697,10 @@ function handleStart(){
     _mostrarErroAudio('play_rejected');
   });
   hP('sim');
-  initVestidoSwap();
+  /* Bloco 2026-05-03 #polaroids: initVestidoSwap() REMOVIDO daqui.
+     Animação só dispara quando usuário scrolla até a seção Vestido (IntersectionObserver).
+     Antes disparava no fechamento do popup, ANTES do usuário chegar lá → fotos caiam
+     invisíveis, dando sensação de "bug" quando ele rolava e via tudo parado. */
   initSecaoObserver();
   initInatividade();
 }
@@ -6719,7 +6722,7 @@ function handleSkip(){
   trackEvento('popup_stage_um_nao','com_musica=nao&tempo_ms='+_tNao);
   playHeroVideo();
   hP('nao');
-  initVestidoSwap();
+  /* Bloco 2026-05-03 #polaroids: initVestidoSwap() REMOVIDO daqui (idem handleAccept) */
   initSecaoObserver();
   initInatividade();
 }
@@ -8359,25 +8362,8 @@ function vpPousar(el,zIdx,cb){
   },780);
 }
 
-/* Arrasto final: cada polaroid sai em direção ALEATÓRIA (não mais todas pro mesmo lado).
-   Simula uma mão espontânea empurrando — mais natural que movimento coreografado. */
-function vpArrastar(ativos,cb){
-  setTimeout(function(){
-    ativos.forEach(function(el,i){
-      if(!el||el.style.opacity==='0')return;
-      /* Direção aleatória: mistura horizontal + vertical, com pouca variação de rotação */
-      var dirX=vpRand(0,1)<0.5?vpRand(-200,-120):vpRand(120,200);
-      var dirY=vpRand(40,120);
-      var rot=vpRand(-25,25);
-      el.style.transition='transform 1.0s cubic-bezier(.4,0,.6,1), opacity .8s ease';
-      el.style.transform='translate3d('+dirX+'%,'+dirY+'%,0) rotate('+rot+'deg)';
-      el.style.opacity='0';
-      el.style.pointerEvents='none';
-      el.classList.remove('pousado');
-    });
-    setTimeout(function(){if(cb)cb();},1100);
-  },4500); /* 4.5s de parada antes do arrasto — tempo pro tio ver */
-}
+/* Bloco 2026-05-03 #2: arrasto da mão REMOVIDO a pedido do usuário.
+   Comportamento: fotos caem 1 vez ao entrar na seção, ficam paradas pra sempre. */
 
 function vpCiclo(){
   if(vpBusy)return;
@@ -8403,18 +8389,15 @@ function vpCiclo(){
   var zBase=3;
   function quedaProxima(){
     if(idx>=ordemQueda.length){
-      /* Bloco #2: NÃO reinicia ciclo; deixa arrasto final rodar 1 vez */
-      vpArrastar(fotosEmbaralhadas,function(){
-        vpBusy=false;
-        /* vpIniciado permanece true — só reinicia se IntersectionObserver disparar de novo */
-      });
+      /* Fim do ciclo — fotos ficam paradas pra sempre. Sem arrasto, sem loop. */
+      vpBusy=false;
       return;
     }
     var el=ordemQueda[idx];
     var z=(el._slotIdx===3)?zBase+10:zBase+idx;
     vpPousar(el,z,null);
     idx++;
-    var delay=vpRand(700,1500); /* delay entre quedas reduzido pra ciclo caber melhor */
+    var delay=vpRand(700,1500);
     vpTimer=setTimeout(quedaProxima,delay);
   }
   vpTimer=setTimeout(quedaProxima,700);
