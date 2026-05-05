@@ -2079,12 +2079,22 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     max-width:none;
   }
 
-  /* Linha 4+: letra aberta, CTA, caixinhas, seta — full width */
+  /* Linha 4+: letra aberta, CTA, caixinhas, seta.
+     Bloco 2026-05-03 #fix-desktop: letra aberta fica na COLUNA DIREITA (grid-column:2),
+     não mais full-width. Assim "Vestido Vestido" não pula de posição quando abre.
+     O pergaminho fechado tá em row 3 col 2; letra aberta substitui visualmente o pergaminho. */
   .vestido .inn > .lyr-box{
+    grid-column:2;
+    grid-row:3;
+    align-self:start;
+  }
+  /* Quando letra aberta, o pergaminho fechado some (já existe regra .vestido.lyr-aberta .pergaminho-wrap{display:none}) */
+  
+  /* musica_cta_fora + caixinhas externas entram abaixo, full-width */
+  .vestido .inn > #musica_cta_fora{
     grid-column:1/-1;
     grid-row:4;
   }
-  
   .vestido .inn > .cx-cards#cxVestido{
     grid-column:1/-1;
     grid-row:5;
@@ -6161,12 +6171,14 @@ function applyConteudo(rows){
     }
   }
   /* Bloco 2026-05-03 #3: esconder wrapper inteiro do quote de abertura quando
-     historia_texto_abertura estiver vazio (ativo=nao no Sheet OU descricao vazia).
-     Evita aparecer só aspas e espaço sem conteúdo. */
-  var hta=document.getElementById('historia_texto_abertura');
+     historia_texto_abertura estiver vazio no Sheet (ativo=nao OU descricao em branco).
+     
+     Fix: checar CONTEUDO (fonte de verdade do Sheet), NÃO textContent do span
+     (que pode ter fallback hardcoded do HTML "Um trecho da letra..."). */
+  var htaValor=(CONTEUDO && CONTEUDO['historia_texto_abertura'])?String(CONTEUDO['historia_texto_abertura']).trim():'';
   var htaWrap=document.getElementById('historia_texto_abertura_wrap');
-  if(hta&&htaWrap){
-    if(!hta.textContent.trim()){
+  if(htaWrap){
+    if(!htaValor){
       htaWrap.style.display='none';
     }else{
       htaWrap.style.display='';
