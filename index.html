@@ -790,8 +790,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 /* ──────────── HERO ──────────── */
 .hero{
+  /* Fix scroll-pulinho: usar 100svh (small viewport height) em TODOS os navegadores modernos.
+     Antes: height:100svh; height:100dvh; (dvh faz o hero crescer quando barra URL some → todo
+     conteúdo abaixo desloca → "pulinho" visível em Vestido/Programação).
+     svh é constante mesmo com barra URL aparecendo/sumindo → sem pulinho. */
   height:100svh;
-  height:100dvh;
   min-height:560px;
   display:flex;
   align-items:stretch;
@@ -896,6 +899,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   opacity:0;
   transition:opacity .35s ease;
   pointer-events:none;
+  /* Fix iOS: aumenta área clicável via padding vertical — tio não acertava na barrinha */
+  padding:14px 0;
+  margin:-14px 0;
 }
 
 .hero.hero-video-started .hero-scrub{
@@ -911,8 +917,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   background:transparent;
   /* Bloco 2026-05-03 #4: altura maior pra aumentar hitbox de toque
      (tio-velho não acertava a barrinha de 2px). Visual da track mantém fino via pseudo. */
-  height:28px;
+  height:44px;
   cursor:pointer;
+  touch-action:manipulation;
 }
 
 .hero-scrub input[type="range"]::-webkit-slider-runnable-track{
@@ -924,13 +931,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .hero-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
-  width:14px;
-  height:14px;
+  width:20px;
+  height:20px;
   border-radius:50%;
   background:rgba(232,197,122,.95);
-  border:none;
-  box-shadow:0 0 0 2px rgba(15,23,32,.55);
-  margin-top:-5px;
+  border:2px solid #0F1720;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  margin-top:-9px;
   cursor:grab;
 }
 
@@ -942,12 +949,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 .hero-scrub input[type="range"]::-moz-range-thumb{
-  width:14px;
-  height:14px;
-  border:none;
+  width:20px;
+  height:20px;
+  border:2px solid #0F1720;
   border-radius:50%;
   background:rgba(232,197,122,.95);
-  box-shadow:0 0 0 2px rgba(15,23,32,.55);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
 }
 
 .hero-vid-wrap:hover .hero-scrub,
@@ -6054,6 +6061,8 @@ var au=document.getElementById('bgMusic');
   au.addEventListener('play',function(){
     _audioUltimoPlay=Date.now();
     syncPlayerUI();
+    /* Bloco 2026-05-03 #5b: avisa o label "pausar" sobre mudança de estado */
+    try{if(window._atualizarLabelPausar)window._atualizarLabelPausar();}catch(e){}
   });
   au.addEventListener('pause',function(){
     if(_audioUltimoPlay){
@@ -6061,6 +6070,7 @@ var au=document.getElementById('bgMusic');
       _audioUltimoPlay=null;
     }
     syncPlayerUI();
+    try{if(window._atualizarLabelPausar)window._atualizarLabelPausar();}catch(e){}
   });
 
   /* P8: feedback em rede ruim — áudio estava falhando em silêncio.
@@ -6874,14 +6884,21 @@ function _toggleLetra(abrir){
 
   /* Helper: scroll instantâneo (sem smooth) pro topo de um elemento,
      menos o offset do nav fixo. Usado ANTES da mudança de estado em ambos
-     os casos pra que a animação CSS role com o viewport já no lugar final. */
+     os casos pra que a animação CSS role com o viewport já no lugar final.
+     
+     Fix pulinho: só rola se a distância for significativa (>60px). Se usuário já
+     está olhando o pergaminho, um scroll de 5-20px seria percebido como pulo. */
   function _scrollInstantTo(el){
     if(!el)return;
     var htmlEl=document.documentElement;
     var prev=htmlEl.style.scrollBehavior;
+    var rect=el.getBoundingClientRect();
+    var alvo=rect.top+window.scrollY-navOffset;
+    var alvoSeguro=Math.max(0,alvo);
+    var distancia=Math.abs(alvoSeguro-window.scrollY);
+    if(distancia<60)return; /* já está próximo, não precisa mexer */
     htmlEl.style.scrollBehavior='auto';
-    var top=el.getBoundingClientRect().top+window.scrollY-navOffset;
-    window.scrollTo(0,Math.max(0,top));
+    window.scrollTo(0,alvoSeguro);
     requestAnimationFrame(function(){htmlEl.style.scrollBehavior=prev||'';});
   }
 
