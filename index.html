@@ -2783,22 +2783,26 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     /* Padding lateral: mínimo 20px, mas escala com a sobra da tela acima de 1180px */
     padding-left:max(20px, calc((100vw - 1180px) / 2));
     padding-right:max(20px, calc((100vw - 1180px) / 2));
-    padding-bottom:0;
+    /* Respiro simétrico: mesma margem bege no topo e na base antes da próxima seção */
+    padding-top:clamp(32px,5vh,72px);
+    padding-bottom:clamp(32px,5vh,72px);
     overflow:visible;
   }
 
   /* Coluna esquerda: foto vertical (3/5, mais retrato) com título no topo sobre o céu.
-     Aspect 3/5 = mais alta que larga, mostra mais do céu e da paisagem. */
+     Aspect 3/5 = mais alta que larga, mostra mais do céu e da paisagem.
+     max-height aumentado pra 840px — foto mais presente em desktop grande. */
   .pres-hero{
     grid-column:1;
     grid-row:1 / 99;
     position:sticky;
     top:100px;
     aspect-ratio:3/5;
-    max-height:720px;
+    max-height:840px;
     width:100%;
     height:auto;
-    margin:clamp(24px,3vh,48px) 0 0;
+    /* Margin-top removido — padding-top da section já cria o respiro bege superior */
+    margin:0 0 0;
     overflow:hidden;
     z-index:1;
     border-radius:14px;
