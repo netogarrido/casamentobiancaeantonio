@@ -1885,11 +1885,36 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 /* Quando letra abre: pergaminho some.
    
-   Fix 2026-05-03 crossfade: em vez de encolher o fechado (visualmente "some/pisca"),
-   fazemos fade suave. Max-height continua controlado pra não quebrar layout do grid.
-   Transição de opacity curta (300ms) e simultânea com a expansão da letra.
-   Os títulos de ambos elementos já estão pixel-aligned (28px top, 68px left, mesma fonte),
-   então durante o fade o título "Vestido Vestido" parece inabalado. */
+   Fix 2026-05-06 crossfade-no-mesmo-ponto:
+   Usa .pergaminho-stack como wrapper grid-1x1 — pergaminho e letra ocupam
+   a mesma célula. Um com opacity:1 + position:relative (ocupa altura),
+   o outro com opacity:0 + position:absolute (fora do fluxo).
+   JS troca `position` coordenando com a transição de opacity pra
+   evitar flash/pulo. */
+.pergaminho-stack{
+  position:relative;
+  max-width:480px;
+  margin:0 auto;
+}
+.pergaminho-stack > .pergaminho-wrap,
+.pergaminho-stack > .lyr-box{
+  transition:opacity .35s ease;
+}
+.pergaminho-stack > .pergaminho-wrap.stack-fora,
+.pergaminho-stack > .lyr-box.stack-fora{
+  position:absolute;
+  top:0; left:0; right:0;
+  opacity:0;
+  pointer-events:none;
+}
+.pergaminho-stack > .pergaminho-wrap.stack-dentro,
+.pergaminho-stack > .lyr-box.stack-dentro{
+  position:relative;
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* Legado v6 — mantido pra compatibilidade caso HTML não tenha stack ainda */
 .pergaminho-wrap{
   transition:max-height .5s cubic-bezier(.4,0,.2,1),
              opacity .3s ease,
@@ -1898,7 +1923,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   max-height:2000px;
   opacity:1;
 }
-.vestido.lyr-aberta .pergaminho-wrap{
+.vestido.lyr-aberta .pergaminho-wrap:not(.stack-dentro):not(.stack-fora){
   max-height:0;
   opacity:0;
   margin-top:0;
@@ -1920,18 +1945,22 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 /* ── Letra aberta — mesmo pergaminho, só expandido ── */
 .lyr-box{
-  max-height:0;
-  overflow:hidden;
-  /* Crossfade: opacity rápida (300ms) sincroniza com pergaminho-wrap que faz fade-out.
-     Max-height mais longo (600ms) pra letra expandir suavemente sem parecer abrupta. */
-  transition:max-height .6s cubic-bezier(.4,0,.2,1), opacity .3s ease;
-  opacity:0;
+  /* v7 crossfade: altura natural (auto). Visibilidade controlada por .stack-fora/.stack-dentro
+     do wrapper .pergaminho-stack. Legado: .open ainda funciona se não houver stack. */
+  transition:opacity .35s ease;
   position:relative;
   overflow-anchor:none;
 }
 .lyr-box *{overflow-anchor:none}
 
-.lyr-box.open{
+/* Legado: fora do stack, letra usa max-height fechada */
+.lyr-box:not(.stack-dentro):not(.stack-fora){
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:max-height .6s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+}
+.lyr-box:not(.stack-dentro):not(.stack-fora).open{
   max-height:5200px;
   opacity:1;
   margin-top:0;
@@ -5382,8 +5411,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 
 
   
-<!-- Pergaminho: trecho da letra com fade e convite a abrir -->
-<div class="pergaminho-wrap" id="pergaminhoWrap">
+<!-- Pergaminho + Letra: stack crossfade (v7 — sem scroll, sem pulo) -->
+<div class="pergaminho-stack" id="pergaminhoStack">
+<div class="pergaminho-wrap stack-dentro" id="pergaminhoWrap">
     <button class="pergaminho" id="pergaminho" type="button" onclick="tL()" aria-label="Abrir letra completa">
       <div class="pergaminho-borda-topo"></div>
       <div class="pergaminho-corpo">
@@ -5401,7 +5431,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   </div>
 
   <!-- Letra completa (expansível) -->
-<div class="lyr-box" id="lB">
+<div class="lyr-box stack-fora" id="lB">
     <div class="lyr-stage">
       <button class="lyr-fechar-x" onclick="tL()" aria-label="Fechar letra">×</button>
       <div class="lyr-titulo" id="lyrTitulo"></div>
@@ -5417,6 +5447,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       </button>
     </div>
   </div>
+</div><!-- /.pergaminho-stack -->
 
   <!-- Bloco 2026-05-03 #fix-letra: musica_cta + caixinhas EXTERNAS, aparecem após letra aberta 1x.
        musica_cta recebe o texto da chave musica_cta do Sheet. -->
@@ -7742,58 +7773,36 @@ function tL(){
 function _toggleLetra(abrir){
   var b=document.getElementById('lB');
   var sec=document.getElementById('vestido');
-  if(!b||!sec)return;
-  /* Bloco 2026-05-03 #fix-letra: #cxNoivoDentro removido do DOM.
-     Caixinhas externas (#cxVestido) controladas via CSS (.letra-foi-aberta). */
+  var perg=document.getElementById('pergaminhoWrap');
+  if(!b||!sec||!perg)return;
 
-  var navOffset=78;
-
-  /* Helper: scroll instantâneo (sem smooth) pro topo de um elemento,
-     menos o offset do nav fixo. Usado ANTES da mudança de estado em ambos
-     os casos pra que a animação CSS role com o viewport já no lugar final.
-     
-     Fix pulinho: só rola se a distância for significativa (>60px). Se usuário já
-     está olhando o pergaminho, um scroll de 5-20px seria percebido como pulo. */
-  function _scrollInstantTo(el){
-    if(!el)return;
-    var htmlEl=document.documentElement;
-    var prev=htmlEl.style.scrollBehavior;
-    var rect=el.getBoundingClientRect();
-    var alvo=rect.top+window.scrollY-navOffset;
-    var alvoSeguro=Math.max(0,alvo);
-    var distancia=Math.abs(alvoSeguro-window.scrollY);
-    if(distancia<60)return; /* já está próximo, não precisa mexer */
-    htmlEl.style.scrollBehavior='auto';
-    window.scrollTo(0,alvoSeguro);
-    requestAnimationFrame(function(){htmlEl.style.scrollBehavior=prev||'';});
-  }
+  /* v7 crossfade no mesmo ponto (sem scroll, sem pulo):
+     - Elemento entrando: adiciona .stack-dentro (opacity 1, relative → ocupa altura)
+     - Elemento saindo: adiciona .stack-fora (opacity 0, absolute → fora do fluxo)
+     - Troca é simultânea: opacity transita 350ms nos dois, mas como ambos estão
+       no mesmo point de ancoragem do stack grid, NÃO há salto de scroll.
+     - Removido _scrollInstantTo — desnecessário. */
 
   if(abrir){
-    /* ABRIR: rola pro pergaminho ANTES, depois troca classes.
-       Com a nova transição sincronizada (pergaminho encolhe + letra expande simultâneo),
-       o layout se auto-compensa e não há pulo visível. */
-    var pergAntes=document.getElementById('pergaminhoWrap');
-    _scrollInstantTo(pergAntes);
+    // Pergaminho: sai. Letra: entra.
+    perg.classList.remove('stack-dentro');
+    perg.classList.add('stack-fora');
+    b.classList.remove('stack-fora');
+    b.classList.add('stack-dentro');
+    b.classList.add('open'); /* compat legado */
 
-    b.classList.add('open');
     sec.classList.add('lyr-aberta');
     sec.classList.add('letra-foi-aberta');
     trackEvento('letra_abriu','');
   }else{
-    /* FECHAR — com transição sincronizada, só precisa remover as classes.
-       Pergaminho expande + letra colapsa em paralelo → sem pulo.
-       Pequeno scroll de correção só se usuário está muito longe. */
-    sec.classList.remove('lyr-aberta');
+    // Letra: sai. Pergaminho: entra.
+    b.classList.remove('stack-dentro');
+    b.classList.add('stack-fora');
     b.classList.remove('open');
-    
-    /* Aguarda 1 frame pro CSS aplicar max-height do pergaminho antes de medir */
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        var pergDepois=document.getElementById('pergaminhoWrap');
-        _scrollInstantTo(pergDepois);
-      });
-    });
-    
+    perg.classList.remove('stack-fora');
+    perg.classList.add('stack-dentro');
+
+    sec.classList.remove('lyr-aberta');
     trackEvento('letra_fechou','');
   }
 }
