@@ -3422,13 +3422,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     filter:saturate(.7);
   }
 
-  /* Hero mais compacto no desktop */
+  /* Hero mais compacto no desktop — 1180px centralizado, altura 260px.
+     Fix 2026-05-06: foto ocupava 1425×320 em 1440 (quase full-bleed), editorialmente
+     pesado. Agora limita largura com bordas navy (cor da seção) dos dois lados
+     e reduz altura pra 260px (meio-termo). Mobile não é afetado. */
+  .prog-hero-wrap{
+    max-width:1180px;
+    margin:0 auto 4px;
+  }
   .prog-hero-img-wrap{
     aspect-ratio:auto !important;
-    height:320px;
-  }
-  .prog-hero-wrap{
-    margin:0 0 4px;
+    height:260px;
   }
   .prog-dias-wrap{
     margin:0 0 16px;
