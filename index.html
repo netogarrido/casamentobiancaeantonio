@@ -6755,11 +6755,28 @@ function applyConteudo(rows){
   /* Sincroniza visibilidade do <ul> dos bullets no popup: se os 3 bullets estão ativo=nao,
      a lista inteira some pra não deixar um espaço vazio no popup. */
   try{ _syncRsvpPopupBullets(); }catch(e){}
+  /* Pré-preenche nome do RSVP com o nome salvo do popup inicial.
+     Correção 2026-05-06: convidado que digitou nome no popup não precisa digitar de novo. */
+  try{ _preencherNomeRSVP(); }catch(e){}
 }
 
-/* Desliga/liga toda a feature "Veja o detalhe das opções" baseado no span #rsvp_detalhes.
-   Se o span está display:none (ativo=nao na Sheet), esconde o wrap da pílula e congela
-   o estado do popup pra que nem o auto-trigger nem o intercept do select abram. */
+/* Pré-preenche #rsvpNomeInput com o nome salvo do popup (localStorage.convidado_nome).
+   Só preenche se o campo está vazio — não sobrescreve se o convidado já começou a digitar.
+   Seguro pra chamar múltiplas vezes: applyConteudo, pós-popup, etc. */
+function _preencherNomeRSVP(){
+  var nome=getNomeSalvo();
+  if(!nome)return;
+  var inp=document.getElementById('rsvpNomeInput');
+  if(!inp)return;
+  if(inp.value && inp.value.trim())return; /* já tem algo digitado, respeita */
+  inp.value=nome;
+}
+
+/* Desliga/liga SÓ A PÍLULA VISUAL "Veja o detalhe das opções" baseado no span
+   #rsvp_detalhes. O popup (#moRsvpOnboard) e o intercept do select permanecem
+   ativos independente desse toggle — são mecanismos separados.
+   Regra (2026-05-06): rsvp_detalhes=nao esconde apenas a pílula. Intercept e popup
+   seguem funcionando normalmente até o convidado enviar o RSVP. */
 function _syncRsvpDetalhesFeature(){
   var span=document.getElementById('rsvp_detalhes');
   var wrap=document.querySelector('.rsvp-cta-opcoes-wrap');
@@ -6767,22 +6784,8 @@ function _syncRsvpDetalhesFeature(){
   var desligado = (span.style.display==='none');
   if(desligado){
     wrap.classList.add('hidden');
-    /* Desliga o intercept também — wrap.hidden é checado em initRsvpOnboardTracking,
-       mas se a sync rodou DEPOIS do init (ex: applyConteudo terminou depois do
-       DOMContentLoaded), aplica direto aqui. */
-    var intercept=document.getElementById('rsvp_select_intercept');
-    if(intercept)intercept.classList.add('gone');
-    /* Marca _interceptJaUsado pra não reativar se alguma lógica futura tentar */
-    _interceptJaUsado=true;
   }else{
     wrap.classList.remove('hidden');
-    /* Se a feature voltou (ativo=sim via refresh de conteúdo), libera intercept —
-       mas só se convidado não enviou RSVP ainda */
-    if(!_jaEnviouRSVP()){
-      _interceptJaUsado=false;
-      var interceptOn=document.getElementById('rsvp_select_intercept');
-      if(interceptOn)interceptOn.classList.remove('gone');
-    }
   }
 }
 
@@ -7225,6 +7228,8 @@ function handleStart(){
   var _tSim=window._popupAbertoTs?(Date.now()-window._popupAbertoTs):0;
   trackEvento('popup_stage_um_sim','com_musica=sim&tempo_ms='+_tSim);
   playHeroVideo();
+  /* Pré-preenche RSVP com o nome que acabou de ser salvo */
+  try{_preencherNomeRSVP();}catch(e){}
   au.play().then(function(){syncPlayerUI();}).catch(function(err){
     /* P8: se falhar (rede/codec/autoplay policy), mostra feedback em vez de silenciar */
     _mostrarErroAudio('play_rejected');
@@ -7258,6 +7263,8 @@ function handleSkip(){
   /* Bloco 2026-05-03 #polaroids: initVestidoSwap() REMOVIDO daqui (idem handleAccept) */
   initSecaoObserver();
   initInatividade();
+  /* Pré-preenche RSVP com o nome salvo */
+  try{_preencherNomeRSVP();}catch(e){}
 }
 
 function hP(motivo){
@@ -7929,16 +7936,16 @@ function _marcarOrigemRsvp(origem){
 }
 
 /* Deve mostrar o onboard auto-trigger agora?
-   Regra: não apareceu ainda neste load + origem veio de navegação direta
-   (hamburger / hero_cta / rodape_cta) + não visitou Programação+Presentes +
-   convidado não enviou RSVP ainda. */
+   Regra (2026-05-06 — desacoplado do toggle rsvp_detalhes):
+   - Não apareceu ainda neste load
+   - Origem veio de navegação direta (hamburger/hero_cta/rodape_cta)
+   - Não visitou Programação+Presentes
+   - Convidado não enviou RSVP ainda
+   O toggle rsvp_detalhes=nao esconde APENAS a pílula visual. Auto-trigger e intercept
+   seguem funcionando — o popup é a ferramenta de orientação, não o botão. */
 function _deveMostrarRsvpOnboard(){
   if(_rsvpOnboardJaApareceu)return false;
   if(_jaEnviouRSVP())return false;
-  /* Feature toggle: se rsvp_detalhes está com ativo=nao na Sheet, o wrap fica oculto.
-     Nesse caso, não dispara auto-trigger de jeito nenhum. */
-  var wrap=document.querySelector('.rsvp-cta-opcoes-wrap');
-  if(wrap && wrap.classList.contains('hidden'))return false;
   var origemDireta = (_rsvpOrigem==='hamburger'||_rsvpOrigem==='hero_cta'||_rsvpOrigem==='rodape_cta');
   if(!origemDireta)return false;
   /* Se já viu programação OU presentes, provavelmente está informado.
@@ -8091,27 +8098,19 @@ function initRsvpOnboardTracking(){
     });
   }
 
-  /* Intercept do select — novo critério (decisão 2026-05-06, opção B+D):
-     - A cada page load (F5 inclusive), intercept volta a aparecer. `_interceptJaUsado`
-       é variável em memória que reseta no load.
-     - EXCETO se o convidado já enviou RSVP (localStorage.rsvp_enviado) ou a feature
-       está desligada via rsvp_detalhes=nao na Sheet. */
+  /* Intercept do select — independente do toggle rsvp_detalhes (2026-05-06).
+     A cada page load, intercept volta a aparecer. Única exceção: convidado já
+     enviou RSVP (localStorage.rsvp_enviado). Toggle rsvp_detalhes só afeta a
+     pílula visual, não o intercept. */
   var intercept=document.getElementById('rsvp_select_intercept');
   if(intercept){
-    var desligado = _jaEnviouRSVP();
-    /* Se a feature inteira está desligada pela Sheet, _syncRsvpDetalhesFeature já
-       colocou .hidden no wrap. Nesse caso, intercept também some. */
-    var wrapDet=document.querySelector('.rsvp-cta-opcoes-wrap');
-    if(wrapDet && wrapDet.classList.contains('hidden'))desligado=true;
-
-    if(desligado){
+    if(_jaEnviouRSVP()){
       intercept.classList.add('gone');
     }else{
       /* Handler: captura pointerdown/click/touchstart antes do select abrir.
          preventDefault() + stopPropagation() impedem o picker nativo.
          Após o primeiro uso, intercept some até o próximo page load. */
       var bloqueador=function(ev){
-        /* Se por qualquer motivo o intercept já foi usado nesta vida do JS, deixa passar */
         if(_interceptJaUsado)return;
         _interceptJaUsado=true;
         ev.preventDefault();
@@ -8123,9 +8122,8 @@ function initRsvpOnboardTracking(){
       intercept.addEventListener('pointerdown', bloqueador, {passive:false});
       intercept.addEventListener('touchstart', bloqueador, {passive:false});
       intercept.addEventListener('click', bloqueador, {passive:false});
-      /* Se o popup abrir por qualquer outra origem (hamburger, pílula, auto),
-         marca _interceptJaUsado + some — não é educado aparecer de novo no mesmo load
-         depois que o popup já foi visto. No próximo F5, volta. */
+      /* Se o popup abrir por qualquer outra origem (pílula, hamburger auto),
+         marca _interceptJaUsado + some no mesmo load. Volta no próximo F5. */
       document.addEventListener('rsvp_onboard_aberto', function(){
         _interceptJaUsado=true;
         intercept.classList.add('gone');
