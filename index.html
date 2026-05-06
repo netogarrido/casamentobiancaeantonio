@@ -6127,29 +6127,118 @@ function salvarNomeConvidado(nome){
 }
 
 /* ══════════════════════════════════════════
-   ANALYTICS — ENVIO CENTRALIZADO
+   ANALYTICS v2 — INSTRUMENTAÇÃO RICA
+   ──────────────────────────────────────────
+   Princípios:
+   - Cada evento carrega CONTEXTO: tempo da sessão, seção atual,
+     scroll %, n-ésimo evento da sessão, viewport, conexão, com_musica
+   - Eventos CRÍTICOS (rsvp/presente/popup) viajam imediatos
+   - Eventos FREQUENTES (nav, faq, modais) vão em batch de 3s
+   - Eventos PASSIVOS (scroll milestones, polaroids) consolidados no pagehide
+   - Heartbeat a cada 30s mantém last_known_state para detecção de zumbis
+   - Performance (LCP/FCP/CLS) reportada no pagehide via sendBeacon
 ══════════════════════════════════════════ */
+
+/* Contexto da sessão (atualizado em tempo real) */
+var _sessaoCtx={
+  entrada_ts: Date.now(),
+  n_evento: 0,
+  secao_atual: 'hero',
+  scroll_y_pct: 0,
+  conexao: (function(){
+    try{
+      var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+      return c&&c.effectiveType ? c.effectiveType : 'desconhecido';
+    }catch(e){return 'desconhecido';}
+  })(),
+  viewport_w: window.innerWidth,
+  viewport_h: window.innerHeight,
+  com_musica: 'nao',
+  deep_link: (window.location.hash||'').replace('#','') || null
+};
+
+/* Eventos considerados CRÍTICOS — enviados imediatamente, bypass do batch */
+var EVENTOS_CRITICOS={
+  'rsvp_enviou':1, 'rsvp_envio_erro':1,
+  'presente_pix_abriu':1,
+  'popup_stage_um_sim':1, 'popup_stage_um_nao':1, 'popup_stage_zero_entrar':1,
+  'musica_erro':1
+};
+
+/* Fila de batching */
+var _filaEventos=[];
+var _batchTimer=null;
+var BATCH_INTERVALO_MS=3000;
+
+/* Coletores passivos consolidados no fim da sessão */
+var _scrollMilestones={}; /* { secaoId: { pct25:ts, pct50:ts, pct75:ts, pct100:ts } } */
+var _polaroidsVistas={};  /* { ordem: ts } */
+var _camposRsvpTocados={}; /* { campo: {focou_ts, digitou_chars, abandonou:bool} } */
+
+/* ── Envio imediato (para críticos e type != 'evento') ── */
 function enviar(payload, onSuccess, onError){
-  payload.convidado_id=getConvidadoId();
-  payload.sessao_id=getSessaoId();
-  payload.nome=payload.nome||getNomeSalvo();
-  payload.timestamp=new Date().toISOString();
+  enriquecerPayload(payload);
   fetch(SU,{
     method:'POST',mode:'no-cors',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload)
   }).then(function(){
-    /* mode:'no-cors' → response é opaque mas request chegou ao servidor.
-       Network errors caem no .catch abaixo. */
     if(typeof onSuccess==='function')onSuccess();
   }).catch(function(err){
     if(typeof onError==='function')onError(err);
   });
 }
 
-/* ── Evento pontual ── */
+/* ── Adiciona contexto a qualquer payload ── */
+function enriquecerPayload(p){
+  p.convidado_id=p.convidado_id||getConvidadoId();
+  p.sessao_id=p.sessao_id||getSessaoId();
+  p.nome=p.nome||getNomeSalvo();
+  p.timestamp=p.timestamp||new Date().toISOString();
+  /* Contexto agregado — só pra eventos (não para analytics/rsvp/presente que já tem campos próprios) */
+  if(p.type==='evento'||p.type==='tempo_secao'){
+    _sessaoCtx.n_evento++;
+    p.tempo_desde_entrada_ms=Date.now()-_sessaoCtx.entrada_ts;
+    p.secao_atual=_sessaoCtx.secao_atual;
+    p.scroll_y_pct=_sessaoCtx.scroll_y_pct;
+    p.n_evento_sessao=_sessaoCtx.n_evento;
+    p.viewport_w=_sessaoCtx.viewport_w;
+    p.viewport_h=_sessaoCtx.viewport_h;
+    p.conexao=_sessaoCtx.conexao;
+    p.com_musica=_sessaoCtx.com_musica;
+  }
+  return p;
+}
+
+/* ── Evento batch (para "não críticos") ── */
+function enviarEventoBatch(evento,detalhe){
+  var p={type:'evento',evento:evento,detalhe:detalhe||''};
+  enriquecerPayload(p);
+  _filaEventos.push(p);
+  if(!_batchTimer){
+    _batchTimer=setTimeout(flushFilaEventos,BATCH_INTERVALO_MS);
+  }
+}
+
+function flushFilaEventos(){
+  _batchTimer=null;
+  if(!_filaEventos.length)return;
+  var lote={type:'evento_batch',eventos:_filaEventos.splice(0)};
+  enriquecerPayload(lote);
+  fetch(SU,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(lote)
+  }).catch(function(){});
+}
+
+/* ── API pública: trackEvento (decide crítico vs batch automaticamente) ── */
 function trackEvento(evento,detalhe){
-  enviar({type:'evento',evento:evento,detalhe:detalhe||''});
+  if(EVENTOS_CRITICOS[evento]){
+    enviar({type:'evento',evento:evento,detalhe:detalhe||''});
+  }else{
+    enviarEventoBatch(evento,detalhe);
+  }
 }
 
 /* ── Tempo por seção ── */
@@ -6159,14 +6248,15 @@ var _secaoInicio=null;
 function trackSecaoInicio(secao){
   trackSecaoFim(); /* fecha anterior se houver */
   _secaoAtiva=secao;
+  _sessaoCtx.secao_atual=secao;
   _secaoInicio=Date.now();
 }
 
 function trackSecaoFim(){
   if(!_secaoAtiva||!_secaoInicio)return;
   var seg=Math.round((Date.now()-_secaoInicio)/1000);
-  if(seg<2)return; /* ignora passagens rápidas */
-  enviar({type:'tempo_secao',secao:_secaoAtiva,tempo_seg:seg});
+  if(seg<2){_secaoAtiva=null;_secaoInicio=null;return;}
+  enviarEventoBatch('secao_tempo',_secaoAtiva+'|'+seg+'s');
   _secaoAtiva=null;
   _secaoInicio=null;
 }
@@ -6186,6 +6276,158 @@ function initSecaoObserver(){
   document.querySelectorAll('section[id]').forEach(function(el){
     obs.observe(el);
   });
+}
+
+/* ══════════════════════════════════════════
+   SCROLL MILESTONES POR SEÇÃO (passivo)
+   Ao atingir 25/50/75/100% de cada seção visível, marca
+   internamente. Envio consolidado no pagehide.
+══════════════════════════════════════════ */
+function initScrollMilestones(){
+  var marcos=[25,50,75,100];
+  window.addEventListener('scroll',function(){
+    if(!_sessaoCtx.secao_atual)return;
+    var sec=document.getElementById(_sessaoCtx.secao_atual);
+    if(!sec)return;
+    var r=sec.getBoundingClientRect();
+    var totAlt=sec.offsetHeight;
+    if(totAlt<=0)return;
+    var visDentro=Math.min(window.innerHeight,Math.max(0,window.innerHeight-r.top));
+    var pct=Math.round((visDentro/totAlt)*100);
+    if(!_scrollMilestones[_sessaoCtx.secao_atual])_scrollMilestones[_sessaoCtx.secao_atual]={};
+    var mapa=_scrollMilestones[_sessaoCtx.secao_atual];
+    marcos.forEach(function(m){
+      if(pct>=m && !mapa['pct'+m]){
+        mapa['pct'+m]=Date.now()-_sessaoCtx.entrada_ts;
+      }
+    });
+  },{passive:true});
+}
+
+/* ══════════════════════════════════════════
+   POLAROIDS VISTAS (passivo) — exposto global
+══════════════════════════════════════════ */
+function trackPolaroidVista(ordem){
+  if(_polaroidsVistas[ordem])return;
+  _polaroidsVistas[ordem]=Date.now()-_sessaoCtx.entrada_ts;
+}
+
+/* ══════════════════════════════════════════
+   RSVP — hesitação por campo (passivo)
+══════════════════════════════════════════ */
+function trackRsvpCampoFocou(nome){
+  if(!_camposRsvpTocados[nome])_camposRsvpTocados[nome]={focou_ts:Date.now(),digitou_chars:0,abandonou:false};
+}
+function trackRsvpCampoDigitou(nome,chars){
+  if(!_camposRsvpTocados[nome])_camposRsvpTocados[nome]={focou_ts:Date.now(),digitou_chars:0,abandonou:false};
+  _camposRsvpTocados[nome].digitou_chars=Math.max(_camposRsvpTocados[nome].digitou_chars,chars|0);
+}
+
+/* ══════════════════════════════════════════
+   CORE WEB VITALS (LCP / FCP / CLS)
+══════════════════════════════════════════ */
+var _perf={lcp:null, fcp:null, cls:0, ttfb:null};
+
+function initPerformanceObservers(){
+  if(!window.PerformanceObserver)return;
+  try{
+    new PerformanceObserver(function(list){
+      list.getEntries().forEach(function(e){
+        if(e.name==='first-contentful-paint')_perf.fcp=Math.round(e.startTime);
+      });
+    }).observe({type:'paint',buffered:true});
+  }catch(e){}
+
+  try{
+    new PerformanceObserver(function(list){
+      var entries=list.getEntries();
+      if(entries.length)_perf.lcp=Math.round(entries[entries.length-1].startTime);
+    }).observe({type:'largest-contentful-paint',buffered:true});
+  }catch(e){}
+
+  try{
+    new PerformanceObserver(function(list){
+      list.getEntries().forEach(function(e){
+        if(!e.hadRecentInput)_perf.cls+=e.value;
+      });
+    }).observe({type:'layout-shift',buffered:true});
+  }catch(e){}
+
+  try{
+    var nav=performance.getEntriesByType('navigation');
+    if(nav&&nav[0])_perf.ttfb=Math.round(nav[0].responseStart);
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   HEARTBEAT 30s — mantém last_heartbeat no backend
+══════════════════════════════════════════ */
+var _heartbeatTimer=null;
+var HEARTBEAT_MS=30000;
+
+function initHeartbeat(){
+  _heartbeatTimer=setInterval(enviarHeartbeat,HEARTBEAT_MS);
+}
+
+function enviarHeartbeat(){
+  if(_sessaoEncerrada)return;
+  var p={
+    type:'heartbeat',
+    convidado_id:getConvidadoId(),
+    sessao_id:getSessaoId(),
+    nome:getNomeSalvo(),
+    tempo_total_seg:getTempoAtivoSeg(),
+    scroll_max_pct:_scrollMax,
+    secao_atual:_sessaoCtx.secao_atual,
+    secoes_visitadas:_secoesVistas.join(', '),
+    timestamp:new Date().toISOString()
+  };
+  try{
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(SU,new Blob([JSON.stringify(p)],{type:'application/json'}));
+      return;
+    }
+  }catch(e){}
+  fetch(SU,{method:'POST',mode:'no-cors',keepalive:true,
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(p)}).catch(function(){});
+}
+
+/* ══════════════════════════════════════════
+   VISIBILITY & ORIENTATION (eventos passivos)
+══════════════════════════════════════════ */
+function initVisibilityTrackers(){
+  document.addEventListener('visibilitychange',function(){
+    enviarEventoBatch('visibility_change',document.visibilityState);
+  });
+  if('orientation' in window){
+    window.addEventListener('orientationchange',function(){
+      enviarEventoBatch('orientation_change',String(window.orientation));
+    });
+  }
+  window.addEventListener('resize',function(){
+    _sessaoCtx.viewport_w=window.innerWidth;
+    _sessaoCtx.viewport_h=window.innerHeight;
+  },{passive:true});
+}
+
+/* ══════════════════════════════════════════
+   DEEP LINK — primeira interação
+══════════════════════════════════════════ */
+var _primeiraInteracaoRegistrada=false;
+function marcarPrimeiraInteracao(tipo){
+  if(_primeiraInteracaoRegistrada)return;
+  _primeiraInteracaoRegistrada=true;
+  enviarEventoBatch('primeira_interacao',tipo+'|'+(Date.now()-_sessaoCtx.entrada_ts)+'ms');
+}
+
+function initPrimeiraInteracao(){
+  ['click','touchstart','keydown'].forEach(function(ev){
+    window.addEventListener(ev,function(){marcarPrimeiraInteracao(ev);},{passive:true,once:true});
+  });
+  if(_sessaoCtx.deep_link){
+    enviarEventoBatch('deep_link_entrada',_sessaoCtx.deep_link);
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -6254,6 +6496,7 @@ var _audioUltimoPlay=null;
       if(total>0){
         var pct=Math.round((window.scrollY/total)*100);
         if(pct>_scrollMax)_scrollMax=pct;
+        _sessaoCtx.scroll_y_pct=pct;
         /* Bloco 2026-05-03 #5 REFATORADO: mini--big agora é controlado por
            IntersectionObserver de Programação/RSVP (abaixo), não por scroll %.
            Motivo: antes ficava grande em Traje também porque scroll > 30% do total
@@ -6288,11 +6531,16 @@ var _audioUltimoPlay=null;
    REGISTRAR ENTRADA (analytics)
 ══════════════════════════════════════════ */
 function registrarEntrada(nome,comMusica){
+  _sessaoCtx.com_musica=comMusica?'sim':'nao';
   enviar({
     type:'analytics',
     nome:nome,
     com_musica:comMusica?'sim':'nao',
     device:/Mobi|Android/i.test(navigator.userAgent)?'celular':'desktop',
+    viewport_w:_sessaoCtx.viewport_w,
+    viewport_h:_sessaoCtx.viewport_h,
+    conexao:_sessaoCtx.conexao,
+    deep_link:_sessaoCtx.deep_link||'',
     origem:(function(){
       var ref=document.referrer||'';
       if(!ref)return'direto';
@@ -6306,11 +6554,14 @@ function registrarEntrada(nome,comMusica){
 
 /* ══════════════════════════════════════════
    REGISTRAR SAÍDA (analytics_saida)
-   Chamado ao fechar aba, inatividade ou beforeunload
+   Chamado ao fechar aba, inatividade ou beforeunload.
+   Inclui: scroll milestones, polaroids vistas, hesitação RSVP,
+   performance, e batch pendente.
 ══════════════════════════════════════════ */
 function registrarSaida(motivo){
   if(_sessaoEncerrada&&motivo!=='inatividade')return;
   _sessaoEncerrada=true;
+  if(_heartbeatTimer){clearInterval(_heartbeatTimer);_heartbeatTimer=null;}
   trackSecaoFim();
   /* fecha acumulador de áudio se ainda estava tocando */
   if(_audioUltimoPlay){
@@ -6319,9 +6570,14 @@ function registrarSaida(motivo){
   }
   _pausarCronometro();
   var tempo=getTempoAtivoSeg();
-  /* % da música ouvida — duração real do áudio se disponível */
   var duracaoAudio=au&&au.duration&&!isNaN(au.duration)?Math.round(au.duration):0;
   var audioPct=duracaoAudio>0?Math.min(100,Math.round((_audioSegTocando/duracaoAudio)*100)):0;
+
+  /* Marcar campos RSVP que foram focados mas nunca submetidos como "abandonados" */
+  /* (guard: se trackEvento rsvp_enviou aconteceu, esses já são descartáveis) */
+  var rsvpEnviado=_filaEventos.some(function(ev){return ev.evento==='rsvp_enviou';}) ||
+                  (window._rsvpEnvioMarcado===true);
+
   var payload={
     type:'analytics_saida',
     convidado_id:getConvidadoId(),
@@ -6332,28 +6588,45 @@ function registrarSaida(motivo){
     scroll_max_pct:_scrollMax,
     secoes_visitadas:_secoesVistas.join(', '),
     audio_pct_ouvido:audioPct,
+    n_eventos_total:_sessaoCtx.n_evento,
+    /* Performance (pode ser null se o browser não suporta) */
+    perf_lcp_ms:_perf.lcp,
+    perf_fcp_ms:_perf.fcp,
+    perf_cls:Math.round(_perf.cls*1000)/1000,
+    perf_ttfb_ms:_perf.ttfb,
+    /* Resumos passivos — JSON compactado como string */
+    scroll_milestones_json:JSON.stringify(_scrollMilestones),
+    polaroids_vistas_json:JSON.stringify(_polaroidsVistas),
+    rsvp_hesitacao_json:rsvpEnviado?'':JSON.stringify(_camposRsvpTocados),
     timestamp:new Date().toISOString()
   };
-  /* Em pagehide/visibilitychange=hidden, fetch pode ser abortado antes de completar.
-     sendBeacon é assíncrono-garantido: o browser se compromete a enviar mesmo que
-     a aba feche. Fallback: fetch com keepalive:true (Safari iOS 11.3+). */
+
+  /* Payload principal via sendBeacon */
   var body=JSON.stringify(payload);
   var enviado=false;
   try{
     if(navigator.sendBeacon){
-      var blob=new Blob([body],{type:'application/json'});
-      enviado=navigator.sendBeacon(SU,blob);
+      enviado=navigator.sendBeacon(SU,new Blob([body],{type:'application/json'}));
     }
   }catch(e){}
   if(!enviado){
     try{
-      fetch(SU,{
-        method:'POST',
-        mode:'no-cors',
-        keepalive:true,
-        headers:{'Content-Type':'application/json'},
-        body:body
-      }).catch(function(){});
+      fetch(SU,{method:'POST',mode:'no-cors',keepalive:true,
+        headers:{'Content-Type':'application/json'},body:body}).catch(function(){});
+    }catch(e){}
+  }
+
+  /* Flush dos eventos pendentes no batch */
+  if(_filaEventos.length){
+    var lote={type:'evento_batch',eventos:_filaEventos.splice(0)};
+    enriquecerPayload(lote);
+    try{
+      if(navigator.sendBeacon){
+        navigator.sendBeacon(SU,new Blob([JSON.stringify(lote)],{type:'application/json'}));
+      }else{
+        fetch(SU,{method:'POST',mode:'no-cors',keepalive:true,
+          headers:{'Content-Type':'application/json'},body:JSON.stringify(lote)}).catch(function(){});
+      }
     }catch(e){}
   }
 }
@@ -7245,6 +7518,11 @@ function handleStart(){
      invisíveis, dando sensação de "bug" quando ele rolava e via tudo parado. */
   initSecaoObserver();
   initInatividade();
+  initScrollMilestones();
+  initPerformanceObservers();
+  initHeartbeat();
+  initVisibilityTrackers();
+  initPrimeiraInteracao();
 }
 
 function handleSkip(){
@@ -7267,6 +7545,11 @@ function handleSkip(){
   /* Bloco 2026-05-03 #polaroids: initVestidoSwap() REMOVIDO daqui (idem handleAccept) */
   initSecaoObserver();
   initInatividade();
+  initScrollMilestones();
+  initPerformanceObservers();
+  initHeartbeat();
+  initVisibilityTrackers();
+  initPrimeiraInteracao();
   /* Pré-preenche RSVP com o nome salvo */
   try{_preencherNomeRSVP();}catch(e){}
 }
@@ -8247,6 +8530,7 @@ function _enviarRSVP(d,form){
   delete d.sugestao_musica;
   delete d.mensagem;
   trackEvento('rsvp_enviou',d.participacao||'');
+  window._rsvpEnvioMarcado=true;
 
   var btnSubmit=form?form.querySelector('button[type="submit"]'):null;
 
@@ -8283,6 +8567,7 @@ function _enviarRSVP(d,form){
       btnSubmit.disabled=false;
       btnSubmit.textContent=btnSubmit.dataset.originalText||'Enviar confirmação';
     }
+    try{trackEvento('rsvp_envio_erro','network_error');}catch(e){}
     alertaRSVP('Sua confirmação pode não ter sido recebida — verifique sua conexão e envie novamente.');
   });
 }
@@ -9303,46 +9588,28 @@ document.addEventListener('DOMContentLoaded',function(){
   goToHeroStart();
   loadAll();
 
+  /* Hesitação RSVP — trackers passivos em cada campo.
+     Consolidados no pagehide se RSVP não foi enviado. */
+  try{
+    var rsvpForm=document.getElementById('rF');
+    if(rsvpForm){
+      rsvpForm.querySelectorAll('input,textarea,select').forEach(function(el){
+        var nome=el.name||el.id||'campo_?';
+        el.addEventListener('focus',function(){trackRsvpCampoFocou(nome);},{passive:true});
+        el.addEventListener('input',function(){
+          trackRsvpCampoDigitou(nome,(el.value||'').length);
+        },{passive:true});
+      });
+    }
+  }catch(e){}
+
 var nomeSalvo=getNomeSalvo();
   /* B1 — marcar abertura do popup e emitir evento com stage inicial */
   window._popupAbertoTs=Date.now();
   trackEvento('popup_abriu', nomeSalvo ? 'stage_um_retornante' : 'stage_zero_novo');
 
-  /* P6 — Core Web Vitals: FCP + LCP (com buffered:true pra captar entradas anteriores ao observer) */
-  try{
-    if('PerformanceObserver' in window){
-      /* FCP */
-      new PerformanceObserver(function(list){
-        list.getEntries().forEach(function(e){
-          if(e.name==='first-contentful-paint' && !window._fcpTracked){
-            window._fcpTracked=true;
-            trackEvento('perf_fcp', Math.round(e.startTime)+'ms');
-          }
-        });
-      }).observe({type:'paint', buffered:true});
-
-      /* LCP — pode emitir múltiplas entradas; guardar só a última em window e emitir ao unload */
-      var _lcpValor=0;
-      new PerformanceObserver(function(list){
-        var entries=list.getEntries();
-        if(entries.length){
-          _lcpValor=entries[entries.length-1].startTime;
-        }
-      }).observe({type:'largest-contentful-paint', buffered:true});
-
-      var _emitLcp=function(){
-        if(_lcpValor && !window._lcpTracked){
-          window._lcpTracked=true;
-          trackEvento('perf_lcp', Math.round(_lcpValor)+'ms');
-        }
-      };
-      /* Emitir LCP uma única vez quando o usuário for sair/esconder a aba */
-      window.addEventListener('pagehide', _emitLcp, {once:true});
-      document.addEventListener('visibilitychange', function(){
-        if(document.visibilityState==='hidden') _emitLcp();
-      });
-    }
-  }catch(e){}
+  /* Core Web Vitals agora é coletado por initPerformanceObservers() e
+     enviado consolidado em registrarSaida() — evita eventos duplicados. */
 
   /* B4 — trackear preenchimento do nome uma vez por sessão (só comprimento, não o nome) */
   var popupNomeInp=document.getElementById('popup_nome');
