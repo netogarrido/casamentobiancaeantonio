@@ -4555,17 +4555,27 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-color:var(--a);
 }
 
-/* Wrap do select participação — permite o intercept cobrir o select */
+/* Wrap do select participação — permite o intercept cobrir o select.
+   Padding extra pro intercept ter "fat-finger zone" ~20px ao redor sem
+   alterar o layout visual do select (padding é consumido pelo inset do intercept). */
 .rsvp-select-wrap{
   position:relative;
 }
-/* Intercept invisível: cobre o select inteiro, captura o PRIMEIRO clique/tap,
-   abre o popup e se remove. Do segundo toque em diante, o select responde normal.
-   aria-hidden + tabindex=-1: screen reader e navegação por teclado ignoram completamente. */
+/* Intercept invisível: cobre o select inteiro + ~20px de margem cada lado.
+   Captura o PRIMEIRO clique/tap, abre o popup e se remove. Do segundo toque
+   em diante, o select abre normal (picker nativo iOS/Android).
+   aria-hidden + tabindex=-1: screen reader e navegação por teclado ignoram.
+   inset negativo cria zona generosa pra tio idoso acertar o tap sem erro. */
 .rsvp-select-intercept{
   position:absolute;
-  inset:0;
-  z-index:2;
+  /* inset:-20px -10px = estende 20px acima/abaixo e 10px laterais pra não
+     invadir bordas da pílula mas garantir cobertura 100% do select + respiro.
+     Laterais menores porque o select já ocupa 100% da coluna. */
+  top:-20px;
+  bottom:-20px;
+  left:-8px;
+  right:-8px;
+  z-index:3;
   background:transparent;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
@@ -5883,8 +5893,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
       <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_dayuse">Day use sábado — R$ 530 por adulto, reserva com a Marcela</li>
       <li class="mo-rsvp-onboard-opcao" id="rsvp_popup_opcao_festa">Somente festa — a partir das 20h de sábado</li>
     </ul>
-    <!-- CTA primário: leva ao Day use dentro da Programação (box 3×1 aberta em "day") -->
-    <button class="mo-rsvp-onboard-botao" type="button" id="rsvp_popup_botao_ver" onclick="fecharRsvpOnboardEVerOpcoes()">Ver as formas de participar ↓</button>
+    <!-- CTA primário: leva ao Day use dentro da Programação (box 3×1 aberta em "day").
+         Texto vem 100% da Sheet (chave rsvp_popup_botao_ver) — sem fallback hardcoded,
+         pois a chave é gerenciada pelos noivos. Se Sheet falha, botão fica vazio —
+         e o próprio applyConteudo com ativo=nao esconde via style.display. -->
+    <button class="mo-rsvp-onboard-botao" type="button" id="rsvp_popup_botao_ver" onclick="fecharRsvpOnboardEVerOpcoes()"></button>
     <!-- CTA secundário: só fecha, mantém usuário no RSVP -->
     <button class="mo-rsvp-onboard-botao-sec" type="button" id="rsvp_popup_botao" onclick="fecharRsvpOnboard('entendi')">Entendi, vou conferir</button>
   </div>
@@ -6528,10 +6541,18 @@ function aplicarFlagsUI(){
 var CONTEUDO={};
 function applyConteudo(rows){
   CONTEUDO={};
+  /* Defensivo: detecta chaves duplicadas na planilha (risco de linha nova ficar no meio
+     e outra versão sobrescrever no fim do loop) + chaves com whitespace. Loga avisos. */
+  var _chavesVistas={};
   rows.forEach(function(r){
-    var key=r.chave;
+    var key=(r.chave||'').replace(/\s+$/,'').replace(/^\s+/,''); /* trim: protege "chave " acidental do Sheet */
     var val=r.descricao;
     if(!key)return;
+    /* Log de duplicata — última entrada vence no DOM, mas avisa o dev no console */
+    if(_chavesVistas[key]){
+      try{console.warn('[applyConteudo] chave duplicada na Sheet:',key,'— última entrada vence');}catch(e){}
+    }
+    _chavesVistas[key]=true;
     var cleaned=(val===null||val===undefined)?'':String(val).replace(/\\n/g,'\n');
     CONTEUDO[key]=cleaned;
     var ativo=String(r.ativo||'sim').toLowerCase().trim();
@@ -7861,22 +7882,48 @@ function fecharRsvpOnboard(motivo){
   try{trackEvento('rsvp_onboard_fechou', motivo||'close');}catch(e){}
 }
 
-/* CTA primário do popup: fecha modal + scroll suave pra Programação com Day use aberto.
+/* CTA primário do popup: fecha modal + abre Day use dentro da Programação,
+   SEM o pulo intermediário pelo topo de Programação.
    Day use é a via de maior conversão (reserva Marcela, R$530 sinal 20%).
-   Reusa abrirDayUseDaProgramacao() que já existe (usado no FAQ CTA map perguntas 5, 14, 22). */
+   Reusa abrirDayUseDaProgramacao() que já existe (usado no FAQ CTA map 5, 14, 22).
+   Estratégia anti-pulo:
+   1. Fecha modal (unlockScroll restaura a posição salva do scroll original)
+   2. Marca a via "day" ativa SEM scroll (skipScroll)
+   3. Um único scroll suave direto pro .prog-via-wrap (onde estão os 3 cards).
+   Não passa por topo da seção Programação. */
 function fecharRsvpOnboardEVerOpcoes(){
   try{trackEvento('rsvp_onboard_ver_opcoes','redirect_programacao_day');}catch(e){}
   fecharRsvpOnboard('ver_opcoes');
-  /* Pequeno delay pra unlockScroll concluir antes do smoothScrollTo — evita conflito iOS */
-  setTimeout(function(){
-    if(typeof abrirDayUseDaProgramacao==='function'){
-      abrirDayUseDaProgramacao();
-    }else if(typeof smoothScrollTo==='function'){
-      smoothScrollTo('programacao');
-    }else{
-      location.hash='#programacao';
-    }
-  },80);
+  /* Aguarda unlockScroll concluir (iOS restaura scroll síncrono mas render é async).
+     Usa 2 RAFs pra garantir que body position:fixed→static liberou. */
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      /* Marca via day ativa sem scroll — apenas atualiza estado visual */
+      try{
+        if(typeof toggleVia==='function' && typeof _viaAtiva !== 'undefined' && _viaAtiva!=='day'){
+          toggleVia('day',{skipScroll:true});
+        }
+      }catch(e){}
+      /* Scroll único direto pro .prog-via-wrap (caixa 3×1) */
+      var anchor=document.querySelector('.prog-via-wrap');
+      if(anchor){
+        try{anchor.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){anchor.scrollIntoView();}
+      }else if(typeof smoothScrollTo==='function'){
+        smoothScrollTo('programacao');
+      }else{
+        location.hash='#programacao';
+      }
+      /* Pulso visual no card "Day use" pra chamar atenção ao destino */
+      try{
+        var card=document.querySelector('.prog-via-card[data-via="day"]');
+        if(card){
+          card.classList.add('pulse-once');
+          setTimeout(function(){card.classList.remove('pulse-once');},1600);
+        }
+      }catch(e){}
+      try{trackEvento('prog_sabado_dayuse','rsvp_onboard');}catch(e){}
+    });
+  });
 }
 
 /* Instalação — listeners de origem + trigger no IntersectionObserver do RSVP +
