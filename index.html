@@ -1576,6 +1576,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   background:transparent;
   border:none;
 }
+/* Thumb nativo do <input type=range>:
+   - Em MOBILE: visível (2×14px ouro) — funciona ok
+   - Em DESKTOP: escondido — renderizadores do Chrome desktop posicionam o thumb
+     de formas inconsistentes (às vezes no meio do track quando input=0), e o
+     margin-top desalinha ele do eixo horizontal da linha do track.
+     Desktop usa o pseudo ::after de .player-scrub-grab como thumb visual
+     (controlado por --prog, sempre alinhado com a linha e respeitando value=0). */
 .player-scrub input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
   appearance:none;
@@ -1616,6 +1623,50 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   touch-action:none;
 }
 .player-scrub-grab.dragging{cursor:grabbing}
+
+/* Thumb visual desktop — pseudo-element dentro de .player-scrub-grab.
+   Só aparece em desktop (min-width:768px) e substitui o thumb nativo escondido
+   via CSS abaixo. Vantagens sobre o thumb nativo em desktop:
+   - Alinhamento perfeito com a linha horizontal (top:50% + translateY(-50%))
+   - Respeita value=0 sem deslocamento — não há motivo pra aparecer no meio
+   - Aparece/desaparece conforme estado .paused/.playing do wrap */
+@media(min-width:768px){
+  /* Desktop: esconde o thumb nativo em webkit e firefox */
+  .player-scrub input[type="range"]::-webkit-slider-thumb{
+    width:0 !important;
+    height:0 !important;
+    opacity:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+  .player-scrub input[type="range"]::-moz-range-thumb{
+    width:0 !important;
+    height:0 !important;
+    opacity:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+  /* Thumb visual desenhado via pseudo do grab (alinhado à linha horizontal) */
+  .player-scrub-grab::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:2px;
+    height:14px;
+    border-radius:1px;
+    background:var(--a);
+    box-shadow:0 0 4px rgba(212,160,74,.4);
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  /* Estado "música não iniciada" (audio.paused && currentTime===0):
+     esconde o thumb — não faz sentido marcar posição sem música tocando */
+  .player-scrub.is-idle .player-scrub-grab::after{
+    opacity:0;
+  }
+}
   
 
   
@@ -2075,6 +2126,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     grid-column:1;
     grid-row:2;
     align-self:start;
+    justify-self:stretch;
+    /* Fix 2026-05-06 desktop item 3: player acompanha a largura da foto principal.
+       Container .vestido-photos mede 512px em 1440 → player vai a 100% do grid-column.
+       Mobile não é afetado (este seletor só existe em @media min-width:768px). */
+    width:100%;
+    max-width:none;
     margin-bottom:22px;
   }
   .vestido .inn > .vestido-photos{
@@ -6463,6 +6520,10 @@ var au=document.getElementById('bgMusic');
        Com preload="none", isso NÃO baixa o arquivo — só registra o src.
        O download real só acontece no primeiro au.play(). */
     au.load();
+    /* Inicializa estado idle do scrubber (fix item 2 desktop):
+       marca .is-idle no .player-scrub desde o load — esconde o thumb vertical
+       até o convidado clicar play. Se tocar, o handler 'play' remove a classe. */
+    try{syncPlayerUI();}catch(e){}
   }
   if(MIDIAS.vestido_textura){
     var styleTag=document.getElementById('dynStyle')||document.createElement('style');
@@ -7221,6 +7282,16 @@ function syncPlayerUI(){
     ?'<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>'
     :'<path d="M8 5v14l11-7z"/>';
   document.getElementById('playBtnEl').classList.toggle('playing',isPlaying);
+  /* Fix item 2 (desktop): marca .is-idle no .player-scrub quando a música nunca tocou.
+     CSS esconde o thumb vertical nesse estado (não faz sentido marcar posição sem música).
+     Estado idle: paused AND currentTime===0 (nunca rodou OU voltou ao começo manualmente). */
+  try{
+    var scrubEl=document.querySelector('.player-scrub');
+    if(scrubEl){
+      var idle = au.paused && (!au.currentTime || au.currentTime===0);
+      scrubEl.classList.toggle('is-idle', idle);
+    }
+  }catch(e){}
 }
 
 /* Scrubber de áudio */
