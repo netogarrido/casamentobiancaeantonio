@@ -3742,6 +3742,89 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 
 /* ══════════════════════════════════════════
+   C1 — Callout GPS (última peça da Programação)
+   Pílula editorial que reforça a dica operacional pra chegar ao hotel.
+   Mesma lógica visual da pílula #rsvp_detalhes: ouro dormente, respira.
+══════════════════════════════════════════ */
+.prog-gps-dica{
+  max-width:560px;
+  margin:40px auto 0;
+  padding:0 20px;
+}
+.prog-gps-dica-inn{
+  background:rgba(212,160,74,.06);
+  border:1.5px solid rgba(212,160,74,.38);
+  border-radius:18px;
+  padding:22px 22px 20px;
+  text-align:center;
+}
+.prog-gps-dica-ico{
+  display:inline-block;
+  font-size:1.4rem;
+  margin-bottom:8px;
+  line-height:1;
+}
+.prog-gps-dica-titulo{
+  font-family:var(--fh);
+  font-weight:400;
+  font-style:italic;
+  font-size:1.35rem;
+  color:#9C7A3F;
+  margin:0 0 10px;
+  line-height:1.2;
+}
+.prog-gps-dica-texto{
+  font-family:var(--fb);
+  font-size:.94rem;
+  line-height:1.55;
+  color:var(--im);
+  margin:0 0 14px;
+}
+.prog-gps-dica-endereco{
+  font-family:var(--fb);
+  font-size:.78rem;
+  line-height:1.5;
+  color:var(--is);
+  margin:0 0 16px;
+  letter-spacing:.01em;
+}
+.prog-gps-dica-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 18px;
+  background:rgba(212,160,74,.12);
+  border:1px solid rgba(212,160,74,.5);
+  border-radius:999px;
+  color:#9C7A3F;
+  font-family:var(--fb);
+  font-size:.85rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  text-decoration:none;
+  transition:background .25s, border-color .25s, transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.prog-gps-dica-btn:hover,
+.prog-gps-dica-btn:focus-visible{
+  background:rgba(212,160,74,.22);
+  border-color:rgba(212,160,74,.8);
+}
+.prog-gps-dica-btn:active{
+  transform:scale(.98);
+}
+.prog-gps-dica-btn-arrow{
+  font-size:.9rem;
+  line-height:1;
+}
+@media(min-width:768px){
+  .prog-gps-dica{margin-top:56px}
+  .prog-gps-dica-inn{padding:28px 28px 24px}
+  .prog-gps-dica-titulo{font-size:1.55rem}
+  .prog-gps-dica-texto{font-size:1rem}
+}
+
+/* ══════════════════════════════════════════
    ALTERNATIVAS — hospedagem orgânica
 ══════════════════════════════════════════ */
 .prog-via-panel--hosp{
@@ -4561,6 +4644,38 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .rsvp-ok{display:none;text-align:center;padding:28px 0}.rsvp-ok.on{display:block}
 .rsvp-ok h3{color:var(--i) !important}
 .rsvp-ok p{color:var(--im) !important}
+
+/* C2 — Transição pra Presentes na tela de sucesso do RSVP.
+   Substitui o auto-scroll silencioso. CTA explícita, copy editorial. */
+.rsvp-ok-divisor{
+  width:48px;
+  height:1px;
+  background:rgba(212,160,74,.4);
+  margin:22px auto;
+}
+.rsvp-ok-transicao{
+  font-family:var(--fh);
+  font-style:italic;
+  font-size:1.1rem;
+  line-height:1.5;
+  color:var(--im) !important;
+  max-width:420px;
+  margin:0 auto 18px !important;
+}
+.rsvp-ok-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  width:auto;
+  max-width:320px;
+  padding:14px 28px;
+  font-size:.95rem;
+  letter-spacing:.02em;
+}
+@media(min-width:768px){
+  .rsvp-ok-transicao{font-size:1.2rem}
+}
 
 /* RSVP — aviso Day use e radios de hospedagem condicional */
 .rsvp-aviso{
@@ -5728,6 +5843,25 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     </div>
 
   </div>
+
+  <!-- C1: Callout com dica de GPS pra chegar ao hotel.
+       Posicionado como último elemento da seção Programação pra pegar quem já decidiu
+       a logística (hospedagem/day use/festa) e está prestes a sair do site.
+       Estilo: pílula ouro dormente — mesma lógica visual do #rsvp_detalhes.
+       Todo o texto vem da Sheet (chaves hosp_dica_gps_*); tem fallback hardcoded. -->
+  <aside class="prog-gps-dica" id="prog_gps_dica" aria-labelledby="prog_gps_dica_titulo">
+    <div class="prog-gps-dica-inn">
+      <span class="prog-gps-dica-ico" aria-hidden="true">📍</span>
+      <h3 class="prog-gps-dica-titulo" id="hosp_dica_gps_titulo">Dica pra chegar</h3>
+      <p class="prog-gps-dica-texto" id="hosp_dica_gps_texto">Coloque Amparo/SP no GPS como referência inicial. Depois que chegar na cidade, troque para Hotel Fazenda Sant'Anna. Isso evita uma estrada de terra com mais de 10 km.</p>
+      <p class="prog-gps-dica-endereco" id="hosp_dica_gps_endereco">Estrada do Córrego Vermelho, s/n — Córrego Vermelho, Amparo/SP, 13903-900</p>
+      <a class="prog-gps-dica-btn" href="https://maps.app.goo.gl/uJTkEHntfkmn49S58" target="_blank" rel="noopener noreferrer" id="hosp_dica_gps_maps_link" onclick="try{trackEvento('prog_gps_maps_clicou','');}catch(e){}">
+        <span id="hosp_dica_gps_maps_label">Abrir no Google Maps</span>
+        <span class="prog-gps-dica-btn-arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </aside>
+
 </section>
 
   
@@ -5802,6 +5936,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <div style="font-size:2.2rem;margin-bottom:12px">💛</div>
     <h3 style="font-family:var(--fh);font-size:1.3rem;color:var(--s)" id="rsvp_confirmacao_titulo">Obrigado! Sua presença foi confirmada.</h3>
     <p style="font-size:.84rem;color:rgba(250,244,232,.6)" id="rsvp_confirmacao_texto">Em breve entraremos em contato se precisarmos de mais algum detalhe.</p>
+    <!-- C2: transição pra Presentes (substitui o auto-scroll silencioso).
+         Tudo editável pelo Sheet. -->
+    <div class="rsvp-ok-divisor" aria-hidden="true"></div>
+    <p class="rsvp-ok-transicao" id="rsvp_pos_confirmacao_transicao">Agora, se quiser, este é um ótimo momento para dar uma olhada na nossa lista de presentes.</p>
+    <button type="button" class="btn btn-a rsvp-ok-cta" id="rsvp_pos_cta_presentes" onclick="irParaPresentesPosRSVP()">Ver lista de presentes &rarr;</button>
   </div>
 </div></section>
 
@@ -8454,43 +8593,23 @@ function initRsvpOnboardTracking(){
   }
 }
 
-/* Dispara o scroll suave para Presentes 3s após a tela de sucesso do RSVP aparecer.
-   Cancela se o usuário scrollar manualmente antes (respeita intenção do convidado
-   que quer ler a confirmação com calma).
-   Respeita prefers-reduced-motion: sem animação, pulo direto. */
-function agendarScrollPosRSVP(){
-  var DELAY_MS=3000;
-  var iniciado=Date.now();
-  var yInicial=window.scrollY||window.pageYOffset||0;
-  var cancelado=false;
-
-  function onScrollManual(){
-    /* se mover >40px pra cima, considera que quer ler a confirmação */
-    var y=window.scrollY||window.pageYOffset||0;
-    if(Math.abs(y - yInicial) > 40){
-      cancelado=true;
-      window.removeEventListener('scroll', onScrollManual);
-      try{trackEvento('rsvp_pos_scroll_cancelado','manual');}catch(e){}
-    }
+/* C2 — Transição pós-confirmação RSVP.
+   Substitui o auto-scroll silencioso (agendarScrollPosRSVP) por um CTA explícito.
+   O botão "Ver lista de presentes →" chama esta função, que rola pra #presentes.
+   Respeita prefers-reduced-motion: pulo direto em vez de animação. */
+function irParaPresentesPosRSVP(){
+  var reduce=false;
+  try{reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  try{trackEvento('rsvp_pos_cta_presentes_clicou', reduce?'instant':'smooth');}catch(e){}
+  var target=document.getElementById('presentes');
+  if(!target)return;
+  if(reduce){
+    target.scrollIntoView({block:'start'});
+  }else if(typeof smoothScrollTo==='function'){
+    smoothScrollTo('presentes');
+  }else{
+    target.scrollIntoView({behavior:'smooth',block:'start'});
   }
-  window.addEventListener('scroll', onScrollManual, {passive:true});
-
-  setTimeout(function(){
-    window.removeEventListener('scroll', onScrollManual);
-    if(cancelado)return;
-    var reduce=false;
-    try{reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
-    try{trackEvento('rsvp_pos_scroll_presentes', reduce?'instant':'smooth');}catch(e){}
-    var target=document.getElementById('presentes');
-    if(!target)return;
-    if(reduce){
-      target.scrollIntoView({block:'start'});
-    }else if(typeof smoothScrollTo==='function'){
-      smoothScrollTo('presentes');
-    }else{
-      target.scrollIntoView({behavior:'smooth',block:'start'});
-    }
-  }, DELAY_MS);
 }
 
 function onHospedagemChange(val){
@@ -8592,9 +8711,9 @@ function _enviarRSVP(d,form){
       if(interceptPost)interceptPost.classList.add('gone');
       _interceptJaUsado=true;
     }catch(e){}
-    /* Pós-confirmação: 3s após mostrar tela de sucesso, rola suave pra Presentes.
-       Cancela se o convidado scrollar pra ler a confirmação com calma. */
-    agendarScrollPosRSVP();
+    /* C2: Pós-confirmação — o scroll automático virou CTA explícito na tela de sucesso
+       (botão "Ver lista de presentes →" dentro de #rO). O convidado decide quando sair
+       da confirmação. Menos invasivo, mais acolhedor. */
   }, function onErrorRSVP(){
     /* Network error — libera submit e avisa convidado */
     _rsvpEmEnvio=false;
