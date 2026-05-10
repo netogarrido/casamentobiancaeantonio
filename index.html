@@ -8713,7 +8713,26 @@ function _enviarRSVP(d,form){
     }catch(e){}
     /* C2: Pós-confirmação — o scroll automático virou CTA explícito na tela de sucesso
        (botão "Ver lista de presentes →" dentro de #rO). O convidado decide quando sair
-       da confirmação. Menos invasivo, mais acolhedor. */
+       da confirmação. Menos invasivo, mais acolhedor.
+
+       Fix 2026-05-10 (bug descoberto em testes D1): ao esconder o form e abrir o rO,
+       a seção RSVP encolhe ~800px. Como o modal de confirmação já havia feito lockScroll
+       salvando a posição antiga, o unlockScroll que vai rodar em seguida restaura
+       scrollY absoluto — mas como o body inteiro encolheu, o #rO fica em top:-574px
+       (acima da dobra). Solução: forçar scroll direto pro topo do #rsvp via RAF pra
+       esperar o reflow do form sumir + rO aparecer + unlockScroll concluir. */
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        try{
+          var secao=document.getElementById('rsvp');
+          if(secao){
+            var reduce=false;
+            try{reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+            secao.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+          }
+        }catch(e){}
+      });
+    });
   }, function onErrorRSVP(){
     /* Network error — libera submit e avisa convidado */
     _rsvpEmEnvio=false;
