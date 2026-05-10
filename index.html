@@ -165,7 +165,7 @@ body.scroll-locked .nav.sc{backdrop-filter:none;-webkit-backdrop-filter:none}
   transform:scale(0.96);
 }
 .nav-logo i{font-style:italic;font-weight:300}
-.nav-lk{display:flex;gap:6px;align-items:center}
+.nav-lk{display:flex;gap:12px;align-items:center}
 .nav-lk a{
   font-size:.72rem;
   font-weight:800;
@@ -994,7 +994,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .cd-l{font-size:.66rem;letter-spacing:.14em;color:rgba(250,244,232,.55);margin-top:4px;display:block;font-weight:700}
 .hero-ctas{display:flex;flex-direction:column;gap:14px;align-items:center;margin-top:18px}
 @media(min-width:900px){.hero-ctas{align-items:flex-start;gap:16px;margin-top:24px}}
-.hero-cd-lbl{font-size:.62rem;letter-spacing:.15em;color:rgba(250,244,232,.45);margin-bottom:4px}
+.hero-cd-lbl{font-size:.62rem;letter-spacing:.15em;color:rgba(250,244,232,.62);text-shadow:0 1px 6px rgba(15,23,32,.45);margin-bottom:4px}
 
 /* CTAs dormentes do hero — permanecem sem texto (ativo=nao no Sheets).
    Quando ativados (applyConteudo preenche o texto), aparecem em estética editorial refinada. */
@@ -4964,6 +4964,8 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-radius:22px 22px 0 0;
   width:100%;
   max-width:480px;
+  /* A3: svh evita pulo quando barra URL iOS Safari some/aparece; vh como fallback */
+  max-height:90svh;
   max-height:90vh;
   overflow-y:auto;
   padding:22px 20px 34px;
@@ -6042,30 +6044,54 @@ function unlockScroll(){
   try{sessionStorage.removeItem('_scrollY_lock');}catch(e){}
 }
   
-/* Recupera posição se o usuário voltar de outra aba/app com o body ainda travado */
+/* v7 fix scroll-pulo-pos-modal:
+   Este listener NÃO deve destravar o scroll sozinho — só deve restaurar a
+   posição quando o usuário volta de uma aba externa E o modal NÃO está mais
+   aberto. Se o modal continua aberto, respeitar o estado travado.
+   
+   Antes (bug): chamava unlockScroll() automaticamente ao voltar → quando o
+   usuário depois fechava o modal manualmente (cM → unlockScroll), _scrollY
+   já tinha sido zerado e a página pulava pro topo. */
 document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='visible'){
-    var travado=document.body.classList.contains('scroll-locked');
-    if(travado){
-      unlockScroll();
-      return;
-    }
-    /* Mesmo sem o body travado, iOS às vezes reseta o scroll ao voltar */
-    try{
-      var saved=sessionStorage.getItem('_scrollY_lock');
-      if(saved){
-        var y=parseInt(saved,10);
-        if(!isNaN(y)&&y>0){
-          document.documentElement.style.scrollBehavior='auto';
-          window.scrollTo(0,y);
-          requestAnimationFrame(function(){
-            document.documentElement.style.scrollBehavior='';
-          });
-          sessionStorage.removeItem('_scrollY_lock');
-        }
-      }
-    }catch(e){}
+  if(document.visibilityState!=='visible')return;
+
+  /* Se algum modal principal ainda está aberto, não mexer no scroll.
+     O unlock será feito pela função de fechamento do modal. */
+  var modaisAbertos=[
+    document.getElementById('mo'),
+    document.getElementById('moConfirmaRSVP'),
+    document.getElementById('moAlerta'),
+    document.getElementById('moReservar'),
+    document.getElementById('moHoteis'),
+    document.getElementById('lightbox')
+  ].some(function(m){return m && m.classList.contains('on');});
+
+  if(modaisAbertos)return; /* não mexer — modal ainda em uso */
+
+  /* Modal fechado. Se body ficou travado por algum motivo (aba matou o
+     handler de fechamento), destrava. */
+  var travado=document.body.classList.contains('scroll-locked');
+  if(travado){
+    unlockScroll();
+    return;
   }
+
+  /* Body não está travado mas iOS pode ter resetado o scroll. Restaurar
+     se tivermos posição salva. */
+  try{
+    var saved=sessionStorage.getItem('_scrollY_lock');
+    if(saved){
+      var y=parseInt(saved,10);
+      if(!isNaN(y)&&y>0&&window.scrollY<10){
+        document.documentElement.style.scrollBehavior='auto';
+        window.scrollTo(0,y);
+        requestAnimationFrame(function(){
+          document.documentElement.style.scrollBehavior='';
+        });
+      }
+      sessionStorage.removeItem('_scrollY_lock');
+    }
+  }catch(e){}
 });
 
 /* ══════════════════════════════════════════
