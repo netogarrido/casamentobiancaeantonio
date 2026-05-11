@@ -3773,7 +3773,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   padding:0 20px;
 }
 .prog-gps-dica-inn{
-  background:rgba(212,160,74,.06);
+  background:rgba(15,23,32,.35);
   border:1.5px solid rgba(212,160,74,.38);
   border-radius:18px;
   padding:24px 22px 22px;
@@ -3790,7 +3790,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-weight:400;
   font-style:italic;
   font-size:1.5rem;
-  color:#9C7A3F;
+  color:var(--al);
   margin:0 0 12px;
   line-height:1.2;
 }
@@ -3798,87 +3798,54 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   font-family:var(--fb);
   font-size:1rem;
   line-height:1.6;
-  color:var(--im);
+  color:#FAF4E8;
   margin:0 0 18px;
 }
 .prog-gps-dica-endereco{
   font-family:var(--fb);
   font-size:.9rem;
   line-height:1.5;
-  color:var(--is);
+  color:rgba(250,244,232,.72);
   margin:0 0 18px;
   letter-spacing:.01em;
 }
 
-/* ── Botão Google Maps: 2 linhas + ícone em círculo azul-petróleo + seta ── */
+/* ── Botão Google Maps: CTA pílula editorial (conforma ao .btn-a) ── */
 .prog-gps-dica-btn{
   display:inline-flex;
   align-items:center;
-  gap:12px;
-  min-height:56px;
-  padding:12px 22px;
-  background:linear-gradient(180deg, #D4A04A 0%, #C89239 100%);
+  justify-content:center;
+  gap:10px;
+  min-height:48px;
+  padding:15px 32px;
+  background:linear-gradient(135deg, var(--a), var(--al));
   border:none;
-  border-radius:14px;
-  color:#2B1F08;
+  border-radius:50px;
+  color:var(--n);
   font-family:var(--fb);
+  font-weight:600;
+  font-size:.74rem;
+  letter-spacing:.04em;
   text-decoration:none;
-  box-shadow:0 4px 14px rgba(212,160,74,.28), inset 0 1px 0 rgba(255,255,255,.2);
-  transition:transform .15s, box-shadow .25s, filter .25s;
+  white-space:nowrap;
+  box-shadow:0 4px 20px rgba(212,160,74,.3);
+  transition:transform .3s, box-shadow .3s;
   -webkit-tap-highlight-color:transparent;
-  max-width:100%;
 }
 .prog-gps-dica-btn:hover,
 .prog-gps-dica-btn:focus-visible{
-  filter:brightness(1.05);
-  box-shadow:0 6px 18px rgba(212,160,74,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(212,160,74,.45);
   outline:none;
 }
 .prog-gps-dica-btn:active{
-  transform:scale(.98);
-}
-
-/* Ícone 🗺️ dentro de círculo — "selo de app" sem logo oficial */
-.prog-gps-dica-btn-ico{
-  flex:0 0 auto;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:#fff;
-  font-size:1.25rem;
-  line-height:1;
-  box-shadow:0 1px 4px rgba(15,23,32,.12);
-}
-.prog-gps-dica-btn-txt{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:2px;
-  text-align:left;
-  min-width:0;
-}
-.prog-gps-dica-btn-principal{
-  font-size:.98rem;
-  font-weight:700;
-  letter-spacing:.01em;
-  line-height:1.2;
-}
-.prog-gps-dica-btn-sub{
-  font-size:.78rem;
-  font-weight:500;
-  line-height:1.3;
-  opacity:.78;
-  letter-spacing:.01em;
+  transform:translateY(0);
+  box-shadow:none;
 }
 .prog-gps-dica-btn-arrow{
-  flex:0 0 auto;
-  font-size:1rem;
+  font-size:.9rem;
   line-height:1;
-  opacity:.72;
-  margin-left:2px;
+  opacity:.85;
 }
 
 @media(min-width:768px){
@@ -3887,16 +3854,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .prog-gps-dica-titulo{font-size:1.75rem}
   .prog-gps-dica-texto{font-size:1.05rem}
   .prog-gps-dica-endereco{font-size:.95rem}
-  .prog-gps-dica-btn{padding:14px 26px; gap:14px}
-  .prog-gps-dica-btn-ico{width:44px; height:44px; font-size:1.35rem}
-  .prog-gps-dica-btn-principal{font-size:1.05rem}
-  .prog-gps-dica-btn-sub{font-size:.82rem}
-}
-
-/* Mobile extra-pequeno: reduz levemente o gap pra não quebrar label em tela estreita */
-@media(max-width:360px){
-  .prog-gps-dica-btn{gap:10px; padding:12px 16px}
-  .prog-gps-dica-btn-principal{font-size:.92rem}
+  .prog-gps-dica-btn{padding:16px 36px; font-size:.78rem}
 }
 
 /* ══════════════════════════════════════════
@@ -5998,14 +5956,10 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <div class="prog-gps-dica-inn">
       <span class="prog-gps-dica-ico" aria-hidden="true">📍</span>
       <h3 class="prog-gps-dica-titulo" id="hosp_dica_gps_titulo">Dica pra chegar</h3>
-      <p class="prog-gps-dica-texto" id="hosp_dica_gps_texto">Coloque Amparo/SP no GPS como referência inicial. Depois que chegar na cidade, troque para Hotel Fazenda Sant'Anna. Isso evita uma estrada de terra com mais de 10 km.</p>
+      <p class="prog-gps-dica-texto" id="hosp_dica_gps_texto">Coloque Amparo/SP no GPS como referência inicial. Depois que chegar na cidade, troque para Hotel Fazenda Sant'Anna. A rota abaixo já inclui essa parada em Amparo e evita uma estrada de terra com mais de 10 km.</p>
       <p class="prog-gps-dica-endereco" id="hosp_dica_gps_endereco">Estrada do Córrego Vermelho, s/n — Córrego Vermelho, Amparo/SP, 13903-900</p>
       <a class="prog-gps-dica-btn" href="https://www.google.com/maps/dir/?api=1&amp;origin=My+Location&amp;waypoints=Amparo%2C+SP%2C+Brasil&amp;destination=Fazenda+Sant%27Anna+Hotel+and+Wellness%2C+Estrada+do+C%C3%B3rrego+Vermelho%2C+Amparo+-+SP&amp;travelmode=driving" target="_blank" rel="noopener noreferrer" id="hosp_dica_gps_maps_link" onclick="try{trackEvento('prog_gps_maps_clicou','');}catch(e){}">
-        <span class="prog-gps-dica-btn-ico" aria-hidden="true">🗺️</span>
-        <span class="prog-gps-dica-btn-txt">
-          <span class="prog-gps-dica-btn-principal" id="hosp_dica_gps_maps_label">Abrir rota no Google Maps</span>
-          <span class="prog-gps-dica-btn-sub" id="hosp_dica_gps_maps_sub">com parada em Amparo</span>
-        </span>
+        <span id="hosp_dica_gps_maps_label">Abrir rota no Google Maps</span>
         <span class="prog-gps-dica-btn-arrow" aria-hidden="true">↗</span>
       </a>
     </div>
