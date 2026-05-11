@@ -7541,27 +7541,35 @@ function applyPerguntas(rows){
   if(FAQS.length>0)renderFAQ(FAQS);
 }
 
-/* Mapa FAQ CTA → ação no site.
-   Chave = ordem da pergunta no Sheet. Valor = função que executa o redirect/modal.
+/* Destino de cada CTA de FAQ. Usuário clica em "veja mais" numa pergunta com CTA e vai
+   pro destino. Ex: clica em "Como posso participar?" → scroll pra programação.
+   Para perguntas sobre DAY USE ou PARTICIPAÇÃO, abre a box de vias com day aberto —
+   usuário vê já toda a informação (o que é, valor, reserva, contato).
    
-   Refinado 2026-05-03: destinos precisos, não só scroll genérico. Quando a pergunta é
-   sobre DAY USE ou PARTICIPAÇÃO, abre a box de vias com day aberto — usuário vê já
-   toda a informação (o que é, valor, reserva, contato). */
+   Atualizado 2026-05-11: 5 perguntas novas foram inseridas entre ordem 10 e 11
+   (categoria "Ajustes na sua confirmação"), deslocando todas as ordens ≥11 em +5. */
 var FAQ_CTA_MAP={
   5: function(){abrirDayUseDaProgramacao();},  /* Como posso participar? → box de vias aberto em "day" */
   7: function(){smoothScrollTo('rsvp');},      /* Preciso confirmar? → RSVP */
   8: function(){smoothScrollTo('rsvp');},      /* Como confirmo presença? → RSVP */
   9: function(){smoothScrollTo('rsvp');},      /* O que informar no RSVP? → RSVP */
   10:function(){smoothScrollTo('rsvp');},      /* Por que essas infos? → RSVP */
-  11:function(){abrirHoteis();},               /* Tem hospedagem Sant'Anna? → modal hotéis alt */
-  12:function(){abrirHoteis();},               /* Quem não conseguiu quarto? → modal hotéis alt */
-  13:function(){abrirHoteis();},               /* Hotéis próximos? → modal hotéis alt */
-  14:function(){abrirDayUseDaProgramacao();},  /* O que é day use? → abre box day aberto */
-  19:function(){abrirReservar();},             /* Quantas vagas? → modal Marcela */
-  20:function(){abrirReservar();},             /* Como reservar? → modal Marcela */
-  22:function(){abrirDayUseDaProgramacao();},  /* Valor do day use? → box day (mostra valor + reserva) */
-  23:function(){abrirReservar();},             /* Reservar pelo site? → modal Marcela */
-  28:function(){smoothScrollTo('presentes');}  /* Como funciona lista presentes? → Presentes */
+  /* ── Ajustes na sua confirmação (novas 2026-05-11) ── */
+  11:function(){smoothScrollTo('rsvp');},      /* Posso atualizar confirmação? → RSVP */
+  12:function(){smoothScrollTo('rsvp');},      /* Casal, quem preenche? → RSVP */
+  13:function(){smoothScrollTo('rsvp');},      /* Só sugerir música? → RSVP */
+  /* ── Hospedagem (antes 11/12/13, agora 16/17/18) ── */
+  16:function(){abrirHoteis();},               /* Tem hospedagem Sant'Anna? → modal hotéis alt */
+  17:function(){abrirHoteis();},               /* Quem não conseguiu quarto? → modal hotéis alt */
+  18:function(){abrirHoteis();},               /* Hotéis próximos? → modal hotéis alt */
+  /* ── Day use (antes 14/19/20/22/23, agora 19/24/25/27/28) ── */
+  19:function(){abrirDayUseDaProgramacao();},  /* O que é day use? → abre box day aberto */
+  24:function(){abrirReservar();},             /* Quantas vagas? → modal Marcela */
+  25:function(){abrirReservar();},             /* Como reservar? → modal Marcela */
+  27:function(){abrirDayUseDaProgramacao();},  /* Valor do day use? → box day (mostra valor + reserva) */
+  28:function(){abrirReservar();},             /* Reservar pelo site? → modal Marcela */
+  /* ── Lista de presentes (antes 28, agora 33) ── */
+  33:function(){smoothScrollTo('presentes');}  /* Como funciona lista presentes? → Presentes */
 };
 
 function faqCtaGo(ordem){
