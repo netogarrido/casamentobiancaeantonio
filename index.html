@@ -1931,16 +1931,11 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   pointer-events:none;
 }
 
-/* ── Wrapper da seta "nossa lista ↓" — começa oculto ── */
+/* ── Wrapper da seta "nossa lista ↓" — sempre visível (2026-05-11) ── */
 .vestido-seta-presentes-wrap{
-  display:none;
+  display:flex;
   justify-content:center;
   padding:56px 0 24px;
-}
-/* Só aparece quando a letra foi aberta ao menos uma vez */
-.vestido.letra-foi-aberta .vestido-seta-presentes-wrap{
-  display:flex;
-  animation:fadeInRise .6s ease both;
 }
 
 /* ── Letra aberta — mesmo pergaminho, só expandido ── */
@@ -2399,7 +2394,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   max-width:720px;
   margin-left:auto;
   margin-right:auto;
-  display:none;
+  display:block;
 }
 .musica-cta-titulo .musica-cta-l1{
   display:block;
@@ -2425,18 +2420,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   .musica-cta-titulo .musica-cta-l1{font-size:1.22rem;white-space:normal}
   .musica-cta-titulo .musica-cta-l2{font-size:1rem}
 }
-/* Caixinhas externas também começam ocultas — mesmo gate */
+/* Caixinhas externas sempre visíveis (2026-05-11) */
 .vestido .cx-cards#cxVestido{
-  display:none;
-}
-/* Só aparece depois da letra ter sido aberta ao menos uma vez (mesmo gate das caixinhas externas) */
-.vestido.letra-foi-aberta .musica-cta-titulo{
-  display:block;
-  animation:fadeInRise .6s ease both;
-}
-.vestido.letra-foi-aberta .cx-cards#cxVestido{
   display:grid;
-  animation:fadeInRise .6s ease both;
 }
 /* Se no Sheet estiver vazio, mesmo com gate ativo, fica escondido */
 .musica-cta-titulo:empty{display:none !important;}
