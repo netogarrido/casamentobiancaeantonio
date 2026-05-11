@@ -5398,19 +5398,51 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 .lightbox-img-wrap{position:relative;max-width:min(92vw,520px);width:100%;display:flex;align-items:center;justify-content:center}
 .lightbox img{max-width:100%;max-height:80vh;border-radius:var(--r);display:block;object-fit:contain;background:#0a0a0a;transition:opacity .18s ease}
 .lightbox img.lbox-fade{opacity:0}
-.lightbox-close{position:absolute;top:16px;right:16px;color:#fff;font-size:1.4rem;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.12);z-index:1;-webkit-tap-highlight-color:transparent;transition:background .2s}
-.lightbox-close:hover{background:rgba(255,255,255,.22)}
-.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:1.6rem;cursor:pointer;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.10);-webkit-tap-highlight-color:transparent;transition:background .2s;border:1px solid rgba(255,255,255,.14)}
-.lightbox-nav:hover{background:rgba(255,255,255,.22)}
+.lightbox-close{position:absolute;top:16px;right:16px;color:#fff;font-size:1.4rem;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.18);z-index:1;-webkit-tap-highlight-color:transparent;transition:background .2s;border:1px solid rgba(255,255,255,.3)}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:1.75rem;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.28);-webkit-tap-highlight-color:transparent;transition:background .2s, transform .15s;border:1.5px solid rgba(255,255,255,.55);box-shadow:0 2px 8px rgba(0,0,0,.4);line-height:1}
+.lightbox-nav:hover{background:rgba(255,255,255,.4)}
+.lightbox-nav:active{transform:translateY(-50%) scale(.95)}
 .lightbox-prev{left:-22px}
 .lightbox-next{right:-22px}
+
 @media(max-width:480px){
-  .lightbox-prev{left:-10px}
-  .lightbox-next{right:-10px}
+  .lightbox-prev{left:-8px}
+  .lightbox-next{right:-8px}
 }
-.lightbox-dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
-.lightbox-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .2s;cursor:pointer}
-.lightbox-dot.on{background:var(--al)}
+/* Contador "1 / 5" — substitui dots pra idoso ler */
+.lightbox-counter{
+  color:rgba(255,255,255,.85);
+  font-family:var(--fb);
+  font-size:.95rem;
+  font-weight:500;
+  letter-spacing:.08em;
+  margin-top:14px;
+  text-align:center;
+}
+/* Hint efêmero "deslize ou use as setas" — aparece 2.5s no primeiro abrir */
+.lightbox-hint{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:14%;
+  color:rgba(255,255,255,.82);
+  font-family:var(--fb);
+  font-size:.82rem;
+  font-weight:500;
+  letter-spacing:.04em;
+  padding:9px 16px;
+  background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:22px;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .4s ease;
+  z-index:2;
+  white-space:nowrap;
+  max-width:92vw;
+}
+.lightbox-hint.on{opacity:1}
 
 /* FIX desktop: lightbox maior e setas dentro do container */
 @media(min-width:768px){
@@ -5433,8 +5465,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <div class="lightbox-nav lightbox-prev" onclick="lboxNav(-1)">‹</div>
     <img src="" alt="" id="lightboxImg">
     <div class="lightbox-nav lightbox-next" onclick="lboxNav(1)">›</div>
+    <div class="lightbox-hint" id="lightboxHint">Toque nas setas ou deslize</div>
   </div>
-  <div class="lightbox-dots" id="lightboxDots"></div>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
   </div>
 
 <!-- POPUP -->
@@ -8241,6 +8274,40 @@ function openCarousel(album,idx){
   document.getElementById('lightbox').classList.add('on');
   lockScroll();
   _pushOverlayState('lightbox');
+  _lboxPushHistory();
+  _lboxShowHint();
+}
+
+/* 2026-05-11: pushState isolado pro lightbox — back-button Android fecha só o modal,
+   não volta pro WhatsApp. Não toca em outros modais (caixinhas, RSVP). */
+var _lboxHistoryPushed=false;
+function _lboxPushHistory(){
+  try{
+    if(_lboxHistoryPushed)return;
+    history.pushState({overlay:'lightbox'},'',location.href);
+    _lboxHistoryPushed=true;
+  }catch(e){}
+}
+window.addEventListener('popstate',function(e){
+  /* Só age se foi nós quem empurramos o state — zero impacto em outros modais */
+  var lb=document.getElementById('lightbox');
+  if(_lboxHistoryPushed && lb && lb.classList.contains('on')){
+    _lboxHistoryPushed=false;
+    lb.classList.remove('on');
+    try{unlockScroll();}catch(e){}
+  }
+});
+
+/* Hint "Toque nas setas ou deslize" — só primeira vez por sessão */
+function _lboxShowHint(){
+  try{
+    if(sessionStorage.getItem('lbox_hint_visto'))return;
+    var h=document.getElementById('lightboxHint');
+    if(!h)return;
+    setTimeout(function(){h.classList.add('on');},200);
+    setTimeout(function(){h.classList.remove('on');},3000);
+    sessionStorage.setItem('lbox_hint_visto','1');
+  }catch(e){}
 }
 
 function lboxPreload(src){
@@ -8315,14 +8382,10 @@ function lboxRender(){
     lboxPreload(imgs[(idx-1+imgs.length)%imgs.length]);
   }
 
-  var dotsEl=document.getElementById('lightboxDots');
-  dotsEl.innerHTML='';
-  imgs.forEach(function(_,i){
-    var d=document.createElement('div');
-    d.className='lightbox-dot'+(i===idx?' on':'');
-    (function(ii){d.onclick=function(){LBOX.cur.idx=ii;lboxRender();};})(i);
-    dotsEl.appendChild(d);
-  });
+  var dotsEl=document.getElementById('lightboxCounter');
+  if(dotsEl){
+    dotsEl.textContent = imgs.length>1 ? ((idx+1)+' / '+imgs.length) : '';
+  }
   var prev=document.querySelector('.lightbox-prev');
   var next=document.querySelector('.lightbox-next');
   if(prev)prev.style.visibility=imgs.length>1?'visible':'hidden';
@@ -8339,6 +8402,11 @@ function closeLightbox(){
   document.getElementById('lightbox').classList.remove('on');
   unlockScroll();
   _popOverlayIfPushed();
+  /* Se tem state nosso na history, popamos pra sincronizar URL com o estado visual */
+  if(_lboxHistoryPushed){
+    _lboxHistoryPushed=false;
+    try{history.back();}catch(e){}
+  }
 }
 
 /* P7 DESATIVADO: sistema popstate/pushState estava causando travamento ao abrir
