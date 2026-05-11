@@ -2195,6 +2195,19 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     margin-left:auto;
     margin-right:auto;
   }
+  /* Fix 2026-05-11 desktop: .pergaminho-stack foi introduzido depois do grid,
+     mas é ele que envolve .pergaminho-wrap + .lyr-box. Precisa ocupar a mesma
+     célula que o pergaminho/letra teriam (col 2, row 3). Sem isso, stack cai
+     como filho default e empurra as fotos pra baixo. */
+  .vestido .inn > .pergaminho-stack{
+    grid-column:2;
+    grid-row:3;
+    align-self:start;
+    max-width:560px;
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+  }
 
   /* Linha 4+: letra aberta, CTA, caixinhas, seta.
      Bloco 2026-05-03 #fix-desktop: letra aberta fica na COLUNA DIREITA (grid-column:2),
