@@ -3229,10 +3229,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   box-shadow:
     0 4px 16px rgba(15,23,32,.18),
     inset 0 1px 0 rgba(255,255,255,.06);
-  padding:16px 8px;
+  padding:12px 8px;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
+  gap:2px;
   white-space:nowrap;
 }
 .prog-dia-card::after{content:none}
@@ -3269,19 +3271,17 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .prog-dia-card.on .dow{color:var(--n)}
 
-/* Affordance "+" / "×" (rotaciona 45°) — espelha padrão do FAQ pra coerência visual */
+/* Affordance "+" / "×" (rotaciona 45°) — espelha padrão do FAQ pra coerência visual.
+   Mobile: stack (linha abaixo do texto) pra não sobrepor em telas estreitas.
+   Desktop: inline à direita via @media. */
 .prog-dia-tg{
-  position:absolute;
-  top:50%;
-  right:8px;
-  transform:translateY(-50%);
-  width:16px;
-  height:16px;
   display:flex;
   align-items:center;
   justify-content:center;
+  width:16px;
+  height:14px;
   font-family:var(--fb);
-  font-size:.95rem;
+  font-size:.9rem;
   font-weight:400;
   line-height:1;
   color:var(--a);
@@ -3291,12 +3291,13 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   z-index:2;
 }
 .prog-dia-card.on .prog-dia-tg{
-  transform:translateY(-50%) rotate(45deg);
+  transform:rotate(45deg);
   color:var(--n);
   opacity:.9;
 }
 @media(min-width:768px){
-  .prog-dia-tg{right:12px;font-size:1.05rem;width:18px;height:18px}
+  .prog-dia-card{flex-direction:row;gap:10px;padding:14px 10px}
+  .prog-dia-tg{width:18px;height:18px;font-size:1.05rem}
 }
 
 .prog-dias-grid.has-open .prog-dia-card:not(.on){
@@ -10265,14 +10266,7 @@ var nomeSalvo=getNomeSalvo();
 
   /* Bloco 2026-05-03 #9: caixa de dias (sexta/sábado/domingo) começa fechada.
      Auto-open do sábado removido a pedido do usuário. Convidado abre por descoberta. */
-  /* Reativado 2026-05-11: Tio Velho + Designer UX consolidaram que sem conteúdo visível
-     as pílulas não afforda clique. Abrir Sábado por default ensina o padrão de aba
-     e alinha com a narrativa (sábado é O dia do casamento). skipScroll evita pular a página no load. */
-  setTimeout(function(){
-    if(typeof toggleDia==='function' && _diaAtivo===null){
-      toggleDia('sabado',{skipScroll:true,skipTrack:true});
-    }
-  },100);
+  /* (linhas removidas: setTimeout toggleDia sabado) */
 
   /* Garante estado inicial correto do RSVP (aviso day use, botão CTA opções) */
   try{
