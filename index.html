@@ -4751,6 +4751,12 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-radius:6px;
   margin-top:8px;
 }
+/* Variante "não vou comparecer" — tom respeitoso, cor neutra sem dramatizar */
+.rsvp-aviso--nao-vou{
+  background:rgba(192,57,43,.08);
+  border-left-color:#C0392B;
+  color:var(--im);
+}
 
 /* RSVP — aviso "você já confirmou, está editando" (pré-preenchimento b, 2026-05-11)
    Aparece no topo do form #rF quando localStorage.rsvp_enviado=1 e snapshot existe.
@@ -5997,6 +6003,7 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <option value="hospedagem_santanna" id="rsvp_opcao_hospedagem_santanna">Já tenho reserva no Sant'Anna (hotel esgotado)</option>
     <option value="dayuse" id="rsvp_opcao_dayuse">Day use no sábado + festa</option>
     <option value="festa" id="rsvp_opcao_festa">Somente festa de sábado</option>
+    <option value="nao_vou" id="rsvp_opcao_nao_vou">Não vou comparecer</option>
   </select>
     <!-- Intercept invisível: intercepta o PRIMEIRO clique no select abrindo o popup.
          A cada page load (F5 inclusive) ele volta a aparecer.
@@ -6006,6 +6013,9 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <div class="rsvp-select-intercept" id="rsvp_select_intercept" aria-hidden="true" tabindex="-1"></div>
   </div>
   <p class="rsvp-aviso" id="rsvp_dayuse_aviso" style="display:none">O day use tem vagas limitadas e precisa ser reservado antecipadamente com a Marcela, mediante pagamento de 20% de sinal e sujeito à lotação.</p>
+  <!-- Aviso visível quando participacao=nao_vou: explica que resposta vale pro grupo
+       inteiro e pra ajustar adultos/crianças se for só parcial. -->
+  <p class="rsvp-aviso rsvp-aviso--nao-vou" id="rsvp_nao_vou_aviso" style="display:none">Essa resposta vale para todos do seu grupo (você + acompanhantes). Se só uma parte do grupo não vai comparecer, ajuste a quantidade de adultos e crianças acima para refletir quantos <strong>não vão</strong>.</p>
   <!-- Pílula ouro dormente sempre visível — abre modal onboard com as 3 formas de participar -->
   <div class="rsvp-cta-opcoes-wrap">
     <button type="button" class="rsvp-cta-opcoes" id="rsvp_cta_opcoes" onclick="abrirRsvpOnboard('cta_clicou')">
@@ -6043,14 +6053,18 @@ section[id]{scroll-margin-top:var(--nav-offset)}
     <p class="rsvp-note" id="rsvp_texto_apoio">Além da confirmação de presença, esse formulário nos ajuda a organizar hospedagem, day use, alimentação e pequenos detalhes para acolher cada convidado com carinho.</p>
   </form>
   <div class="rsvp-ok" id="rO">
-    <div style="font-size:2.2rem;margin-bottom:12px">💛</div>
+    <div style="font-size:2.2rem;margin-bottom:12px" id="rsvp_confirmacao_emoji">💛</div>
     <h3 style="font-family:var(--fh);font-size:1.3rem;color:var(--s)" id="rsvp_confirmacao_titulo">Obrigado! Sua presença foi confirmada.</h3>
     <p style="font-size:.84rem;color:rgba(250,244,232,.6)" id="rsvp_confirmacao_texto">Em breve entraremos em contato se precisarmos de mais algum detalhe.</p>
     <!-- C2: transição pra Presentes (substitui o auto-scroll silencioso).
-         Tudo editável pelo Sheet. -->
-    <div class="rsvp-ok-divisor" aria-hidden="true"></div>
-    <p class="rsvp-ok-transicao" id="rsvp_pos_confirmacao_transicao">Agora, se quiser, este é um ótimo momento para dar uma olhada na nossa lista de presentes.</p>
-    <button type="button" class="btn btn-a rsvp-ok-cta" id="rsvp_pos_cta_presentes" onclick="irParaPresentesPosRSVP()">Ver lista de presentes &rarr;</button>
+         Tudo editável pelo Sheet.
+         IMPORTANTE (c/nao_vou 2026-05-11): todo o bloco abaixo é escondido via JS
+         quando participacao=nao_vou — convidar quem não vem pra presente seria estranho. -->
+    <div id="rsvp_ok_bloco_presentes">
+      <div class="rsvp-ok-divisor" aria-hidden="true"></div>
+      <p class="rsvp-ok-transicao" id="rsvp_pos_confirmacao_transicao">Agora, se quiser, este é um ótimo momento para dar uma olhada na nossa lista de presentes.</p>
+      <button type="button" class="btn btn-a rsvp-ok-cta" id="rsvp_pos_cta_presentes" onclick="irParaPresentesPosRSVP()">Ver lista de presentes &rarr;</button>
+    </div>
   </div>
 </div></section>
 
@@ -8490,22 +8504,57 @@ function onParticiplacaoChange(val){
   var hotelWrap=document.getElementById('rsvp_nome_hotel_wrap');
   var hotelInput=document.getElementById('rsvp_nome_hotel_input');
   var avisoDay=document.getElementById('rsvp_dayuse_aviso');
+  var avisoNaoVou=document.getElementById('rsvp_nao_vou_aviso');
+  var restricoesWrap=document.getElementById('rsvp_restricoes_ta');
+  var btnSubmit=document.getElementById('rsvp_campo_botao');
 
   /* Reset do bloco secundário sempre que muda participação */
   document.querySelectorAll('input[name="hospedagem_tipo"]').forEach(function(r){r.checked=false;});
   if(hotelWrap)hotelWrap.style.display='none';
   if(hotelInput){hotelInput.value='';hotelInput.disabled=true;}
 
-  /* Aviso Day use: só quando escolhe day use */
+  var ehNaoVou=(val==='nao_vou');
+
+  /* Aviso Day use: só quando escolhe day use (nunca em nao_vou) */
   if(avisoDay){
     avisoDay.style.display=(val==='dayuse')?'block':'none';
   }
 
-  /* Pergunta condicional hospedagem: day use ou festa */
+  /* Aviso "não vou comparecer — vale pro grupo": só em nao_vou */
+  if(avisoNaoVou){
+    avisoNaoVou.style.display=ehNaoVou?'block':'none';
+  }
+
+  /* Pergunta condicional hospedagem: day use ou festa (não em nao_vou) */
   if(val==='dayuse' || val==='festa'){
     if(hospWrap)hospWrap.style.display='block';
   }else{
     if(hospWrap)hospWrap.style.display='none';
+  }
+
+  /* Restrições alimentares: esconder o grupo inteiro (label + textarea) quando nao_vou */
+  if(restricoesWrap){
+    var restricoesFg=restricoesWrap.closest('.fg');
+    if(restricoesFg){
+      restricoesFg.style.display=ehNaoVou?'none':'';
+      if(ehNaoVou)restricoesWrap.value=''; /* limpa o conteúdo */
+    }
+  }
+
+  /* Botão: muda pra "Enviar resposta" quando nao_vou (mais neutro que "Enviar confirmação") */
+  if(btnSubmit){
+    /* Guarda texto original na primeira vez */
+    if(!btnSubmit.dataset.textoOriginal){
+      btnSubmit.dataset.textoOriginal=btnSubmit.textContent;
+    }
+    if(ehNaoVou){
+      btnSubmit.textContent='Enviar resposta';
+    }else{
+      /* Respeita "Atualizar confirmação" se foi setado pelo pré-preenchimento */
+      if(btnSubmit.textContent==='Enviar resposta'){
+        btnSubmit.textContent=btnSubmit.dataset.textoOriginal||'Enviar confirmação';
+      }
+    }
   }
 }
 
@@ -8974,6 +9023,13 @@ function _enviarRSVP(d,form){
   if(d.participacao==='hospedagem_santanna'){
     d.hospedagem_tipo='santanna';
     d.nome_hotel=TXT('rsvp_hotel_santanna_nome',"Sant'Anna Fazenda Hotel");
+  }else if(d.participacao==='nao_vou'){
+    /* Não vai comparecer — campos de logística não fazem sentido, limpar tudo.
+       Mantém: nome, adultos, criancas (usuário pode indicar N do grupo que não vai),
+       mensagem e sugestao_musica (ainda podem ser enviados como despedida/afeto). */
+    d.hospedagem_tipo='';
+    d.nome_hotel='';
+    d.restricoes='';
   }else if(d.hospedagem_tipo==='sem'){
     d.nome_hotel='';
   }
@@ -9000,6 +9056,22 @@ function _enviarRSVP(d,form){
     var rO=document.getElementById('rO');
     if(rO)rO.classList.add('on');
     _rsvpEmEnvio=false;
+
+    /* Customiza tela de sucesso quando participacao=nao_vou (c 2026-05-11):
+       Título e texto ficam respeitosos; bloco de "ver presentes" some. */
+    try{
+      var tituloOk=document.getElementById('rsvp_confirmacao_titulo');
+      var textoOk=document.getElementById('rsvp_confirmacao_texto');
+      var blocoPresentes=document.getElementById('rsvp_ok_bloco_presentes');
+      if(d.participacao==='nao_vou'){
+        if(tituloOk)tituloOk.textContent=TXT('rsvp_confirmacao_nao_vou_titulo','Obrigado pela sua resposta.');
+        if(textoOk)textoOk.textContent=TXT('rsvp_confirmacao_nao_vou_texto','Vamos sentir sua falta. Obrigado por avisar — isso ajuda muito na nossa organização.');
+        if(blocoPresentes)blocoPresentes.style.display='none';
+      }else{
+        /* Fluxo normal: restaura textos default caso um envio anterior tenha modificado */
+        if(blocoPresentes)blocoPresentes.style.display='';
+      }
+    }catch(e){}
     /* Marca localStorage.rsvp_enviado pra suprimir intercept + popup em F5s futuros
        (decisão 2026-05-06 — opção B+D). Quem já confirmou presença não precisa
        mais ser orientado sobre as formas de participação. */
