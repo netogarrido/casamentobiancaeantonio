@@ -7945,12 +7945,26 @@ function _toggleLetra(abrir){
   var perg=document.getElementById('pergaminhoWrap');
   if(!b||!sec||!perg)return;
 
-  /* v7 crossfade no mesmo ponto (sem scroll, sem pulo):
-     - Elemento entrando: adiciona .stack-dentro (opacity 1, relative → ocupa altura)
-     - Elemento saindo: adiciona .stack-fora (opacity 0, absolute → fora do fluxo)
-     - Troca é simultânea: opacity transita 350ms nos dois, mas como ambos estão
-       no mesmo point de ancoragem do stack grid, NÃO há salto de scroll.
-     - Removido _scrollInstantTo — desnecessário. */
+  /* Stack crossfade: pergaminho e letra alternam .stack-dentro (position:relative,
+     opacity:1, altura natural) vs .stack-fora (position:absolute, opacity:0,
+     altura zero).
+
+     BUG HISTÓRICO RESOLVIDO em 2026-05-11:
+     O código antes assumia que "ambos no mesmo ponto de ancoragem do stack = sem
+     pulo de scroll". Isso é falso quando o elemento entrando e o saindo têm alturas
+     MUITO diferentes (letra ~2500px vs pergaminho ~400px). O window.scrollY é
+     absoluto — quando a seção encolhe/cresce 2000px, o que estava na dobra
+     dessincroniza do conteúdo.
+
+     Sintoma:
+     - Abrir letra: usuário clica no botão no fim do pergaminho e cai no meio da
+       letra, sem ver título nem primeiras linhas.
+     - Fechar letra: usuário clica "recolher" no fim da música e é catapultado
+       pra Presentes.
+
+     Solução orgânica: após o toggle completar (2 RAFs pra garantir reflow),
+     rolar suave pra âncora correta (letra ao abrir, pergaminho ao fechar).
+     Respeita prefers-reduced-motion. */
 
   if(abrir){
     // Pergaminho: sai. Letra: entra.
@@ -7963,6 +7977,8 @@ function _toggleLetra(abrir){
     sec.classList.add('lyr-aberta');
     sec.classList.add('letra-foi-aberta');
     trackEvento('letra_abriu','');
+
+    _ancorarStackLetra(b);
   }else{
     // Letra: sai. Pergaminho: entra.
     b.classList.remove('stack-dentro');
@@ -7973,7 +7989,31 @@ function _toggleLetra(abrir){
 
     sec.classList.remove('lyr-aberta');
     trackEvento('letra_fechou','');
+
+    _ancorarStackLetra(perg);
   }
+}
+
+/* Helper — rola suave até o topo do elemento passado, com respiro pro nav fixo.
+   Chamado APÓS o toggle de stack-dentro/stack-fora pra compensar mudança brusca
+   de altura (letra: ~2500px, pergaminho: ~400px).
+   Usa 2 RAFs pra esperar o reflow do position:relative|absolute completar antes
+   de medir getBoundingClientRect — valor antes do reflow é o do estado antigo. */
+function _ancorarStackLetra(target){
+  if(!target)return;
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      var reduce=false;
+      try{reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+      var NAV_OFFSET=80; /* respiro pro nav fixo não cobrir o topo do alvo */
+      var rect=target.getBoundingClientRect();
+      var targetY=window.scrollY + rect.top - NAV_OFFSET;
+      window.scrollTo({
+        top: Math.max(0, targetY),
+        behavior: reduce ? 'auto' : 'smooth'
+      });
+    });
+  });
 }
 
 /* Popula o pergaminho a partir das chaves musica_titulo + musica_trecho */
