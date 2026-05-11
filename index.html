@@ -4804,6 +4804,26 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   color:var(--al);
   font-weight:700;
 }
+/* Botão "carregue sua resposta anterior" inline dentro do aviso.
+   Visual de link com sublinhado — herda tipografia do aviso. */
+.rsvp-aviso-editavel-btn{
+  background:transparent;
+  border:none;
+  padding:0;
+  margin:0;
+  color:#9C7A3F;
+  font:inherit;
+  font-weight:600;
+  text-decoration:underline;
+  text-underline-offset:2px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.rsvp-aviso-editavel-btn:hover,
+.rsvp-aviso-editavel-btn:focus-visible{
+  color:var(--al);
+  outline:none;
+}
 @media(min-width:768px){
   .rsvp-aviso-editavel{font-size:.95rem; padding:14px 16px}
 }
@@ -7371,15 +7391,35 @@ function applyConteudo(rows){
 }
 
 /* Pré-preenche #rsvpNomeInput com o nome salvo do popup (localStorage.convidado_nome).
-   Só preenche se o campo está vazio — não sobrescreve se o convidado já começou a digitar.
-   Seguro pra chamar múltiplas vezes: applyConteudo, pós-popup, etc. */
+   Atualiza o campo pra refletir o nome mais recente (ex: convidado editou no popup
+   numa sessão posterior). Respeita input manual no próprio RSVP: se o valor do
+   campo não bate nem com convidado_nome nem está vazio, assume edição manual.
+   Bug 1 fix (2026-05-11): antes só preenchia se vazio, então nome antigo do
+   snapshot/pré-preenchimento travava o campo. */
 function _preencherNomeRSVP(){
   var nome=getNomeSalvo();
   if(!nome)return;
   var inp=document.getElementById('rsvpNomeInput');
   if(!inp)return;
-  if(inp.value && inp.value.trim())return; /* já tem algo digitado, respeita */
-  inp.value=nome;
+  var atual=(inp.value||'').trim();
+  /* Se o campo está vazio OU contém um valor restaurado pelo snapshot (que pode
+     estar desatualizado), sobrescreve com o convidado_nome do popup. */
+  if(!atual){
+    inp.value=nome;
+    return;
+  }
+  /* Se o usuário editou o campo manualmente (valor ≠ convidado_nome), preserva.
+     Sinal heurístico: se o valor atual bate com snapshot antigo e difere do
+     convidado_nome, é restauração stale → atualiza. */
+  try{
+    var snapRaw=localStorage.getItem(_RSVP_SNAPSHOT_KEY);
+    if(snapRaw){
+      var snap=JSON.parse(snapRaw);
+      if(snap && snap.nome && atual===snap.nome && atual!==nome){
+        inp.value=nome;
+      }
+    }
+  }catch(e){}
 }
 
 /* Desliga/liga SÓ A PÍLULA VISUAL "Veja o detalhe das opções" baseado no span
@@ -8669,9 +8709,29 @@ function _restaurarRSVP(){
   var form=document.getElementById('rF');
   if(!form)return;
 
-  /* Preencher campos básicos (não sobrescrever se usuário já editou manualmente) */
+  /* Opção C (2026-05-11): não restaurar campos automaticamente.
+     Mostrar aviso "Você já confirmou em DD/MM — Carregar minha resposta anterior"
+     e deixar o convidado decidir se quer carregar. Evita que respostas antigas
+     (especialmente "não vou comparecer") fiquem pré-selecionadas sem contexto. */
+  _mostrarAvisoRSVPEditavel(snap);
+}
+
+/* Aplica os dados do snapshot no form. Chamada quando o convidado clica explicitamente
+   em "Carregar minha resposta anterior" no aviso editável. */
+function _aplicarSnapshotNoForm(snap){
+  if(!snap)return;
+  var form=document.getElementById('rF');
+  if(!form)return;
+
+  /* Bug 1 fix (2026-05-11): o nome salvo em localStorage.convidado_nome é editado
+     direto pelo popup. O snapshot guarda a cópia do momento do envio. Se o convidado
+     editou o nome depois, convidado_nome é a fonte mais recente — vence. */
+  var nomeSalvo='';
+  try{nomeSalvo=localStorage.getItem('convidado_nome')||'';}catch(e){}
+  var nomeFinal=nomeSalvo||snap.nome||'';
+
   var nomeInp=document.getElementById('rsvpNomeInput');
-  if(nomeInp && !nomeInp.value.trim())nomeInp.value=snap.nome||'';
+  if(nomeInp)nomeInp.value=nomeFinal;
 
   var adultosInp=document.getElementById('rsvpAdultosInput');
   if(adultosInp && snap.adultos)adultosInp.value=snap.adultos;
@@ -8682,7 +8742,6 @@ function _restaurarRSVP(){
   var partSel=document.getElementById('rsvp_select_participacao');
   if(partSel && snap.participacao){
     partSel.value=snap.participacao;
-    /* dispara onChange pra mostrar bloco condicional (hospedagem radio) */
     try{onParticiplacaoChange(snap.participacao);}catch(e){}
   }
 
@@ -8703,26 +8762,36 @@ function _restaurarRSVP(){
   }
 
   var restInp=document.getElementById('rsvp_restricoes_ta');
-  if(restInp && !restInp.value.trim())restInp.value=snap.restricoes||'';
-
-  /* Aviso sutil acima do form explicando que está editável */
-  _mostrarAvisoRSVPEditavel();
+  if(restInp)restInp.value=snap.restricoes||'';
 
   /* Muda texto do botão submit pra sinalizar "está atualizando" */
   var btn=document.getElementById('rsvp_campo_botao');
   if(btn){
-    /* Guarda texto original pra restaurar se reset */
     if(!btn.dataset.textoOriginal){
       btn.dataset.textoOriginal=btn.textContent;
     }
-    /* Não mexe se o Sheet já definiu texto personalizado — applyConteudo pode ter posto algo */
-    if(btn.textContent==='Enviar confirmação' || btn.textContent==='Confirmar' || btn.textContent===btn.dataset.textoOriginal){
+    /* Só muda pra "Atualizar" se não for nao_vou (nao_vou tem botão próprio) */
+    if(snap.participacao!=='nao_vou' && 
+       (btn.textContent==='Enviar confirmação' || btn.textContent===btn.dataset.textoOriginal)){
       btn.textContent='Atualizar confirmação';
     }
   }
+
+  /* Atualiza aviso pra dizer que carregou */
+  var aviso=document.getElementById('rsvp_aviso_editavel');
+  if(aviso){
+    aviso.innerHTML=
+      '<span class="rsvp-aviso-editavel-ico" aria-hidden="true">💛</span>'+
+      '<span class="rsvp-aviso-editavel-txt">'+
+        '<strong>Sua resposta anterior foi carregada.</strong> '+
+        'Ajuste o que precisar e envie de novo para atualizar.'+
+      '</span>';
+  }
+
+  try{trackEvento('rsvp_carregou_anterior','');}catch(e){}
 }
 
-function _mostrarAvisoRSVPEditavel(){
+function _mostrarAvisoRSVPEditavel(snap){
   var form=document.getElementById('rF');
   if(!form)return;
   if(document.getElementById('rsvp_aviso_editavel'))return; /* já existe */
@@ -8736,9 +8805,19 @@ function _mostrarAvisoRSVPEditavel(){
     '<span class="rsvp-aviso-editavel-ico" aria-hidden="true">💛</span>'+
     '<span class="rsvp-aviso-editavel-txt">'+
       '<strong>Você já confirmou'+txtData+'.</strong> '+
-      'Ajuste os campos abaixo e clique em enviar para atualizar sua resposta.'+
+      'Para atualizar sua resposta, '+
+      '<button type="button" class="rsvp-aviso-editavel-btn" id="rsvp_btn_carregar_anterior">carregue sua resposta anterior</button> '+
+      'ou preencha do zero.'+
     '</span>';
   form.insertBefore(aviso, form.firstChild);
+
+  /* Handler do botão — só carrega quando o convidado clica explicitamente */
+  var btnCarregar=document.getElementById('rsvp_btn_carregar_anterior');
+  if(btnCarregar){
+    btnCarregar.addEventListener('click', function(){
+      _aplicarSnapshotNoForm(snap);
+    });
+  }
 }
 
 /* Chamar após o DOM carregar + applyConteudo terminar */
