@@ -4751,6 +4751,43 @@ section[id]{scroll-margin-top:var(--nav-offset)}
   border-radius:6px;
   margin-top:8px;
 }
+
+/* RSVP — aviso "você já confirmou, está editando" (pré-preenchimento b, 2026-05-11)
+   Aparece no topo do form #rF quando localStorage.rsvp_enviado=1 e snapshot existe.
+   Visual: pílula creme translúcido + borda ouro suave + ícone 💛 à esquerda.
+   Função: informar o convidado que o form está EM MODO DE EDIÇÃO (pré-preenchido),
+   não em branco. Evita confusão "já enviei e agora?". */
+.rsvp-aviso-editavel{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  background:rgba(212,160,74,.10);
+  border:1.5px solid rgba(212,160,74,.38);
+  border-radius:12px;
+  padding:12px 14px;
+  margin:0 0 18px;
+  font-family:var(--fb);
+  font-size:.88rem;
+  line-height:1.5;
+  color:var(--s);
+  animation:fadeInRise .5s ease both;
+}
+.rsvp-aviso-editavel-ico{
+  flex:0 0 auto;
+  font-size:1.2rem;
+  line-height:1.3;
+}
+.rsvp-aviso-editavel-txt{
+  flex:1;
+  min-width:0;
+}
+.rsvp-aviso-editavel-txt strong{
+  color:var(--al);
+  font-weight:700;
+}
+@media(min-width:768px){
+  .rsvp-aviso-editavel{font-size:.95rem; padding:14px 16px}
+}
 /* Pílula "Veja o detalhe das opções" — ouro dormente, centralizada, sempre visível.
    Abre modal onboard discreto (#moRsvpOnboard) com resumo das 3 formas de participar.
    Substitui o antigo "Veja as opções abaixo ↓" (linkava Programação). */
@@ -8510,6 +8547,147 @@ function _marcarRSVPEnviado(){
   try{localStorage.setItem('rsvp_enviado','1');}catch(e){}
 }
 
+/* ══════════════════════════════════════════
+   RSVP PRÉ-PREENCHIMENTO (2026-05-11)
+
+   Após um envio bem-sucedido, salvamos os dados do form em localStorage.
+   Na próxima visita, se o convidado voltar pro site (F5, aba nova, etc.)
+   e `_jaEnviouRSVP()` for true, restauramos os campos + mostramos um
+   aviso sutil acima do form explicando que o RSVP está editável.
+
+   Não salvamos:
+   - sugestao_musica: cada envio deve ser nova música
+   - mensagem: já foi enviada, não duplica
+
+   Chave de storage: rsvp_form_snapshot (JSON)
+   Data do envio: rsvp_enviado_em (ISO string)
+══════════════════════════════════════════ */
+var _RSVP_SNAPSHOT_KEY='rsvp_form_snapshot';
+var _RSVP_DATA_KEY='rsvp_enviado_em';
+
+function _salvarSnapshotRSVP(d){
+  try{
+    var snap={
+      nome: d.nome||'',
+      adultos: d.adultos||'1',
+      criancas: d.criancas||'0',
+      participacao: d.participacao||'',
+      hospedagem_tipo: d.hospedagem_tipo||'',
+      nome_hotel: d.nome_hotel||'',
+      restricoes: d.restricoes||''
+    };
+    localStorage.setItem(_RSVP_SNAPSHOT_KEY, JSON.stringify(snap));
+    localStorage.setItem(_RSVP_DATA_KEY, new Date().toISOString());
+  }catch(e){}
+}
+
+function _lerSnapshotRSVP(){
+  try{
+    var raw=localStorage.getItem(_RSVP_SNAPSHOT_KEY);
+    if(!raw)return null;
+    return JSON.parse(raw);
+  }catch(e){return null;}
+}
+
+function _formatarDataEnvio(iso){
+  try{
+    var d=new Date(iso);
+    if(isNaN(d.getTime()))return '';
+    var dia=String(d.getDate()).padStart(2,'0');
+    var mes=String(d.getMonth()+1).padStart(2,'0');
+    return dia+'/'+mes;
+  }catch(e){return '';}
+}
+
+function _restaurarRSVP(){
+  if(!_jaEnviouRSVP())return;
+  var snap=_lerSnapshotRSVP();
+  if(!snap)return;
+
+  var form=document.getElementById('rF');
+  if(!form)return;
+
+  /* Preencher campos básicos (não sobrescrever se usuário já editou manualmente) */
+  var nomeInp=document.getElementById('rsvpNomeInput');
+  if(nomeInp && !nomeInp.value.trim())nomeInp.value=snap.nome||'';
+
+  var adultosInp=document.getElementById('rsvpAdultosInput');
+  if(adultosInp && snap.adultos)adultosInp.value=snap.adultos;
+
+  var criancasInp=document.getElementById('rsvpCriancasInput');
+  if(criancasInp && snap.criancas!=null)criancasInp.value=snap.criancas;
+
+  var partSel=document.getElementById('rsvp_select_participacao');
+  if(partSel && snap.participacao){
+    partSel.value=snap.participacao;
+    /* dispara onChange pra mostrar bloco condicional (hospedagem radio) */
+    try{onParticiplacaoChange(snap.participacao);}catch(e){}
+  }
+
+  /* Hospedagem condicional */
+  if(snap.hospedagem_tipo){
+    var radios=document.querySelectorAll('input[name="hospedagem_tipo"]');
+    for(var i=0;i<radios.length;i++){
+      if(radios[i].value===snap.hospedagem_tipo){
+        radios[i].checked=true;
+        try{onHospedagemChange(snap.hospedagem_tipo);}catch(e){}
+        break;
+      }
+    }
+    if(snap.hospedagem_tipo==='hotel' && snap.nome_hotel){
+      var hotelInp=document.getElementById('rsvp_nome_hotel_input');
+      if(hotelInp){hotelInp.value=snap.nome_hotel; hotelInp.disabled=false;}
+    }
+  }
+
+  var restInp=document.getElementById('rsvp_restricoes_ta');
+  if(restInp && !restInp.value.trim())restInp.value=snap.restricoes||'';
+
+  /* Aviso sutil acima do form explicando que está editável */
+  _mostrarAvisoRSVPEditavel();
+
+  /* Muda texto do botão submit pra sinalizar "está atualizando" */
+  var btn=document.getElementById('rsvp_campo_botao');
+  if(btn){
+    /* Guarda texto original pra restaurar se reset */
+    if(!btn.dataset.textoOriginal){
+      btn.dataset.textoOriginal=btn.textContent;
+    }
+    /* Não mexe se o Sheet já definiu texto personalizado — applyConteudo pode ter posto algo */
+    if(btn.textContent==='Enviar confirmação' || btn.textContent==='Confirmar' || btn.textContent===btn.dataset.textoOriginal){
+      btn.textContent='Atualizar confirmação';
+    }
+  }
+}
+
+function _mostrarAvisoRSVPEditavel(){
+  var form=document.getElementById('rF');
+  if(!form)return;
+  if(document.getElementById('rsvp_aviso_editavel'))return; /* já existe */
+
+  var dataEnvio=_formatarDataEnvio(localStorage.getItem(_RSVP_DATA_KEY));
+  var txtData=dataEnvio?' em '+dataEnvio:'';
+  var aviso=document.createElement('div');
+  aviso.id='rsvp_aviso_editavel';
+  aviso.className='rsvp-aviso-editavel';
+  aviso.innerHTML=
+    '<span class="rsvp-aviso-editavel-ico" aria-hidden="true">💛</span>'+
+    '<span class="rsvp-aviso-editavel-txt">'+
+      '<strong>Você já confirmou'+txtData+'.</strong> '+
+      'Ajuste os campos abaixo e clique em enviar para atualizar sua resposta.'+
+    '</span>';
+  form.insertBefore(aviso, form.firstChild);
+}
+
+/* Chamar após o DOM carregar + applyConteudo terminar */
+document.addEventListener('DOMContentLoaded',function(){
+  /* setTimeout garante que applyConteudo do Sheet já rodou antes de restaurar.
+     Se aplicarmos ANTES do applyConteudo, os valores do HTML padrão sobrescrevem. */
+  setTimeout(function(){
+    try{_restaurarRSVP();}catch(e){}
+  }, 800);
+});
+
 /* Marca origem ao clicar no link RSVP do hamburger ou em CTAs. Chamada
    via listener instalado em initRsvpOnboardTracking(). */
 function _marcarOrigemRsvp(origem){
@@ -8826,6 +9004,9 @@ function _enviarRSVP(d,form){
        (decisão 2026-05-06 — opção B+D). Quem já confirmou presença não precisa
        mais ser orientado sobre as formas de participação. */
     _marcarRSVPEnviado();
+    /* Salva snapshot dos campos pra pré-preencher o form na próxima visita.
+       Permite o convidado atualizar a resposta sem relembrar o que tinha marcado. */
+    try{_salvarSnapshotRSVP(d);}catch(e){}
     /* Esconde intercept e pílula caso usuário dê F5 sem fechar a aba */
     try{
       var interceptPost=document.getElementById('rsvp_select_intercept');
