@@ -3283,6 +3283,36 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 }
 .prog-dia-card.on .dow{color:var(--n)}
 
+/* Affordance "+" / "×" (rotaciona 45°) — espelha padrão do FAQ pra coerência visual */
+.prog-dia-tg{
+  position:absolute;
+  top:50%;
+  right:8px;
+  transform:translateY(-50%);
+  width:16px;
+  height:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--fb);
+  font-size:.95rem;
+  font-weight:400;
+  line-height:1;
+  color:var(--a);
+  opacity:.75;
+  transition:transform .3s ease, color .28s ease, opacity .28s ease;
+  pointer-events:none;
+  z-index:2;
+}
+.prog-dia-card.on .prog-dia-tg{
+  transform:translateY(-50%) rotate(45deg);
+  color:var(--n);
+  opacity:.9;
+}
+@media(min-width:768px){
+  .prog-dia-tg{right:12px;font-size:1.05rem;width:18px;height:18px}
+}
+
 .prog-dias-grid.has-open .prog-dia-card:not(.on){
   opacity:.55;
 }
@@ -5754,12 +5784,15 @@ section[id]{scroll-margin-top:var(--nav-offset)}
 <div class="prog-dias-grid">
         <button type="button" class="prog-dia-card" data-dia="sexta" aria-pressed="false" onclick="toggleDia('sexta')">
           <span class="dow" id="sexta_titulo">Sexta-feira</span>
+          <span class="prog-dia-tg" aria-hidden="true">+</span>
         </button>
         <button type="button" class="prog-dia-card" data-dia="sabado" aria-pressed="false" onclick="toggleDia('sabado')">
           <span class="dow" id="sabado_titulo">Sábado</span>
+          <span class="prog-dia-tg" aria-hidden="true">+</span>
         </button>
         <button type="button" class="prog-dia-card" data-dia="domingo" aria-pressed="false" onclick="toggleDia('domingo')">
           <span class="dow" id="domingo_titulo">Domingo</span>
+          <span class="prog-dia-tg" aria-hidden="true">+</span>
         </button>
       </div>
 
@@ -9656,7 +9689,8 @@ function toggleLazer(id){
 }
 
 var _diaAtivo=null;
-function toggleDia(d){
+function toggleDia(d,opts){
+  opts=opts||{};
   var novo=(_diaAtivo===d)?null:d;
   var wrap=document.getElementById('progDiasPanels');
   document.querySelectorAll('.prog-dia-card').forEach(function(c){
@@ -9669,7 +9703,7 @@ function toggleDia(d){
   });
   if(wrap){wrap.classList.toggle('has-open',!!novo);}
   _diaAtivo=novo;
-  if(novo){trackEvento('prog_dia_abriu',novo);}
+  if(novo && !opts.skipTrack){trackEvento('prog_dia_abriu',novo);}
 
   /* Remover glow do Sábado ao primeiro clique em qualquer dia */
   try{
@@ -9680,7 +9714,7 @@ function toggleDia(d){
   }catch(e){}
 
   /* Scroll-to-top ao abrir dia — desktop e mobile (acordeão em ambos) */
-  if(novo){
+  if(novo && !opts.skipScroll){
     setTimeout(function(){
       var anchor=document.querySelector('.prog-dias-wrap')||document.querySelector('.prog-dias-panel');
       if(anchor){
@@ -10245,7 +10279,14 @@ var nomeSalvo=getNomeSalvo();
 
   /* Bloco 2026-05-03 #9: caixa de dias (sexta/sábado/domingo) começa fechada.
      Auto-open do sábado removido a pedido do usuário. Convidado abre por descoberta. */
-  /* (linhas removidas: setTimeout toggleDia sabado) */
+  /* Reativado 2026-05-11: Tio Velho + Designer UX consolidaram que sem conteúdo visível
+     as pílulas não afforda clique. Abrir Sábado por default ensina o padrão de aba
+     e alinha com a narrativa (sábado é O dia do casamento). skipScroll evita pular a página no load. */
+  setTimeout(function(){
+    if(typeof toggleDia==='function' && _diaAtivo===null){
+      toggleDia('sabado',{skipScroll:true,skipTrack:true});
+    }
+  },100);
 
   /* Garante estado inicial correto do RSVP (aviso day use, botão CTA opções) */
   try{
